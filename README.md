@@ -1,6 +1,6 @@
 # my-blog
 
-The Site is generated using [vuepress](https://vuepress.vuejs.org/) and [vuepress-theme-plume](https://github.com/pengzhanbo/vuepress-theme-plume)
+网站使用 [vuepress](https://vuepress.vuejs.org/) 和 [vuepress-theme-plume](https://github.com/pengzhanbo/vuepress-theme-plume) 构建生成。
 
 ## Install
 
@@ -11,17 +11,17 @@ npm i
 ## Usage
 
 ```sh
-# start dev server
+# 启动开发服务
 npm run docs:dev
-# build for production
+# 构建生产包
 npm run docs:build
-# preview production build in local
+# 本地预览生产服务
 npm run docs:preview
-# update vuepress and theme
+# 更新 vuepress 和主题
 npm run vp-update
 ```
 
-## Documents
+## 文档
 
 - [vuepress](https://vuepress.vuejs.org/)
 - [vuepress-theme-plume](https://theme-plume.vuejs.press/)
