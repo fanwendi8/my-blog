@@ -1,0 +1,131 @@
+@font-face {
+  font-family: "ZWZT";
+  src: url("/fonts/ZWZT.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "fira-code";
+  src: url("/fonts/FiraCode-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: "ZWZT";
+}
+
+// 导航
+.vp-navbar {
+  .navbar-menu-link {
+    font-family: "ZWZT";
+    font-size: 16px;
+  }
+}
+//blog 背景方格样式
+.vp-doc-container.is-posts {
+  background-image: linear-gradient(
+      90deg,
+      rgba(213, 196, 161, 0.15) 3%,
+      transparent 0
+    ),
+    linear-gradient(1turn, rgba(213, 196, 161, 0.15) 3%, transparent 0);
+  background-size: 20px 20px;
+  background-position: 50%;
+}
+
+//svg icon
+svg {
+  fill: rgba(168, 153, 132, 1) !important;
+}
+
+//button hover & focus
+// .el-button:not(.el-button--primary):not(.el-button--text):hover {
+//   border-color: #D5C4A1 !important;
+//   color: #D5C4A1 !important;
+//   background-color: rgba(243, 238, 226, 0.921) !important;
+// }
+
+// .el-button:not(.el-button--primary):not(.el-button--text):focus {
+//   border-color: #D5C4A1 !important;
+//   color: #D5C4A1 !important;
+//   background-color: rgba(243, 238, 226, 0.921) !important;
+// }
+// //send button
+// .el-button.tk-send {
+//   background-color: rgba(168, 153, 132, 1) !important;
+//   border-color: rgba(168, 153, 132, 1) !important;
+// }
+
+
+
+:root {
+  /**
+   * code blog theme
+   * -------------------------------------------------------------------------- */
+
+   --vp-font-family-mono: "fira-code", "Consolas", "Courier New", monospace;
+   --vp-code-font-size: 0.9em;
+   --vp-code-line-height: 1.3em;
+
+  /**
+   * 主题色
+   * -------------------------------------------------------------------------- */
+
+  --vp-c-brand-1: rgba(168, 153, 132, 1); /* 链接颜色、强调色 */
+  --vp-c-brand-2: rgba(213, 196, 161, 1); /* 链接、按钮 hover 颜色 */
+  --vp-c-brand-3: rgba(152, 151, 26, 1); /* 背景色、边框色 */
+  --vp-c-brand-soft: rgba(196, 193, 121, 0.314); /* 辅助色 */
+
+  /**
+   * 文本颜色
+   * -------------------------------------------------------------------------- */
+
+  --vp-c-text-1: rgba(60, 60, 67); /* 主要文本 */
+  --vp-c-text-2: rgba(60, 60, 67, 0.78); /* 次要文本 */
+  --vp-c-text-3: rgba(60, 60, 67, 0.56); /* 辅助文本 */
+
+  /**
+   * 背景色
+   * -------------------------------------------------------------------------- */
+
+  --vp-c-bg: #fff; /* 主体背景 */
+  --vp-nav-bg-color: #fff; /* 导航栏背景 */
+  --vp-nav-screen-bg-color: #fff; /* 移动端导航栏 */
+  --vp-local-nav-bg-color: #fff; /* 页面内导航栏 */
+  --vp-sidebar-bg-color: #f6f6f7; /* 侧边栏背景 */
+  --vp-code-block-bg: #f6f8fa; /* 代码块背景 */
+}
+
+[data-theme="dark"] {
+  /**
+   * 主题色
+   * -------------------------------------------------------------------------- */
+
+  --vp-c-brand-1: rgba(235, 219, 178, 1); /* 链接颜色、强调色 */
+  --vp-c-brand-2: rgba(213, 196, 161, 1); /* 链接、按钮 hover 颜色 */
+  --vp-c-brand-3: rgba(152, 151, 26, 1); /* 背景色、边框色 */
+  --vp-c-brand-soft: rgba(196, 193, 121, 0.314); /* 辅助色 */
+
+  /**
+   * 文本颜色
+   * -------------------------------------------------------------------------- */
+
+  --vp-c-text-1: rgba(255, 255, 245, 0.86); /* 主要文本 */
+  --vp-c-text-2: rgba(235, 235, 245, 0.6); /* 次要文本 */
+  --vp-c-text-3: rgba(235, 235, 245, 0.38); /* 辅助文本 */
+
+  /**
+   * 背景色
+   * -------------------------------------------------------------------------- */
+
+  --vp-c-bg: #1b1b1f; /* 主体背景 */
+  --vp-nav-bg-color: #1b1b1f; /* 导航栏背景 */
+  --vp-nav-screen-bg-color: #1b1b1f; /* 移动端导航栏 */
+  --vp-local-nav-bg-color: #1b1b1f; /* 页面内导航栏 */
+  --vp-sidebar-bg-color: #161618; /* 侧边栏背景 */
+  --vp-code-block-bg: #202127; /* 代码块背景 */
+}

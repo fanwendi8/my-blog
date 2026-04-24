@@ -1,0 +1,27 @@
+{
+  "name": "my-blog",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "基于 vuepress-theme-plume 的个人博客",
+  "author": "fanwendi8 <psbc_fanwendi@163.com>",
+  "license": "MIT",
+  "scripts": {
+    "docs:build": "vuepress build docs --clean-cache --clean-temp",
+    "docs:dev": "vuepress dev docs",
+    "docs:dev-clean": "vuepress dev docs --clean-cache --clean-temp",
+    "docs:preview": "http-server docs/.vuepress/dist",
+    "vp-update": "npx vp-update"
+  },
+  "devDependencies": {
+    "@vuepress/bundler-vite": "2.0.0-rc.28",
+    "http-server": "^14.1.1",
+    "sass": "^1.99.0",
+    "typescript": "^5.9.3",
+    "vue": "^3.5.32",
+    "vuepress": "2.0.0-rc.28",
+    "vuepress-theme-plume": "1.0.0-rc.196"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.0.0"
+  }
+}
