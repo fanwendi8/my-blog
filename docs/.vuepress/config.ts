@@ -27,8 +27,6 @@ export default defineUserConfig({
   shouldPrefetch: false,
 
   theme: plumeTheme({
-    cache: 'filesystem',
-
     autoFrontmatter: {
       permalink: true,
       createTime: true,
