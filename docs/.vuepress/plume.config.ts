@@ -18,17 +18,14 @@ import collections from './collections'
  * @see https://theme-plume.vuejs.press/config/theme/
  */
 export default defineThemeConfig({
-  logo: 'https://theme-plume.vuejs.press/plume.png',
+  logo: '/logo.png',
 
   appearance: false,
 
   social: [
     { icon: 'github', link: 'https://github.com/fanwendi8' },
+    { icon: 'xbox', link: 'https://www.xbox.com/play/user/FanWendi8' },
   ],
-
-  prevPage: true,
-  nextPage: true,
-  createTime: true,
 
   /* 站点页脚 */
   footer: {
@@ -40,9 +37,10 @@ export default defineThemeConfig({
    * @see https://theme-plume.vuejs.press/config/theme/#profile
    */
   profile: {
-    avatar: 'https://theme-plume.vuejs.press/plume.png',
+    avatar: '/logo.png',
     name: '𝓦𝓮𝓷𝓭𝓲',
-    description: '代码即诗，光影为笺',
+    description: '代码如诗，光影作笺',
+    location: '𝐵𝑒𝒾𝒥𝒾𝓃𝑔, 𝒞𝒽𝒾𝓃𝒶',
   },
 
   navbar,

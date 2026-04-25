@@ -9,6 +9,10 @@ const blog = defineCollection({
   dir: 'blog',
   title: '墨痕',
   link: '/blog/',
+  tagsLink: '/tags/',
+  archivesLink: '/archives/',
+  categoriesLink: '/categories/',
+  postList: false,
 })
 
 const notes = defineCollection({

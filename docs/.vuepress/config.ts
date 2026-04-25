@@ -11,40 +11,19 @@
 
 import { viteBundler } from '@vuepress/bundler-vite'
 import { defineUserConfig } from 'vuepress'
-import { plumeTheme } from 'vuepress-theme-plume'
+import { theme } from './theme.ts'
 
 export default defineUserConfig({
+  head: [
+    ['link', { rel: 'icon', type: 'image/png', href: '/logo.png' }],
+  ],
+
   base: '/',
   lang: 'zh-CN',
   title: '𝓦𝓮𝓷𝓭𝓲',
-  description: '代码即诗，光影为笺',
-
-  head: [
-    ['link', { rel: 'icon', type: 'image/png', href: 'https://theme-plume.vuejs.press/favicon-32x32.png' }],
-  ],
+  description: '代码如诗，光影作笺',
 
   bundler: viteBundler(),
-  shouldPrefetch: false,
 
-  theme: plumeTheme({
-    autoFrontmatter: {
-      permalink: true,
-      createTime: true,
-      title: true,
-    },
-
-    search: { provider: 'local' },
-
-    comment: {
-      provider: 'Giscus',
-      comment: true,
-      repo: 'fanwendi8/my-bolg',
-      repoId: '',
-      category: 'Announcements',
-      categoryId: '',
-      mapping: 'pathname',
-      reactionsEnabled: true,
-      inputPosition: 'top',
-    },
-  }),
+  theme,
 })
