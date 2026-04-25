@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "vuepress-plume-config": {
+      "source": "git@github.com:pengzhanbo/vuepress-theme-plume.git",
+      "sourceType": "git",
+      "computedHash": "46a978e8b8e18b73cd18a2c0bab424654077065423ec986e62613d7000d03604"
+    },
+    "vuepress-plume-markdown": {
+      "source": "git@github.com:pengzhanbo/vuepress-theme-plume.git",
+      "sourceType": "git",
+      "computedHash": "351ea9f2bfc8ccab44674aaa77ad166f59ae23363bb89f5cdd4386d08a06dc93"
+    }
+  }
+}
