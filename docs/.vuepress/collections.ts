@@ -15,15 +15,6 @@ const blog = defineCollection({
   archivesText: '流年',
 })
 
-const notes = defineCollection({
-  type: 'post',
-  dir: 'notes',
-  linkPrefix: '/notes',
-  postList: false,
-  title: '集萃',
-})
-
 export default defineCollections([
   blog,
-  // notes,
 ])
