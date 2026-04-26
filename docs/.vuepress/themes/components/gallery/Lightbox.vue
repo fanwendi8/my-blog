@@ -1,6 +1,5 @@
-<!-- docs/.vuepress/themes/components/gallery/Lightbox.vue -->
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { Photo } from './types'
 import { publicSrc } from './cdn'
 import PhotoInfoPanel from './PhotoInfoPanel.vue'
@@ -15,7 +14,7 @@ const emit = defineEmits<{
   (e: 'navigate', id: string): void
 }>()
 
-const host = ref<HTMLElement | null>(null)
+const pswpContainer = ref<HTMLElement | null>(null)
 const currentPhoto = ref<Photo | null>(null)
 let pswp: any = null
 
@@ -31,11 +30,32 @@ function pickSrc(p: Photo) {
 
 async function open(id: string) {
   if (typeof window === 'undefined') return
+  if (!pswpContainer.value) return
   const idx = props.photos.findIndex(p => p.id === id)
   if (idx < 0) return
   const PhotoSwipe = await ensureLib()
   const dataSource = props.photos.map(p => ({ ...pickSrc(p), msrc: publicSrc(p.src.thumb), alt: p.title ?? '' }))
-  pswp = new PhotoSwipe({ dataSource, index: idx, bgOpacity: 0.92, showHideAnimationType: 'fade' })
+  const container = pswpContainer.value
+  pswp = new PhotoSwipe({
+    dataSource,
+    index: idx,
+    bgOpacity: 0.92,
+    showHideAnimationType: 'fade',
+    appendToEl: container,
+    getViewportSizeFn: () => ({
+      x: container.clientWidth,
+      y: container.clientHeight,
+    }),
+  })
+  pswp.on('afterInit', () => {
+    const el = container!.querySelector('.pswp') as HTMLElement | null
+    if (el) {
+      el.style.position = 'absolute'
+      el.style.inset = '0'
+      el.style.width = '100%'
+      el.style.height = '100%'
+    }
+  })
   pswp.on('change', () => {
     const p = props.photos[pswp.currIndex]
     currentPhoto.value = p
@@ -56,23 +76,27 @@ watch(() => props.activeId, async (id, prev) => {
       if (idx >= 0 && idx !== pswp.currIndex) pswp.goTo(idx)
       else if (idx < 0) close()
     } else {
+      await nextTick()
       await open(id)
     }
   } else if (!id && pswp) {
     close()
   }
-}, { immediate: true })
+})
 
-onMounted(() => {})
+onMounted(() => {
+  if (props.activeId) {
+    nextTick(() => open(props.activeId!))
+  }
+})
 onBeforeUnmount(() => { pswp?.destroy?.() })
 </script>
 
 <template>
-  <div ref="host" class="gallery-lightbox-host">
-    <Teleport to="body">
-      <div v-if="currentPhoto" class="gallery-lightbox-info">
-        <PhotoInfoPanel :photo="currentPhoto" />
-      </div>
-    </Teleport>
+  <div v-if="activeId" class="gallery-lightbox">
+    <div ref="pswpContainer" class="gallery-lightbox__stage"></div>
+    <div class="gallery-lightbox__panel">
+      <PhotoInfoPanel v-if="currentPhoto" :photo="currentPhoto" />
+    </div>
   </div>
 </template>
