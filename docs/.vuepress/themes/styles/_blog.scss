@@ -1,0 +1,15 @@
+// blog 背景方格样式
+.vp-doc-container.is-posts {
+  background-image: linear-gradient(
+      90deg,
+      rgba(213, 196, 161, 0.15) 3%,
+      transparent 0
+    ),
+    linear-gradient(1turn, rgba(213, 196, 161, 0.15) 3%, transparent 0);
+  background-size: 20px 20px;
+  background-position: 50%;
+}
+
+.vp-posts-nav {
+  display: none;
+}
