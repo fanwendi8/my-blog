@@ -10,4 +10,7 @@ docs/.vuepress/dist
 .superpowers/
 
 .gallery-cache/
-gallery-staging/
+gallery-staging/**
+!gallery-staging/.gitkeep
+docs/.vuepress/public/gallery-img/
+docs/.vuepress/public/gallery/
