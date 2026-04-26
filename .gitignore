@@ -8,3 +8,6 @@ docs/.vuepress/dist
 *.log
 .playwright-mcp
 .superpowers/
+
+.gallery-cache/
+gallery-staging/
