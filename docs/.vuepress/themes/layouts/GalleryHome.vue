@@ -10,6 +10,8 @@ import TabTags from '../components/gallery/TabTags.vue'
 import AlbumDetail from '../components/gallery/AlbumDetail.vue'
 import Lightbox from '../components/gallery/Lightbox.vue'
 import type { GalleryTab } from '../components/gallery/types'
+import { useGalleryRoute } from '../composables/useGalleryRoute'
+import { watch } from 'vue'
 
 const { photos, albums, tags, ready, error, reload } = useGalleryData()
 
@@ -40,6 +42,32 @@ function navigatePhoto(id: string) { activePhotoId.value = id }
 
 function openAlbum(id: string) { activeAlbumId.value = id }
 function backFromAlbum() { activeAlbumId.value = null }
+
+const { route, push, pull } = useGalleryRoute()
+
+// 初始化:把 hash 同步到本地状态
+function applyRoute() {
+  activeTab.value = route.value.tab
+  activeAlbumId.value = route.value.album ?? null
+  activeTagName.value = route.value.tag ?? null
+  activePhotoId.value = route.value.p ?? null
+}
+
+// 当数据 ready 后再 apply 一次,避免 photo id 找不到时错过
+watch(ready, (r) => { if (r) applyRoute() }, { immediate: true })
+
+// 浏览器 hashchange 触发 pull → route 变化 → 同步本地
+watch(route, applyRoute, { deep: true })
+
+// 本地状态变化 → 写回 hash(去重避免循环)
+watch([activeTab, activeAlbumId, activeTagName, activePhotoId], () => {
+  push({
+    tab: activeTab.value,
+    album: activeAlbumId.value ?? undefined,
+    tag: activeTagName.value ?? undefined,
+    p: activePhotoId.value ?? undefined,
+  })
+})
 
 onMounted(async () => { await import('photoswipe/style.css') })
 </script>
