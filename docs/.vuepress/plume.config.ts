@@ -39,7 +39,7 @@ export default defineThemeConfig({
   profile: {
     avatar: '/logo.png',
     name: '𝓦𝓮𝓷𝓭𝓲',
-    description: '代码如诗，光影作笺',
+    description: '代码如诗，光影为辞',
     location: '𝐵𝑒𝒾𝒥𝒾𝓃𝑔, 𝒞𝒽𝒾𝓃𝒶',
   },
 
