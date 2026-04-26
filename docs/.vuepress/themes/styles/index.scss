@@ -42,25 +42,9 @@ svg {
   fill: rgba(168, 153, 132, 1) !important;
 }
 
-//button hover & focus
-// .el-button:not(.el-button--primary):not(.el-button--text):hover {
-//   border-color: #D5C4A1 !important;
-//   color: #D5C4A1 !important;
-//   background-color: rgba(243, 238, 226, 0.921) !important;
-// }
-
-// .el-button:not(.el-button--primary):not(.el-button--text):focus {
-//   border-color: #D5C4A1 !important;
-//   color: #D5C4A1 !important;
-//   background-color: rgba(243, 238, 226, 0.921) !important;
-// }
-// //send button
-// .el-button.tk-send {
-//   background-color: rgba(168, 153, 132, 1) !important;
-//   border-color: rgba(168, 153, 132, 1) !important;
-// }
-
-
+.vp-posts-nav {
+  display: none;
+}
 
 :root {
   /**

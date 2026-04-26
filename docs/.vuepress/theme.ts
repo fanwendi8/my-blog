@@ -16,11 +16,14 @@ export const theme: Theme = plumeTheme({
       size: true,
     },
     fileTree: true, // :::file-tree  文件树容器
+    codeTree: true, // :::code-tree  代码树容器
     plot: true, // !!plot!! 隐秘文本
     npmTo: true, // :::npm-to
     mark: 'lazy',
     demo: true, // :::demo
     field: true, // :::field
+    qrcode: true, // @[qrcode](options) 生成二维码
+    abbr: true, // 启用缩略语
     table: {
       copy: false,
     }, // 启用表格增强
@@ -31,7 +34,6 @@ export const theme: Theme = plumeTheme({
     artPlayer: true, // @[artplayer](options)  嵌入 artplayer 视频
     audioReader: true, // @[audio-reader](options)  嵌入 audio-reader 音频播放器
     codepen: true, // @[codepen](user/slash)  嵌入 codepen
-    // caniuse: true, // @[caniuse](feature)  嵌入 caniuse
     repl: {
       python: true,
     }, // :::python-repl

@@ -9,21 +9,21 @@ const blog = defineCollection({
   dir: 'blog',
   title: '墨痕',
   link: '/blog/',
-  tagsLink: '/tags/',
-  archivesLink: '/archives/',
-  categoriesLink: '/categories/',
   postList: false,
+  categories: false,
+  tagsText: '萤火',
+  archivesText: '流年',
 })
 
 const notes = defineCollection({
-  type: 'doc',
+  type: 'post',
   dir: 'notes',
   linkPrefix: '/notes',
+  postList: false,
   title: '集萃',
-  sidebar: 'auto',
 })
 
 export default defineCollections([
   blog,
-  notes,
+  // notes,
 ])

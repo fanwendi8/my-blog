@@ -1,6 +1,9 @@
 ---
 title: 瞳画
-createTime: 2026/04/24
+home: true
+config:
+  -
+    type: custom
 ---
 
 # 瞳画
