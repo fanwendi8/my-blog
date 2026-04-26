@@ -14,3 +14,4 @@ gallery-staging/**
 !gallery-staging/.gitkeep
 docs/.vuepress/public/gallery-img/
 docs/.vuepress/public/gallery/
+scripts/gallery/__tests__/perf/gallery-staging-perf/
