@@ -23,7 +23,13 @@ export default defineUserConfig({
   title: '𝓦𝓮𝓷𝓭𝓲',
   description: '代码如诗，光影为辞',
 
-  bundler: viteBundler(),
+  bundler: viteBundler({
+    viteOptions: {
+      define: {
+        __GALLERY_CDN_BASE__: JSON.stringify(process.env.GALLERY_CDN_BASE ?? ''),
+      },
+    },
+  }),
 
   theme,
 })
