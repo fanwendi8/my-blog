@@ -3,6 +3,8 @@ import { computed, ref } from 'vue'
 import { ClientOnly } from 'vuepress/client'
 import { useGalleryData } from '../composables/useGalleryData'
 import TabTimeline from '../components/gallery/TabTimeline.vue'
+import { onMounted } from 'vue'
+import Lightbox from '../components/gallery/Lightbox.vue'
 
 const { photos, ready, error, reload } = useGalleryData()
 const activeId = ref<string | null>(null)
@@ -10,6 +12,19 @@ const activeId = ref<string | null>(null)
 const sortedPhotos = computed(() => photos.value)
 
 function open(id: string) { activeId.value = id }
+
+const cdnPhoto = computed(() => activeId.value
+  ? sortedPhotos.value.find(p => p.id === activeId.value) ?? null
+  : null
+)
+
+function close() { activeId.value = null }
+function navigate(id: string) { activeId.value = id }
+
+onMounted(async () => {
+  // PhotoSwipe v5 默认样式 - 仅客户端 import
+  await import('photoswipe/style.css')
+})
 </script>
 
 <template>
@@ -28,6 +43,12 @@ function open(id: string) { activeId.value = id }
 
     <ClientOnly v-else>
       <TabTimeline :photos="sortedPhotos" @open="open" />
+      <Lightbox
+        :photos="sortedPhotos"
+        :active-id="activeId"
+        @close="close"
+        @navigate="navigate"
+      />
     </ClientOnly>
   </div>
 </template>
