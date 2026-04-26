@@ -3,6 +3,7 @@ import Swiper from 'vuepress-theme-plume/features/Swiper.vue'
 import NoteCard from './themes/components/NoteCard.vue'
 import PinnedNotes from './themes/components/PinnedNotes.vue'
 import NotesHome from './themes/layouts/NotesHome.vue'
+import GalleryHome from './themes/layouts/GalleryHome.vue'
 import './themes/styles/index.scss'
 
 export default defineClientConfig({
@@ -17,5 +18,6 @@ export default defineClientConfig({
     app.component('NoteCard', NoteCard)
     app.component('PinnedNotes', PinnedNotes)
     app.component('NotesHome', NotesHome)
+    app.component('GalleryHome', GalleryHome)
   },
 })

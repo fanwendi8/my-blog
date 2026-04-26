@@ -3,11 +3,6 @@ title: 瞳画
 home: true
 config:
   -
-    type: custom
+    type: gallery-home
+permalink: /gallery/
 ---
-
-# 瞳画
-
-个人摄影作品集，记录光影之间的瞬间。
-
-> 页面开发中，敬请期待...
