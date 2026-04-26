@@ -116,3 +116,12 @@
 .gallery-chip:hover { border-color: var(--vp-c-brand-1); }
 .gallery-chip.is-active { background: var(--vp-c-brand-1); border-color: var(--vp-c-brand-1); color: #fff; }
 .gallery-chip__count { margin-left: 6px; opacity: .7; font-size: 11px; }
+
+.photo-tile__error {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--vp-c-bg-mute);
+  color: var(--vp-c-text-3);
+  font-size: 24px;
+  font-weight: 600;
+}

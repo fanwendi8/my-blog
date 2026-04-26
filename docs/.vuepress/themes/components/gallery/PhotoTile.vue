@@ -14,7 +14,10 @@ const props = withDefaults(defineProps<{
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 const loaded = ref(false)
+const errored = ref(false)
 const src = computed(() => publicSrc(props.photo.src.thumb))
+
+function onError() { errored.value = true }
 
 onMounted(() => {
   if (!canvas.value || !props.photo.blurhash) return
@@ -33,8 +36,9 @@ onMounted(() => {
 
 <template>
   <div class="photo-tile" :style="{ width: width + 'px', height: height + 'px' }">
-    <canvas ref="canvas" class="photo-tile__bh" :class="{ 'is-hidden': loaded }" />
+    <canvas ref="canvas" class="photo-tile__bh" :class="{ 'is-hidden': loaded || errored }" />
     <img
+      v-if="!errored"
       :src="src"
       :width="width"
       :height="height"
@@ -42,6 +46,10 @@ onMounted(() => {
       :alt="photo.title ?? ''"
       decoding="async"
       @load="loaded = true"
+      @error="onError"
     />
+    <div v-else class="photo-tile__error" role="img" aria-label="加载失败">
+      <span>!</span>
+    </div>
   </div>
 </template>
