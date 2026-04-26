@@ -86,4 +86,10 @@ async function main() {
   }
 }
 
-main().catch((e) => { console.error('[gallery]', e); process.exit(1) })
+main().catch((e) => {
+  console.error('[gallery] build failed:', e.message)
+  if (/unknown photo id/.test(e.message)) {
+    console.error('  hint: 检查 scripts/gallery/albums.config.mjs 中的 photo id 是否对应 photos.json 内已生成的 id')
+  }
+  process.exit(1)
+})
