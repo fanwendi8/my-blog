@@ -45,14 +45,22 @@ onMounted(async () => {
 
   observer = new IntersectionObserver(
     (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          const year = Number((entry.target as HTMLElement).dataset.year)
-          activeYear.value = year
+      const visible = entries.filter((e) => e.isIntersecting)
+      if (visible.length === 0) return
+
+      const best = visible.reduce((prev, curr) => {
+        if (curr.intersectionRatio !== prev.intersectionRatio) {
+          return curr.intersectionRatio > prev.intersectionRatio ? curr : prev
         }
-      }
+        const prevTop = prev.target.getBoundingClientRect().top
+        const currTop = curr.target.getBoundingClientRect().top
+        return currTop < prevTop ? curr : prev
+      })
+
+      const year = Number((best.target as HTMLElement).dataset.year)
+      activeYear.value = year
     },
-    { rootMargin: '-20% 0px -60% 0px' }
+    { threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] }
   )
 
   for (const el of groupRefs.values()) {
