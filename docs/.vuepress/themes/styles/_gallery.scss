@@ -518,6 +518,7 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 }
 
 .gallery-tabs {
+  position: relative;
   display: inline-grid;
   grid-template-columns: repeat(3, minmax(110px, 1fr));
   gap: 4px;
@@ -535,6 +536,7 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 
 .gallery-tabs > .gallery-tab {
   position: relative;
+  z-index: 1;
   min-height: 48px;
   border: 0;
   border-radius: 12px;
@@ -561,23 +563,46 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 }
 
 .gallery-tabs > .gallery-tab.is-active {
-  background: linear-gradient(180deg, rgba(255, 255, 255, .98), rgba(255, 255, 255, .86));
-  box-shadow:
-    0 14px 28px rgba(31, 39, 60, .08),
-    0 8px 20px rgba(138, 103, 255, .10);
   color: var(--vp-c-text-1);
   transform: translateY(-1px);
 }
 
-.gallery-tabs > .gallery-tab.is-active::after {
+.gallery-tabs__glow {
   position: absolute;
-  right: 18px;
-  bottom: -4px;
-  left: 18px;
-  height: 2px;
-  border-radius: 999px;
+  border-radius: 12px;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .90), rgba(255, 255, 255, .80));
+  box-shadow:
+    0 14px 28px rgba(31, 39, 60, .08),
+    0 8px 20px rgba(138, 103, 255, .10);
+  transition:
+    left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gallery-tabs__glow::after {
   content: "";
-  background: linear-gradient(90deg, #8a67ff, #f0a8ff);
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(90deg, #8a67ff, #f0a8ff, #ec4899, #8b5cf6, #8a67ff);
+  background-size: 240% 100%;
+  animation: flow 2.4s linear infinite;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+@keyframes flow {
+  from { background-position: 0% 50%; }
+  to   { background-position: 240% 50%; }
 }
 
 [data-theme="dark"] .gallery-tabs {
@@ -585,8 +610,8 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
   background: rgba(32, 33, 39, .72);
 }
 
-[data-theme="dark"] .gallery-tabs > .gallery-tab.is-active {
-  background: rgba(255, 255, 255, .10);
+[data-theme="dark"] .gallery-tabs__glow {
+  background: rgba(255, 255, 255, .08);
   box-shadow: 0 12px 28px rgba(0, 0, 0, .22);
 }
 
