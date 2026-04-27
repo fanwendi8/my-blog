@@ -70,10 +70,15 @@ defineExpose({ recompute })
 
 <template>
   <div ref="root" class="justified-grid">
-    <VList :data="rows" :item-size="targetRowHeight + gap" style="height: 60vh; overflow-y: auto;" #default="{ item: row }">
+    <VList
+      :data="rows"
+      :item-size="targetRowHeight + gap"
+      class="justified-grid__viewport"
+      #default="{ item: row }"
+    >
       <div class="justified-grid__row" :style="{ height: row.height + 'px', marginBottom: gap + 'px', position: 'relative' }">
         <div
-          v-for="(it, j) in row.items"
+          v-for="it in row.items"
           :key="it.photo.id"
           class="justified-grid__cell"
           :style="{

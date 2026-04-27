@@ -4,9 +4,13 @@ import { nextTick, h } from 'vue'
 
 vi.mock('virtua/vue', () => ({
   VList: {
-    props: ['data'],
-    setup(props: any, { slots }: any) {
-      return () => h('div', {}, props.data.map((item: any) => slots.default?.({ item })))
+    props: ['data', 'itemSize'],
+    setup(props: any, { slots, attrs }: any) {
+      return () => h(
+        'div',
+        { ...attrs, 'data-item-size': props.itemSize },
+        props.data.map((item: any) => slots.default?.({ item })),
+      )
     },
   },
 }))
@@ -40,5 +44,20 @@ describe('JustifiedGrid', () => {
     await nextTick()
     await w.find('.justified-grid__cell').trigger('click')
     expect(w.emitted('click')?.[0]).toEqual(['a'])
+  })
+
+  it('uses a classed viewport instead of hard-coded inline scrolling', async () => {
+    const w = mount(JustifiedGrid, {
+      props: { photos: [photo('a', 600, 400), photo('b', 400, 600)] },
+      attachTo: document.body,
+    })
+    Object.defineProperty(w.element, 'clientWidth', { value: 1000, configurable: true })
+    w.vm.$.exposed?.recompute?.()
+    await nextTick()
+
+    const viewport = w.find('.justified-grid__viewport')
+    expect(viewport.exists()).toBe(true)
+    expect(viewport.attributes('style') ?? '').not.toContain('overflow-y')
+    expect(viewport.attributes('style') ?? '').not.toContain('60vh')
   })
 })

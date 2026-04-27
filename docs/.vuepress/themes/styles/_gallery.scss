@@ -117,12 +117,22 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 
 .justified-grid {
   width: 100%;
-  min-height: 60vh;
+  min-height: 64vh;
 }
 
-.justified-grid > div {
+.justified-grid__viewport {
   width: 100%;
+  height: min(72vh, 980px);
+  overflow-x: hidden;
+  overflow-y: auto;
   border-radius: 12px;
+  scrollbar-gutter: stable;
+  scrollbar-width: none;
+}
+
+.justified-grid__viewport::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 .justified-grid__row {
@@ -574,6 +584,17 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 }
 
 @media (max-width: 720px) {
+  .justified-grid {
+    min-height: 0;
+  }
+
+  .justified-grid__viewport {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    scrollbar-gutter: auto;
+  }
+
   .gallery-lightbox {
     flex-direction: column;
     padding: 12px;
