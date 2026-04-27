@@ -122,7 +122,7 @@ onBeforeUnmount(() => { pswp?.destroy?.() })
 
 <template>
   <div v-if="activeId" class="gallery-lightbox">
-    <div ref="pswpContainer" class="gallery-lightbox__stage"></div>
+    <div ref="pswpContainer" class="gallery-lightbox__stage gallery-lightbox__stage-shell"></div>
     <div class="gallery-lightbox__panel">
       <PhotoInfoPanel v-if="currentPhoto" :photo="currentPhoto" />
     </div>

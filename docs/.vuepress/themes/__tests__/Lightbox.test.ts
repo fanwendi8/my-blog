@@ -34,6 +34,15 @@ describe('Lightbox', () => {
 
   it('renders nothing visible when no activeId', () => {
     const w = mount(Lightbox, { props: { photos: [photo('a')], activeId: null } })
-    expect(w.find('.gallery-lightbox-host').exists()).toBe(true)
+    expect(w.find('.gallery-lightbox').exists()).toBe(false)
+  })
+
+  it('renders stage and panel shell when activeId exists', async () => {
+    const w = mount(Lightbox, {
+      props: { photos: [photo('a'), photo('b')], activeId: 'a' },
+    })
+    await flushPromises()
+    expect(w.find('.gallery-lightbox__stage').exists()).toBe(true)
+    expect(w.find('.gallery-lightbox__panel').exists()).toBe(true)
   })
 })

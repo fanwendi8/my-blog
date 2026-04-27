@@ -234,22 +234,22 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
   inset: 0;
   display: flex;
   gap: 0;
-  padding: 28px;
+  padding: clamp(18px, 3vw, 44px);
   background:
     radial-gradient(circle at 15% 0%, rgba(255, 166, 77, .10), transparent 28rem),
     radial-gradient(circle at 88% 10%, rgba(138, 103, 255, .10), transparent 30rem),
-    rgba(245, 246, 250, .96);
+    rgba(247, 248, 252, .98);
 }
 
 .gallery-lightbox__stage {
   position: relative;
   isolation: isolate;
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   border-radius: 18px 0 0 18px;
-  background: #f0f1f5;
-  box-shadow: 0 24px 70px rgba(20, 26, 42, .12);
+  background: #eef1f6;
+  box-shadow: 0 28px 76px rgba(20, 26, 42, .14);
 }
 
 .gallery-lightbox__stage .pswp {
@@ -260,7 +260,7 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 }
 
 .gallery-lightbox__stage .pswp__bg {
-  background: #f0f1f5 !important;
+  background: #eef1f6 !important;
 }
 
 .gallery-lightbox__stage .pswp__top-bar {
@@ -274,6 +274,9 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 
 .gallery-lightbox__stage .pswp__button {
   color: rgba(32, 38, 56, .60);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .68);
+  backdrop-filter: blur(10px);
 }
 
 .gallery-lightbox__stage .pswp__button:hover {
@@ -287,12 +290,11 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 
 .gallery-lightbox__panel {
   position: relative;
-  flex-shrink: 0;
-  width: 360px;
+  flex: 0 0 clamp(340px, 27vw, 430px);
   border-left: 1px solid rgba(143, 151, 170, .18);
   border-radius: 0 18px 18px 0;
   background: #fff;
-  box-shadow: 0 24px 70px rgba(20, 26, 42, .13);
+  box-shadow: 0 28px 76px rgba(20, 26, 42, .13);
 }
 
 .gallery-lightbox__panel .gallery-info {
@@ -605,17 +607,19 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 
   .gallery-lightbox {
     flex-direction: column;
-    padding: 12px;
+    padding: 10px;
   }
 
   .gallery-lightbox__stage {
-    min-height: 55vh;
+    flex: 1 1 auto;
+    min-height: 52vh;
     border-radius: 14px 14px 0 0;
   }
 
   .gallery-lightbox__panel {
+    flex: 0 0 auto;
     width: 100%;
-    max-height: 40vh;
+    max-height: 42vh;
     border-left: 0;
     border-top: 1px solid rgba(143, 151, 170, .18);
     border-radius: 0 0 14px 14px;
