@@ -81,13 +81,13 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
   display: flex;
   align-items: end;
   justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 28px;
+  gap: 14px;
+  margin-bottom: 16px;
   padding-left: 188px;
 }
 
 .gallery-home__header h1 {
-  margin: 0 0 8px;
+  margin: 0 0 4px;
   color: var(--vp-c-text-1);
   font-size: 42px;
   line-height: 1.1;
@@ -580,12 +580,12 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
   grid-template-columns: repeat(3, minmax(110px, 1fr));
   gap: 4px;
   min-width: min(100%, 520px);
-  margin-bottom: 32px;
+  margin-bottom: 22px;
   margin-left: 188px;
   overflow: visible;
   border: 1px solid rgba(143, 151, 170, .18);
-  border-radius: 16px;
-  padding: 4px;
+  border-radius: 14px;
+  padding: 3px;
   background: rgba(255, 255, 255, .64);
   box-shadow: 0 18px 44px rgba(31, 39, 60, .06);
   backdrop-filter: blur(16px);
@@ -594,10 +594,10 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 .gallery-tabs > .gallery-tab {
   position: relative;
   z-index: 1;
-  min-height: 48px;
+  min-height: 40px;
   border: 0;
-  border-radius: 12px;
-  padding: 0 22px;
+  border-radius: 10px;
+  padding: 0 20px;
   background: transparent;
   color: rgba(60, 60, 67, .68);
   cursor: pointer;
@@ -626,7 +626,7 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 
 .gallery-tabs__glow {
   position: absolute;
-  border-radius: 12px;
+  border-radius: 10px;
   z-index: 0;
   pointer-events: none;
   background: linear-gradient(180deg, rgba(255, 255, 255, .90), rgba(255, 255, 255, .80));
