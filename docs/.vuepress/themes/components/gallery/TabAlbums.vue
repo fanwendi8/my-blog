@@ -31,8 +31,8 @@ function coverSrc(a: Album): string {
           <div class="gallery-album-card__shade"></div>
           <div class="gallery-album-card__meta">
             <h3>{{ a.title }}</h3>
-            <p>{{ a.desc || `${a.count} 张` }}</p>
-            <span>{{ a.count }} 张</span>
+            <p class="gallery-album-card__desc">{{ a.desc || '精选照片合集' }}</p>
+            <span class="gallery-album-card__count">{{ a.count }} 张</span>
           </div>
           <span class="gallery-album-card__arrow" aria-hidden="true">→</span>
         </div>

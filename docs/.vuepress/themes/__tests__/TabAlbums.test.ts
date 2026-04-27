@@ -25,4 +25,11 @@ describe('TabAlbums', () => {
     await w.findAll('.gallery-album-card')[0].trigger('click')
     expect(w.emitted('open')?.[0]).toEqual(['x'])
   })
+
+  it('renders separate album description and count elements', () => {
+    const w = mount(TabAlbums, { props: { albums, photos } })
+    const first = w.findAll('.gallery-album-card')[0]
+    expect(first.find('.gallery-album-card__desc').exists()).toBe(true)
+    expect(first.find('.gallery-album-card__count').text()).toBe('2 张')
+  })
 })
