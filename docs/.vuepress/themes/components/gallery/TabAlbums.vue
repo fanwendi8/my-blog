@@ -28,10 +28,13 @@ function coverSrc(a: Album): string {
       >
         <div class="gallery-album-card__cover">
           <img v-if="coverSrc(a)" :src="coverSrc(a)" :alt="a.title" loading="lazy" decoding="async" />
-        </div>
-        <div class="gallery-album-card__meta">
-          <h3>{{ a.title }}</h3>
-          <p>{{ a.count }} 张</p>
+          <div class="gallery-album-card__shade"></div>
+          <div class="gallery-album-card__meta">
+            <h3>{{ a.title }}</h3>
+            <p>{{ a.desc || `${a.count} 张` }}</p>
+            <span>{{ a.count }} 张</span>
+          </div>
+          <span class="gallery-album-card__arrow" aria-hidden="true">→</span>
         </div>
       </button>
     </div>

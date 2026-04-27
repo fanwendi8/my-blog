@@ -48,7 +48,11 @@ onMounted(() => {
       @load="loaded = true"
       @error="onError"
     />
-    <div v-else class="photo-tile__error" role="img" aria-label="加载失败">
+    <div v-if="!errored && (photo.title || photo.tags?.length)" class="photo-tile__meta">
+      <span v-if="photo.tags?.[0]" class="photo-tile__tag">{{ photo.tags[0] }}</span>
+      <strong v-if="photo.title">{{ photo.title }}</strong>
+    </div>
+    <div v-if="errored" class="photo-tile__error" role="img" aria-label="加载失败">
       <span>!</span>
     </div>
   </div>
