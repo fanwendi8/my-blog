@@ -1,10 +1,68 @@
-.gallery-home {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 36px 24px 72px;
+html:has(.gallery-page),
+html:has(.gallery-page) body {
   background:
-    radial-gradient(circle at 16% 0%, rgba(255, 166, 77, .14), transparent 30rem),
-    radial-gradient(circle at 84% 2%, rgba(138, 103, 255, .12), transparent 32rem);
+    radial-gradient(circle at 18% 0%, rgba(255, 166, 77, .13), transparent 34rem),
+    radial-gradient(circle at 78% 2%, rgba(138, 103, 255, .12), transparent 38rem),
+    linear-gradient(180deg, #fbfcff 0%, #fff 46%, #fbfbfd 100%);
+  scrollbar-color: rgba(129, 136, 154, .42) transparent;
+  scrollbar-width: thin;
+}
+
+html:has(.gallery-page)::-webkit-scrollbar {
+  width: 10px;
+}
+
+html:has(.gallery-page)::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html:has(.gallery-page)::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: rgba(129, 136, 154, .42);
+  background-clip: content-box;
+}
+
+.gallery-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255, 166, 77, .13), transparent 34rem),
+    radial-gradient(circle at 78% 2%, rgba(138, 103, 255, .12), transparent 38rem),
+    linear-gradient(180deg, #fbfcff 0%, #fff 46%, #fbfbfd 100%);
+  scrollbar-color: rgba(129, 136, 154, .42) transparent;
+  scrollbar-width: thin;
+}
+
+.gallery-page::-webkit-scrollbar {
+  width: 10px;
+}
+
+.gallery-page::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.gallery-page::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: rgba(129, 136, 154, .42);
+  background-clip: content-box;
+}
+
+.gallery-page .vp-content,
+.vp-layout.gallery-page {
+  background: transparent;
+}
+
+.gallery-page .vp-footer {
+  display: none;
+}
+
+.gallery-home {
+  width: min(calc(100% - 48px), 2880px);
+  max-width: none;
+  margin: 0 auto;
+  padding: 36px 0 72px;
+  background: transparent;
 }
 
 .gallery-home__header {
@@ -544,7 +602,8 @@
   }
 
   .gallery-home {
-    padding: 28px 16px 56px;
+    width: min(calc(100% - 32px), 100%);
+    padding: 28px 0 56px;
   }
 
   .gallery-home__header {
