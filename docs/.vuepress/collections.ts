@@ -9,7 +9,7 @@ const blog = defineCollection({
   dir: 'blog',
   title: '墨痕',
   link: '/blog/',
-  postList: false,
+  postList: true,
   categories: false,
   tagsText: '萤火',
   archivesText: '流年',

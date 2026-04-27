@@ -162,9 +162,9 @@
   gap: 0;
   padding: 28px;
   background:
-    radial-gradient(circle at 15% 0%, rgba(255, 166, 77, .13), transparent 28rem),
-    radial-gradient(circle at 88% 10%, rgba(138, 103, 255, .14), transparent 30rem),
-    rgba(246, 247, 251, .96);
+    radial-gradient(circle at 15% 0%, rgba(255, 166, 77, .10), transparent 28rem),
+    radial-gradient(circle at 88% 10%, rgba(138, 103, 255, .10), transparent 30rem),
+    rgba(245, 246, 250, .96);
 }
 
 .gallery-lightbox__stage {
@@ -174,8 +174,8 @@
   min-width: 0;
   overflow: hidden;
   border-radius: 18px 0 0 18px;
-  background: #10131c;
-  box-shadow: 0 24px 70px rgba(20, 26, 42, .18);
+  background: #f0f1f5;
+  box-shadow: 0 24px 70px rgba(20, 26, 42, .12);
 }
 
 .gallery-lightbox__stage .pswp {
@@ -185,15 +185,40 @@
   height: 100% !important;
 }
 
+.gallery-lightbox__stage .pswp__bg {
+  background: #f0f1f5 !important;
+}
+
+.gallery-lightbox__stage .pswp__top-bar {
+  background: transparent !important;
+}
+
+.gallery-lightbox__stage .pswp__counter {
+  color: rgba(32, 38, 56, .72);
+  text-shadow: none;
+}
+
+.gallery-lightbox__stage .pswp__button {
+  color: rgba(32, 38, 56, .60);
+}
+
+.gallery-lightbox__stage .pswp__button:hover {
+  color: rgba(32, 38, 56, .90);
+}
+
+.gallery-lightbox__stage .pswp__zoom-wrap img {
+  border-radius: 8px;
+  box-shadow: 0 16px 48px rgba(20, 26, 42, .15);
+}
+
 .gallery-lightbox__panel {
   position: relative;
   flex-shrink: 0;
   width: 360px;
   border-left: 1px solid rgba(143, 151, 170, .18);
   border-radius: 0 18px 18px 0;
-  background: rgba(255, 255, 255, .9);
+  background: #fff;
   box-shadow: 0 24px 70px rgba(20, 26, 42, .13);
-  backdrop-filter: blur(18px);
 }
 
 .gallery-lightbox__panel .gallery-info {

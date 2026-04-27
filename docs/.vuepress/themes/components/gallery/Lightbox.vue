@@ -54,7 +54,7 @@ async function open(id: string) {
   pswp = new PhotoSwipe({
     dataSource,
     index: idx,
-    bgOpacity: 0.92,
+    bgOpacity: 0.35,
     showHideAnimationType: 'fade',
     appendToEl: container,
     getViewportSizeFn: () => ({
