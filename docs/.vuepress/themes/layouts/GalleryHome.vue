@@ -75,8 +75,8 @@ onMounted(async () => { await import('photoswipe/style.css') })
 <template>
   <div class="gallery-home">
     <header class="gallery-home__header">
-      <div>
-        <h1>瞳画 <span aria-hidden="true">✦</span></h1>
+      <div class="gallery-home__title-wrap">
+        <h1>瞳画 <span class="gallery-home__sparkle" aria-hidden="true">✦</span></h1>
         <p class="gallery-home__sub">{{ photos.length }} 件作品</p>
       </div>
     </header>
