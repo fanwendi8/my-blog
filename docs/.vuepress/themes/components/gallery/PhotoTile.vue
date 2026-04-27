@@ -17,6 +17,17 @@ const loaded = ref(false)
 const errored = ref(false)
 const src = computed(() => publicSrc(props.photo.src.thumb))
 
+const displayDate = computed(() => {
+  try {
+    const date = new Date(props.photo.takenAt)
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${month}/${day}`
+  } catch {
+    return ''
+  }
+})
+
 function onError() { errored.value = true }
 
 onMounted(() => {
@@ -48,9 +59,10 @@ onMounted(() => {
       @load="loaded = true"
       @error="onError"
     />
-    <div v-if="!errored && (photo.title || photo.tags?.length)" class="photo-tile__meta">
+    <div v-if="!errored && (photo.title || photo.tags?.length || displayDate)" class="photo-tile__meta">
       <span v-if="photo.tags?.[0]" class="photo-tile__tag">{{ photo.tags[0] }}</span>
       <strong v-if="photo.title">{{ photo.title }}</strong>
+      <span v-if="displayDate" class="photo-tile__date">{{ displayDate }}</span>
     </div>
     <div v-if="errored" class="photo-tile__error" role="img" aria-label="加载失败">
       <span>!</span>

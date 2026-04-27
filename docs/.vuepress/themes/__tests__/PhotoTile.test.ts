@@ -23,4 +23,9 @@ describe('PhotoTile', () => {
     const eager = mount(PhotoTile, { props: { photo, width: 220, height: 146, eager: true } })
     expect(eager.find('img').attributes('loading')).toBe('eager')
   })
+
+  it('renders a compact taken date in the metadata overlay', () => {
+    const w = mount(PhotoTile, { props: { photo, width: 220, height: 146 } })
+    expect(w.find('.photo-tile__date').text()).toBe('04/01')
+  })
 })
