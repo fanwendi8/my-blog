@@ -30,6 +30,13 @@ function toggle(name: string) {
   <section class="gallery-tab gallery-tab--tags">
     <div class="gallery-chips">
       <button
+        class="gallery-chip"
+        :class="{ 'is-active': !active }"
+        @click="active = null"
+      >
+        全部 <span class="gallery-chip__count">{{ photos.length }}</span>
+      </button>
+      <button
         v-for="t in tags"
         :key="t.name"
         class="gallery-chip"

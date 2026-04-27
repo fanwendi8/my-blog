@@ -9,7 +9,7 @@ const props = withDefaults(defineProps<{
   targetRowHeight?: number
   gap?: number
   eagerCount?: number
-}>(), { targetRowHeight: 240, gap: 6, eagerCount: 12 })
+}>(), { targetRowHeight: 260, gap: 14, eagerCount: 12 })
 
 const emit = defineEmits<{ (e: 'click', id: string): void }>()
 
@@ -25,7 +25,7 @@ function recompute() {
   if (!root.value) return
   let w = root.value.clientWidth || containerWidth.value
   if (!w && typeof window !== 'undefined') {
-    w = Math.min(window.innerWidth - 48, 2880)
+    w = Math.min(window.innerWidth - 64, 2880)
   }
   if (!w) return
   containerWidth.value = w

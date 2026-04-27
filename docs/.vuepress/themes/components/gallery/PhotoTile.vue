@@ -59,10 +59,12 @@ onMounted(() => {
       @load="loaded = true"
       @error="onError"
     />
-    <div v-if="!errored && (photo.title || photo.tags?.length || displayDate)" class="photo-tile__meta">
+    <div v-if="!errored && (photo.title || displayDate || photo.tags?.[0])" class="photo-tile__meta">
+      <div class="photo-tile__meta-main">
+        <strong v-if="photo.title">{{ photo.title }}</strong>
+        <span v-if="displayDate" class="photo-tile__date">{{ displayDate }}</span>
+      </div>
       <span v-if="photo.tags?.[0]" class="photo-tile__tag">{{ photo.tags[0] }}</span>
-      <strong v-if="photo.title">{{ photo.title }}</strong>
-      <span v-if="displayDate" class="photo-tile__date">{{ displayDate }}</span>
     </div>
     <div v-if="errored" class="photo-tile__error" role="img" aria-label="加载失败">
       <span>!</span>
