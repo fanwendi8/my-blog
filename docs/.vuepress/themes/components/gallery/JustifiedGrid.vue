@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import justifiedLayout from 'justified-layout'
-import { VList } from 'virtua/vue'
 import type { Photo } from './types'
 import PhotoTile from './PhotoTile.vue'
 
@@ -24,7 +23,10 @@ const rows = ref<Row[]>([])
 
 function recompute() {
   if (!root.value) return
-  const w = root.value.clientWidth || containerWidth.value
+  let w = root.value.clientWidth || containerWidth.value
+  if (!w && typeof window !== 'undefined') {
+    w = Math.min(window.innerWidth - 48, 2880)
+  }
   if (!w) return
   containerWidth.value = w
   const sizes = props.photos.map(p => ({ width: p.w, height: p.h }))
@@ -34,7 +36,6 @@ function recompute() {
     boxSpacing: props.gap,
     containerPadding: 0,
   })
-  // 按 top 分组成行
   const map = new Map<number, RowItem[]>()
   layout.boxes.forEach((b, i) => {
     const key = Math.round(b.top)
@@ -55,28 +56,31 @@ function recompute() {
 
 let ro: ResizeObserver | null = null
 onMounted(() => {
-  recompute()
-  if (typeof ResizeObserver !== 'undefined' && root.value) {
-    ro = new ResizeObserver(() => recompute())
-    ro.observe(root.value)
+  const setup = () => {
+    recompute()
+    if (typeof ResizeObserver !== 'undefined' && root.value) {
+      ro = new ResizeObserver(() => recompute())
+      ro.observe(root.value)
+    }
   }
+  nextTick(() => requestAnimationFrame(() => setTimeout(setup, 50)))
 })
 onUnmounted(() => ro?.disconnect())
 
-watch(() => props.photos, recompute, { deep: false })
+watch(() => props.photos, recompute, { deep: false, immediate: true })
 
 defineExpose({ recompute })
 </script>
 
 <template>
   <div ref="root" class="justified-grid">
-    <VList
-      :data="rows"
-      :item-size="targetRowHeight + gap"
-      class="justified-grid__viewport"
-      #default="{ item: row }"
-    >
-      <div class="justified-grid__row" :style="{ height: row.height + 'px', marginBottom: gap + 'px', position: 'relative' }">
+    <div class="justified-grid__viewport">
+      <div
+        v-for="row in rows"
+        :key="row.items[0]?.photo.id"
+        class="justified-grid__row"
+        :style="{ height: row.height + 'px', marginBottom: gap + 'px', position: 'relative' }"
+      >
         <div
           v-for="it in row.items"
           :key="it.photo.id"
@@ -97,6 +101,6 @@ defineExpose({ recompute })
           />
         </div>
       </div>
-    </VList>
+    </div>
   </div>
 </template>
