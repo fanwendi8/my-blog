@@ -31,11 +31,22 @@ function setGroupRef(el: HTMLElement, year: number) {
   groupRefs.set(year, el)
 }
 
+const isProgrammaticScroll = ref(false)
+let scrollTimeout: ReturnType<typeof setTimeout> | null = null
+
 function scrollToYear(year: number) {
+  activeYear.value = year
+  isProgrammaticScroll.value = true
+  if (scrollTimeout) clearTimeout(scrollTimeout)
+
   const el = groupRefs.get(year)
   if (el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+
+  scrollTimeout = setTimeout(() => {
+    isProgrammaticScroll.value = false
+  }, 800)
 }
 
 let observer: IntersectionObserver | null = null
@@ -45,6 +56,8 @@ onMounted(async () => {
 
   observer = new IntersectionObserver(
     (entries) => {
+      if (isProgrammaticScroll.value) return
+
       const visible = entries.filter((e) => e.isIntersecting)
       if (visible.length === 0) return
 
@@ -72,6 +85,10 @@ onUnmounted(() => {
   if (observer) {
     observer.disconnect()
     observer = null
+  }
+  if (scrollTimeout) {
+    clearTimeout(scrollTimeout)
+    scrollTimeout = null
   }
 })
 </script>
