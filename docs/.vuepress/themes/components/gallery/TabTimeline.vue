@@ -85,7 +85,6 @@ onUnmounted(() => {
           :data-year="group.year"
           class="timeline-year-section"
         >
-          <h3 class="timeline-year-section__title">{{ group.year }}</h3>
           <JustifiedGrid :photos="group.photos" @click="(id) => $emit('open', id)" />
         </div>
       </div>
