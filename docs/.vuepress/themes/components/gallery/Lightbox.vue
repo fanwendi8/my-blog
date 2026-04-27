@@ -46,6 +46,11 @@ async function open(id: string) {
   const PhotoSwipe = await ensureLib()
   const dataSource = props.photos.map(p => ({ ...pickSrc(p), msrc: publicSrc(p.src.thumb), alt: p.title ?? '' }))
   const container = pswpContainer.value
+
+  // 先设置 currentPhoto 让 panel 渲染，确保 flex 布局稳定后再测量 viewport
+  currentPhoto.value = props.photos[idx]
+  await nextTick()
+
   pswp = new PhotoSwipe({
     dataSource,
     index: idx,
@@ -82,7 +87,6 @@ async function open(id: string) {
     }
   })
   pswp.init()
-  currentPhoto.value = props.photos[idx]
 }
 
 function close() {
