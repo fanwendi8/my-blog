@@ -59,7 +59,7 @@
 .vp-posts .vp-archives .post-time,
 .vp-posts .vp-archives .archive-title .total,
 .vp-posts .vp-tags .tag-count {
-  color: rgba(60, 60, 67, .62);
+  color: var(--vp-c-text-2);
 }
 
 .vp-posts .vp-post-list .tag-list .tag,
