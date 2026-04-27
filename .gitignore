@@ -17,3 +17,9 @@ docs/.vuepress/public/gallery-img/
 docs/.vuepress/public/gallery/
 scripts/gallery/__tests__/perf/gallery-staging-perf/
 docs/.vuepress/public/gallery-img
+
+# Terminal Paste Image folder
+.cp-images/
+
+# Worktrees
+.worktrees/
