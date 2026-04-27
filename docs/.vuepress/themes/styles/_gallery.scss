@@ -539,10 +539,14 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 }
 
 .gallery-chips {
+  position: sticky;
+  top: 120px;
+  z-index: 40;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 22px;
+  padding: 10px 0;
 }
 
 .gallery-chip {
@@ -575,7 +579,9 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 }
 
 .gallery-tabs {
-  position: relative;
+  position: sticky;
+  top: 72px;
+  z-index: 40;
   display: inline-grid;
   grid-template-columns: repeat(3, minmax(110px, 1fr));
   gap: 4px;

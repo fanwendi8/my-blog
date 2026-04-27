@@ -33,20 +33,50 @@ function setGroupRef(el: HTMLElement, year: number) {
 
 const isProgrammaticScroll = ref(false)
 let scrollTimeout: ReturnType<typeof setTimeout> | null = null
+let scrollListener: (() => void) | null = null
 
 function scrollToYear(year: number) {
   activeYear.value = year
   isProgrammaticScroll.value = true
+
+  // 清除之前的 timeout 和监听器
   if (scrollTimeout) clearTimeout(scrollTimeout)
+  if (scrollListener) {
+    window.removeEventListener('scroll', scrollListener)
+    scrollListener = null
+  }
 
   const el = groupRefs.get(year)
   if (el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  // 用 scroll 事件 debounce 检测滚动真正结束
+  let lastScrollTop = window.scrollY
+  scrollListener = () => {
+    const st = window.scrollY
+    if (st !== lastScrollTop) {
+      lastScrollTop = st
+      if (scrollTimeout) clearTimeout(scrollTimeout)
+      scrollTimeout = setTimeout(() => {
+        isProgrammaticScroll.value = false
+        if (scrollListener) {
+          window.removeEventListener('scroll', scrollListener)
+          scrollListener = null
+        }
+      }, 150)
+    }
+  }
+  window.addEventListener('scroll', scrollListener)
+
+  // fallback：如果目标已经在可视区域内，可能不会有 scroll 事件
   scrollTimeout = setTimeout(() => {
     isProgrammaticScroll.value = false
-  }, 800)
+    if (scrollListener) {
+      window.removeEventListener('scroll', scrollListener)
+      scrollListener = null
+    }
+  }, 1500)
 }
 
 let observer: IntersectionObserver | null = null
@@ -89,6 +119,10 @@ onUnmounted(() => {
   if (scrollTimeout) {
     clearTimeout(scrollTimeout)
     scrollTimeout = null
+  }
+  if (scrollListener) {
+    window.removeEventListener('scroll', scrollListener)
+    scrollListener = null
   }
 })
 </script>
