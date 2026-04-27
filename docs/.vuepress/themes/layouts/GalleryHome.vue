@@ -75,8 +75,10 @@ onMounted(async () => { await import('photoswipe/style.css') })
 <template>
   <div class="gallery-home">
     <header class="gallery-home__header">
-      <h1>瞳画</h1>
-      <p class="gallery-home__sub">{{ photos.length }} 件作品</p>
+      <div>
+        <h1>瞳画 <span aria-hidden="true">✦</span></h1>
+        <p class="gallery-home__sub">{{ photos.length }} 件作品</p>
+      </div>
     </header>
 
     <div v-if="error" class="gallery-error">
