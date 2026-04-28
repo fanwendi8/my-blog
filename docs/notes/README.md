@@ -1,5 +1,6 @@
 ---
 home: true
+pageClass: notes-page
 config:
   - type: notes-home
     pinned:

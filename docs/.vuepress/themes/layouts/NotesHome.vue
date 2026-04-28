@@ -19,6 +19,7 @@ const props = defineProps<ThemeHomeConfigBase & {
 
 <template>
   <VPHomeBox
+    class="notes-home"
     :index="index"
     :type="type"
     :background-image="backgroundImage"

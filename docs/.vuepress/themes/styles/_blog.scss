@@ -6,6 +6,57 @@
     linear-gradient(180deg, #fbfcff 0%, #fff 42%, #fbfbfd 100%);
 }
 
+.vp-layout:not(.gallery-page) {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(255, 166, 77, .11), transparent 30rem),
+    radial-gradient(circle at 82% 4%, rgba(138, 103, 255, .10), transparent 32rem),
+    linear-gradient(180deg, #fbfcff 0%, #fff 44%, #fbfbfd 100%);
+}
+
+.vp-layout:not(.gallery-page) .vp-content {
+  background: transparent;
+}
+
+.vp-layout:not(.gallery-page) .vp-footer {
+  position: relative;
+  overflow: hidden;
+  border-top: 0;
+  background:
+    linear-gradient(180deg, rgba(251, 251, 253, 0), rgba(251, 251, 253, .84) 22%, rgba(251, 251, 253, .96) 100%);
+}
+
+.vp-layout:not(.gallery-page) .vp-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 50%;
+  width: min(960px, calc(100% - 48px));
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(143, 151, 170, .26), transparent);
+  transform: translateX(-50%);
+}
+
+.vp-layout:not(.gallery-page) .vp-footer .container {
+  position: relative;
+  display: grid;
+  gap: 4px;
+}
+
+.notes-page .vp-home {
+  min-height: calc(100vh - var(--vp-nav-height, 64px) - var(--vp-footer-height, 0px));
+  background: transparent;
+}
+
+.notes-page .vp-home-box.notes-home {
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(100vh - var(--vp-nav-height, 64px) - var(--vp-footer-height, 0px));
+  padding-block: clamp(28px, 5vh, 56px) clamp(48px, 8vh, 88px);
+}
+
+.notes-page .vp-home-box.notes-home .container {
+  max-width: 1200px;
+}
+
 .vp-posts .posts-container {
   max-width: 1120px;
 }
@@ -92,6 +143,22 @@
     radial-gradient(circle at 18% 10%, rgba(236, 127, 34, .1), transparent 28rem),
     radial-gradient(circle at 82% 6%, rgba(138, 103, 255, .11), transparent 30rem),
     linear-gradient(180deg, #1b1b1f 0%, #161618 100%);
+}
+
+[data-theme="dark"] .vp-layout:not(.gallery-page) {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(236, 127, 34, .08), transparent 30rem),
+    radial-gradient(circle at 82% 4%, rgba(138, 103, 255, .10), transparent 32rem),
+    linear-gradient(180deg, #1b1b1f 0%, #161618 100%);
+}
+
+[data-theme="dark"] .vp-layout:not(.gallery-page) .vp-footer {
+  background:
+    linear-gradient(180deg, rgba(22, 22, 24, 0), rgba(22, 22, 24, .84) 22%, rgba(22, 22, 24, .96) 100%);
+}
+
+[data-theme="dark"] .vp-layout:not(.gallery-page) .vp-footer::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .12), transparent);
 }
 
 [data-theme="dark"] .vp-posts .vp-post-list .vp-post-item,
