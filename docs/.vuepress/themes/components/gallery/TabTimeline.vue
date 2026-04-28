@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, nextTick, onMounted, onUnmounted } from 'vue'
+import { computed, ref, nextTick, onMounted, onUnmounted, watch } from 'vue'
 import JustifiedGrid from './JustifiedGrid.vue'
 import YearTimeline from './YearTimeline.vue'
 import type { Photo } from './types'
+import { getActiveTimelineYear } from './timelineActiveYear'
 
 const props = defineProps<{ photos: Photo[] }>()
 defineEmits<{ (e: 'open', id: string): void }>()
@@ -34,6 +35,34 @@ function setGroupRef(el: HTMLElement, year: number) {
 const isProgrammaticScroll = ref(false)
 let scrollTimeout: ReturnType<typeof setTimeout> | null = null
 let scrollListener: (() => void) | null = null
+let rafId: number | null = null
+
+function getActiveAnchorY() {
+  const tabs = document.querySelector('.gallery-tabs')
+  const tabsBottom = tabs?.getBoundingClientRect().bottom ?? 120
+  return Math.min(Math.max(tabsBottom + 20, 120), window.innerHeight * 0.45)
+}
+
+function syncActiveYear() {
+  const nextYear = getActiveTimelineYear(
+    [...groupRefs.entries()].map(([year, el]) => {
+      const rect = el.getBoundingClientRect()
+      return { year, top: rect.top, bottom: rect.bottom }
+    }),
+    getActiveAnchorY()
+  )
+
+  if (nextYear !== null) activeYear.value = nextYear
+}
+
+function scheduleActiveYearSync() {
+  if (isProgrammaticScroll.value || rafId !== null) return
+
+  rafId = window.requestAnimationFrame(() => {
+    rafId = null
+    syncActiveYear()
+  })
+}
 
 function scrollToYear(year: number) {
   activeYear.value = year
@@ -60,6 +89,7 @@ function scrollToYear(year: number) {
       if (scrollTimeout) clearTimeout(scrollTimeout)
       scrollTimeout = setTimeout(() => {
         isProgrammaticScroll.value = false
+        syncActiveYear()
         if (scrollListener) {
           window.removeEventListener('scroll', scrollListener)
           scrollListener = null
@@ -72,6 +102,7 @@ function scrollToYear(year: number) {
   // fallback：如果目标已经在可视区域内，可能不会有 scroll 事件
   scrollTimeout = setTimeout(() => {
     isProgrammaticScroll.value = false
+    syncActiveYear()
     if (scrollListener) {
       window.removeEventListener('scroll', scrollListener)
       scrollListener = null
@@ -79,43 +110,18 @@ function scrollToYear(year: number) {
   }, 1500)
 }
 
-let observer: IntersectionObserver | null = null
-
 onMounted(async () => {
   await nextTick()
 
-  observer = new IntersectionObserver(
-    (entries) => {
-      if (isProgrammaticScroll.value) return
-
-      const visible = entries.filter((e) => e.isIntersecting)
-      if (visible.length === 0) return
-
-      const best = visible.reduce((prev, curr) => {
-        if (curr.intersectionRatio !== prev.intersectionRatio) {
-          return curr.intersectionRatio > prev.intersectionRatio ? curr : prev
-        }
-        const prevTop = prev.target.getBoundingClientRect().top
-        const currTop = curr.target.getBoundingClientRect().top
-        return currTop < prevTop ? curr : prev
-      })
-
-      const year = Number((best.target as HTMLElement).dataset.year)
-      activeYear.value = year
-    },
-    { threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] }
-  )
-
-  for (const el of groupRefs.values()) {
-    observer.observe(el)
-  }
+  syncActiveYear()
+  window.addEventListener('scroll', scheduleActiveYearSync, { passive: true })
+  window.addEventListener('resize', scheduleActiveYearSync)
 })
 
 onUnmounted(() => {
-  if (observer) {
-    observer.disconnect()
-    observer = null
-  }
+  window.removeEventListener('scroll', scheduleActiveYearSync)
+  window.removeEventListener('resize', scheduleActiveYearSync)
+  if (rafId !== null) window.cancelAnimationFrame(rafId)
   if (scrollTimeout) {
     clearTimeout(scrollTimeout)
     scrollTimeout = null
@@ -124,6 +130,19 @@ onUnmounted(() => {
     window.removeEventListener('scroll', scrollListener)
     scrollListener = null
   }
+})
+
+watch(yearList, (years) => {
+  if (years.length === 0) {
+    activeYear.value = null
+    return
+  }
+
+  if (!years.some((item) => item.year === activeYear.value)) {
+    activeYear.value = years[0].year
+  }
+
+  nextTick(syncActiveYear)
 })
 </script>
 

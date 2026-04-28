@@ -24,6 +24,7 @@ describe('useGalleryData', () => {
     expect(photos.value).toHaveLength(1)
     expect(albums.value[0].title).toBe('X')
     expect(tags.value[0].name).toBe('street')
+    expect(globalThis.fetch).toHaveBeenCalledWith('/gallery/data/photos.json', { cache: 'no-store' })
   })
 
   it('shares state between calls (singleton)', async () => {

@@ -17,6 +17,12 @@ export function __resetGalleryData() { store = null }
 
 const BASE = '/gallery/data'
 
+async function fetchManifest<T>(path: string): Promise<T> {
+  const response = await fetch(`${BASE}/${path}`, { cache: 'no-store' })
+  if (!response.ok) throw new Error(path)
+  return response.json()
+}
+
 function create(): Store {
   const photos = ref<Photo[]>([])
   const albums = ref<Album[]>([])
@@ -29,9 +35,9 @@ function create(): Store {
     ready.value = false
     try {
       const [p, a, t] = await Promise.all([
-        fetch(`${BASE}/photos.json`).then(r => { if (!r.ok) throw new Error('photos.json'); return r.json() }),
-        fetch(`${BASE}/albums.json`).then(r => { if (!r.ok) throw new Error('albums.json'); return r.json() }),
-        fetch(`${BASE}/tags.json`).then(r => { if (!r.ok) throw new Error('tags.json'); return r.json() }),
+        fetchManifest<Photo[]>('photos.json'),
+        fetchManifest<Album[]>('albums.json'),
+        fetchManifest<Tag[]>('tags.json'),
       ])
       photos.value = p
       albums.value = a

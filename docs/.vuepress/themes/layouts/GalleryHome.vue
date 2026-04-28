@@ -22,6 +22,18 @@ const activePhotoId = ref<string | null>(null)
 
 const sortedPhotos = computed(() => photos.value)
 
+const galleryYearRange = computed(() => {
+  const years = photos.value
+    .map((photo) => new Date(photo.takenAt).getFullYear())
+    .filter((year) => Number.isFinite(year))
+
+  if (years.length === 0) return '时光采样'
+
+  const min = Math.min(...years)
+  const max = Math.max(...years)
+  return min === max ? `${max}` : `${min}-${max}`
+})
+
 const visiblePhotos = computed(() => {
   if (activeAlbumId.value) {
     return sortedPhotos.value.filter(p => p.albums.includes(activeAlbumId.value!))
@@ -75,10 +87,10 @@ onMounted(async () => { await import('photoswipe/style.css') })
 <template>
   <div class="gallery-home">
     <header class="gallery-home__header">
-      <div class="gallery-home__title-wrap">
-        <h1>瞳画 <span class="gallery-home__sparkle" aria-hidden="true">✦</span></h1>
-        <p class="gallery-home__sub">{{ photos.length }} 件作品</p>
-      </div>
+      <p class="gallery-home__sub">
+        <span>{{ photos.length }} 帧光影</span>
+        <span>{{ galleryYearRange }}</span>
+      </p>
     </header>
 
     <div v-if="error" class="gallery-error">
