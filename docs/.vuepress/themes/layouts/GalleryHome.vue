@@ -1,6 +1,6 @@
 <!-- docs/.vuepress/themes/layouts/GalleryHome.vue -->
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { ClientOnly } from 'vuepress/client'
 import { useGalleryData } from '../composables/useGalleryData'
 import GalleryTabs from '../components/gallery/GalleryTabs.vue'
@@ -11,7 +11,6 @@ import AlbumDetail from '../components/gallery/AlbumDetail.vue'
 import Lightbox from '../components/gallery/Lightbox.vue'
 import type { GalleryTab } from '../components/gallery/types'
 import { useGalleryRoute } from '../composables/useGalleryRoute'
-import { watch } from 'vue'
 
 const { photos, albums, tags, ready, error, reload } = useGalleryData()
 
@@ -55,6 +54,33 @@ function navigatePhoto(id: string) { activePhotoId.value = id }
 function openAlbum(id: string) { activeAlbumId.value = id }
 function backFromAlbum() { activeAlbumId.value = null }
 
+function forceScrollTop() {
+  const html = document.documentElement
+  const body = document.body
+  const previousHtmlBehavior = html.style.scrollBehavior
+  const previousBodyBehavior = body.style.scrollBehavior
+
+  html.style.scrollBehavior = 'auto'
+  body.style.scrollBehavior = 'auto'
+  window.scrollTo(0, 0)
+  if (document.scrollingElement) document.scrollingElement.scrollTop = 0
+
+  requestAnimationFrame(() => {
+    html.style.scrollBehavior = previousHtmlBehavior
+    body.style.scrollBehavior = previousBodyBehavior
+  })
+}
+
+async function resetGalleryScroll() {
+  await nextTick()
+  if (typeof window === 'undefined') return
+
+  forceScrollTop()
+  requestAnimationFrame(forceScrollTop)
+  window.setTimeout(forceScrollTop, 80)
+  window.setTimeout(forceScrollTop, 180)
+}
+
 const { route, push, pull } = useGalleryRoute()
 
 // 初始化:把 hash 同步到本地状态
@@ -80,6 +106,8 @@ watch([activeTab, activeAlbumId, activeTagName, activePhotoId], () => {
     p: activePhotoId.value ?? undefined,
   })
 })
+
+watch([activeTab, activeTagName], resetGalleryScroll, { flush: 'post' })
 
 onMounted(async () => { await import('photoswipe/style.css') })
 </script>
