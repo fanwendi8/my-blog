@@ -89,20 +89,26 @@ describe('GalleryHome', () => {
   it('scrolls instantly to the top when switching main tabs', async () => {
     document.documentElement.style.scrollBehavior = 'smooth'
     document.body.style.scrollBehavior = 'smooth'
-    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {
-      expect(document.documentElement.style.scrollBehavior).toBe('auto')
-      expect(document.body.style.scrollBehavior).toBe('auto')
+    const scrollTo = vi.fn()
+    Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
+      configurable: true,
+      value: scrollTo,
     })
     const wrapper = mount(GalleryHome)
 
     await wrapper.findAll('.gallery-tab')[2].trigger('click')
     await flushPromises()
 
-    expect(scrollTo).toHaveBeenCalledWith(0, 0)
+    expect(scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'auto' })
+    expect(wrapper.find('.gallery-home__viewport').element.scrollTop).toBe(0)
   })
 
   it('scrolls to the top when changing the active tag', async () => {
-    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+    const scrollTo = vi.fn()
+    Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
+      configurable: true,
+      value: scrollTo,
+    })
     const wrapper = mount(GalleryHome)
 
     await wrapper.findAll('.gallery-tab')[2].trigger('click')
@@ -112,6 +118,6 @@ describe('GalleryHome', () => {
     await wrapper.findAll('.gallery-chip')[1].trigger('click')
     await flushPromises()
 
-    expect(scrollTo).toHaveBeenCalledWith(0, 0)
+    expect(scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'auto' })
   })
 })

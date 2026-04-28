@@ -5,13 +5,18 @@ import type { Photo, Tag } from './types'
 import JustifiedGrid from './JustifiedGrid.vue'
 import { filterPhotos } from '../../composables/useFiltering'
 
-const props = defineProps<{ tags: Tag[]; photos: Photo[]; activeTag?: string | null }>()
+const props = defineProps<{
+  tags: Tag[]
+  photos: Photo[]
+  activeTag?: string | null
+}>()
 const emit = defineEmits<{
   (e: 'open', id: string): void
   (e: 'update:activeTag', tag: string | null): void
 }>()
 
 const internal = ref<string | null>(props.activeTag ?? null)
+const gridScroll = ref<HTMLElement | null>(null)
 const active = computed({
   get: () => props.activeTag ?? internal.value,
   set: (v) => { internal.value = v; emit('update:activeTag', v) },
@@ -24,6 +29,15 @@ const filtered = computed(() => active.value
 function toggle(name: string) {
   active.value = active.value === name ? null : name
 }
+
+function scrollToTop() {
+  if (gridScroll.value) {
+    gridScroll.value.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+    gridScroll.value.scrollTop = 0
+  }
+}
+
+defineExpose({ scrollToTop })
 </script>
 
 <template>
@@ -46,6 +60,8 @@ function toggle(name: string) {
         {{ t.name }} <span class="gallery-chip__count">{{ t.count }}</span>
       </button>
     </div>
-    <JustifiedGrid :photos="filtered" @click="(id) => emit('open', id)" />
+    <div ref="gridScroll" class="gallery-grid-scroll">
+      <JustifiedGrid :photos="filtered" :scroll-ref="gridScroll" @click="(id) => emit('open', id)" />
+    </div>
   </section>
 </template>

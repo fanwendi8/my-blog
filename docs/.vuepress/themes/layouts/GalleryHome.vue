@@ -18,6 +18,9 @@ const activeTab = ref<GalleryTab>('timeline')
 const activeAlbumId = ref<string | null>(null)
 const activeTagName = ref<string | null>(null)
 const activePhotoId = ref<string | null>(null)
+const timelineTab = ref<{ scrollToTop: () => void } | null>(null)
+const tagsTab = ref<{ scrollToTop: () => void } | null>(null)
+const albumDetail = ref<{ scrollToTop: () => void } | null>(null)
 
 const sortedPhotos = computed(() => photos.value)
 
@@ -55,6 +58,16 @@ function openAlbum(id: string) { activeAlbumId.value = id }
 function backFromAlbum() { activeAlbumId.value = null }
 
 function forceScrollTop() {
+  const activeScroller = activeAlbum.value
+    ? albumDetail.value
+    : activeTab.value === 'timeline'
+      ? timelineTab.value
+      : activeTab.value === 'tags'
+        ? tagsTab.value
+        : null
+
+  activeScroller?.scrollToTop()
+
   const html = document.documentElement
   const body = document.body
   const previousHtmlBehavior = html.style.scrollBehavior
@@ -62,7 +75,7 @@ function forceScrollTop() {
 
   html.style.scrollBehavior = 'auto'
   body.style.scrollBehavior = 'auto'
-  window.scrollTo(0, 0)
+  if (!activeScroller) window.scrollTo(0, 0)
   if (document.scrollingElement) document.scrollingElement.scrollTop = 0
 
   requestAnimationFrame(() => {
@@ -107,7 +120,7 @@ watch([activeTab, activeAlbumId, activeTagName, activePhotoId], () => {
   })
 })
 
-watch([activeTab, activeTagName], resetGalleryScroll, { flush: 'post' })
+watch([activeTab, activeTagName, activeAlbumId], resetGalleryScroll, { flush: 'post' })
 
 onMounted(async () => { await import('photoswipe/style.css') })
 </script>
@@ -130,18 +143,37 @@ onMounted(async () => { await import('photoswipe/style.css') })
 
     <ClientOnly v-else>
       <template v-if="activeAlbum">
-        <AlbumDetail
-          :album="activeAlbum"
-          :photos="sortedPhotos"
-          @back="backFromAlbum"
-          @open="openPhoto"
-        />
+        <div class="gallery-home__viewport">
+          <AlbumDetail
+            ref="albumDetail"
+            :album="activeAlbum"
+            :photos="sortedPhotos"
+            @back="backFromAlbum"
+            @open="openPhoto"
+          />
+        </div>
       </template>
       <template v-else>
-        <GalleryTabs v-model="activeTab" />
-        <TabTimeline v-if="activeTab === 'timeline'" :photos="sortedPhotos" @open="openPhoto" />
-        <TabAlbums v-else-if="activeTab === 'albums'" :albums="albums" :photos="sortedPhotos" @open="openAlbum" />
-        <TabTags v-else :tags="tags" :photos="sortedPhotos" v-model:active-tag="activeTagName" @open="openPhoto" />
+        <div class="gallery-home__chrome">
+          <GalleryTabs v-model="activeTab" />
+        </div>
+        <div class="gallery-home__viewport">
+          <TabTimeline
+            v-if="activeTab === 'timeline'"
+            ref="timelineTab"
+            :photos="sortedPhotos"
+            @open="openPhoto"
+          />
+          <TabAlbums v-else-if="activeTab === 'albums'" :albums="albums" :photos="sortedPhotos" @open="openAlbum" />
+          <TabTags
+            v-else
+            ref="tagsTab"
+            :tags="tags"
+            :photos="sortedPhotos"
+            v-model:active-tag="activeTagName"
+            @open="openPhoto"
+          />
+        </div>
       </template>
 
       <Lightbox

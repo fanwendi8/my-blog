@@ -13,16 +13,18 @@ vi.mock('virtua/vue', () => ({
       )
     },
   },
-  WindowVirtualizer: {
-    props: ['data', 'itemSize', 'bufferSize'],
+  Virtualizer: {
+    props: ['data', 'itemSize', 'bufferSize', 'scrollRef', 'startMargin'],
     setup(props: any, { slots, attrs }: any) {
       return () => h(
         'div',
         {
           ...attrs,
-          'data-virtualizer': 'window',
+          'data-virtualizer': 'container',
           'data-item-size': props.itemSize,
           'data-buffer-size': props.bufferSize,
+          'data-start-margin': props.startMargin,
+          'data-has-scroll-ref': String(Boolean(props.scrollRef)),
         },
         props.data.map((item: any, index: number) => slots.default?.({ item, index })),
       )
@@ -76,9 +78,10 @@ describe('JustifiedGrid', () => {
     expect(viewport.attributes('style') ?? '').not.toContain('60vh')
   })
 
-  it('virtualizes rows against window scroll', async () => {
+  it('virtualizes rows against a scroll container', async () => {
+    const scrollRef = document.createElement('div')
     const w = mount(JustifiedGrid, {
-      props: { photos: [photo('a', 600, 400), photo('b', 400, 600), photo('c', 800, 600)] },
+      props: { photos: [photo('a', 600, 400), photo('b', 400, 600), photo('c', 800, 600)], scrollRef },
       attachTo: document.body,
     })
     Object.defineProperty(w.element, 'clientWidth', { value: 1000, configurable: true })
@@ -86,7 +89,8 @@ describe('JustifiedGrid', () => {
     await nextTick()
 
     const viewport = w.find('.justified-grid__viewport')
-    expect(viewport.attributes('data-virtualizer')).toBe('window')
+    expect(viewport.attributes('data-virtualizer')).toBe('container')
     expect(viewport.attributes('data-buffer-size')).toBe('900')
+    expect(viewport.attributes('data-has-scroll-ref')).toBe('true')
   })
 })

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import justifiedLayout from 'justified-layout'
-import { WindowVirtualizer } from 'virtua/vue'
+import { Virtualizer } from 'virtua/vue'
 import type { Photo } from './types'
 import PhotoTile from './PhotoTile.vue'
 
 const props = withDefaults(defineProps<{
   photos: Photo[]
+  scrollRef?: HTMLElement | null
   targetRowHeight?: number
   gap?: number
   eagerCount?: number
@@ -16,11 +17,23 @@ const emit = defineEmits<{ (e: 'click', id: string): void }>()
 
 const root = ref<HTMLElement | null>(null)
 const containerWidth = ref(0)
+const startMargin = ref(0)
 
 interface RowItem { photo: Photo; width: number; height: number; left: number; eager: boolean }
 interface Row { height: number; items: RowItem[] }
 
 const rows = ref<Row[]>([])
+
+function updateStartMargin() {
+  if (!root.value || !props.scrollRef) {
+    startMargin.value = 0
+    return
+  }
+
+  const rootRect = root.value.getBoundingClientRect()
+  const scrollRect = props.scrollRef.getBoundingClientRect()
+  startMargin.value = rootRect.top - scrollRect.top + props.scrollRef.scrollTop
+}
 
 function recompute() {
   if (!root.value) return
@@ -53,9 +66,19 @@ function recompute() {
   rows.value = [...map.entries()]
     .sort((a, b) => a[0] - b[0])
     .map(([, items]) => ({ height: Math.max(...items.map(it => it.height)), items }))
+  updateStartMargin()
 }
 
 let ro: ResizeObserver | null = null
+let resizeListener: (() => void) | null = null
+
+function scheduleRecompute() {
+  window.requestAnimationFrame(() => {
+    recompute()
+    window.requestAnimationFrame(recompute)
+  })
+}
+
 onMounted(() => {
   const setup = () => {
     recompute()
@@ -63,23 +86,31 @@ onMounted(() => {
       ro = new ResizeObserver(() => recompute())
       ro.observe(root.value)
     }
+    resizeListener = scheduleRecompute
+    window.addEventListener('resize', resizeListener)
   }
-  nextTick(() => requestAnimationFrame(() => setTimeout(setup, 50)))
+  nextTick(() => window.requestAnimationFrame(() => window.setTimeout(setup, 50)))
 })
-onUnmounted(() => ro?.disconnect())
+onUnmounted(() => {
+  ro?.disconnect()
+  if (resizeListener) window.removeEventListener('resize', resizeListener)
+})
 
 watch(() => props.photos, recompute, { deep: false, immediate: true })
+watch(() => props.scrollRef, () => nextTick(scheduleRecompute))
 
 defineExpose({ recompute })
 </script>
 
 <template>
   <div ref="root" class="justified-grid">
-    <WindowVirtualizer
+    <Virtualizer
       class="justified-grid__viewport"
       :data="rows"
       :item-size="targetRowHeight + gap"
       :buffer-size="900"
+      :scroll-ref="scrollRef ?? undefined"
+      :start-margin="startMargin"
     >
       <template #default="{ item: row }">
         <div
@@ -108,6 +139,6 @@ defineExpose({ recompute })
           </div>
         </div>
       </template>
-    </WindowVirtualizer>
+    </Virtualizer>
   </div>
 </template>

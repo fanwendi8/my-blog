@@ -5,7 +5,9 @@ import YearTimeline from './YearTimeline.vue'
 import type { Photo } from './types'
 import { getActiveTimelineYear } from './timelineActiveYear'
 
-const props = defineProps<{ photos: Photo[] }>()
+const props = defineProps<{
+  photos: Photo[]
+}>()
 defineEmits<{ (e: 'open', id: string): void }>()
 
 const yearGroups = computed(() => {
@@ -25,6 +27,7 @@ const yearList = computed(() =>
 )
 
 const activeYear = ref<number | null>(yearList.value[0]?.year ?? null)
+const timelineContent = ref<HTMLElement | null>(null)
 
 const groupRefs = new Map<number, HTMLElement>()
 
@@ -36,11 +39,27 @@ const isProgrammaticScroll = ref(false)
 let scrollTimeout: ReturnType<typeof setTimeout> | null = null
 let scrollListener: (() => void) | null = null
 let rafId: number | null = null
+let activeScrollTarget: HTMLElement | Window | null = null
+
+function getScrollTarget() {
+  return timelineContent.value ?? window
+}
+
+function listenToScrollTarget() {
+  const next = getScrollTarget()
+  if (activeScrollTarget === next) return
+  activeScrollTarget?.removeEventListener('scroll', scheduleActiveYearSync)
+  activeScrollTarget = next
+  activeScrollTarget.addEventListener('scroll', scheduleActiveYearSync, { passive: true })
+}
 
 function getActiveAnchorY() {
-  const tabs = document.querySelector('.gallery-tabs')
-  const tabsBottom = tabs?.getBoundingClientRect().bottom ?? 120
-  return Math.min(Math.max(tabsBottom + 20, 120), window.innerHeight * 0.45)
+  const viewportTop = timelineContent.value?.getBoundingClientRect().top ?? 0
+  const viewportHeight = timelineContent.value?.clientHeight ?? window.innerHeight
+  const tabsBottom = viewportTop
+  const minAnchor = viewportTop + 96
+  const maxAnchor = viewportTop + viewportHeight * 0.45
+  return Math.min(Math.max(tabsBottom + 20, minAnchor), maxAnchor)
 }
 
 function syncActiveYear() {
@@ -71,19 +90,25 @@ function scrollToYear(year: number) {
   // 清除之前的 timeout 和监听器
   if (scrollTimeout) clearTimeout(scrollTimeout)
   if (scrollListener) {
-    window.removeEventListener('scroll', scrollListener)
+    getScrollTarget().removeEventListener('scroll', scrollListener)
     scrollListener = null
   }
 
   const el = groupRefs.get(year)
-  if (el) {
+  if (el && timelineContent.value) {
+    const viewportRect = timelineContent.value.getBoundingClientRect()
+    const targetRect = el.getBoundingClientRect()
+    const top = timelineContent.value.scrollTop + targetRect.top - viewportRect.top
+    timelineContent.value.scrollTo({ top, behavior: 'smooth' })
+  } else if (el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   // 用 scroll 事件 debounce 检测滚动真正结束
-  let lastScrollTop = window.scrollY
+  const scrollTarget = getScrollTarget()
+  let lastScrollTop = timelineContent.value?.scrollTop ?? window.scrollY
   scrollListener = () => {
-    const st = window.scrollY
+    const st = timelineContent.value?.scrollTop ?? window.scrollY
     if (st !== lastScrollTop) {
       lastScrollTop = st
       if (scrollTimeout) clearTimeout(scrollTimeout)
@@ -91,20 +116,20 @@ function scrollToYear(year: number) {
         isProgrammaticScroll.value = false
         syncActiveYear()
         if (scrollListener) {
-          window.removeEventListener('scroll', scrollListener)
+          scrollTarget.removeEventListener('scroll', scrollListener)
           scrollListener = null
         }
       }, 150)
     }
   }
-  window.addEventListener('scroll', scrollListener)
+  scrollTarget.addEventListener('scroll', scrollListener)
 
   // fallback：如果目标已经在可视区域内，可能不会有 scroll 事件
   scrollTimeout = setTimeout(() => {
     isProgrammaticScroll.value = false
     syncActiveYear()
     if (scrollListener) {
-      window.removeEventListener('scroll', scrollListener)
+      scrollTarget.removeEventListener('scroll', scrollListener)
       scrollListener = null
     }
   }, 1500)
@@ -114,12 +139,13 @@ onMounted(async () => {
   await nextTick()
 
   syncActiveYear()
-  window.addEventListener('scroll', scheduleActiveYearSync, { passive: true })
+  listenToScrollTarget()
   window.addEventListener('resize', scheduleActiveYearSync)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', scheduleActiveYearSync)
+  activeScrollTarget?.removeEventListener('scroll', scheduleActiveYearSync)
+  activeScrollTarget = null
   window.removeEventListener('resize', scheduleActiveYearSync)
   if (rafId !== null) window.cancelAnimationFrame(rafId)
   if (scrollTimeout) {
@@ -127,7 +153,7 @@ onUnmounted(() => {
     scrollTimeout = null
   }
   if (scrollListener) {
-    window.removeEventListener('scroll', scrollListener)
+    getScrollTarget().removeEventListener('scroll', scrollListener)
     scrollListener = null
   }
 })
@@ -144,6 +170,15 @@ watch(yearList, (years) => {
 
   nextTick(syncActiveYear)
 })
+
+function scrollToTop() {
+  if (timelineContent.value) {
+    timelineContent.value.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+    timelineContent.value.scrollTop = 0
+  }
+}
+
+defineExpose({ scrollToTop })
 </script>
 
 <template>
@@ -155,7 +190,7 @@ watch(yearList, (years) => {
         :active-year="activeYear"
         @select="scrollToYear"
       />
-      <div class="timeline-content">
+      <div ref="timelineContent" class="timeline-content">
         <div
           v-for="group in yearGroups"
           :key="group.year"
@@ -163,7 +198,7 @@ watch(yearList, (years) => {
           :data-year="group.year"
           class="timeline-year-section"
         >
-          <JustifiedGrid :photos="group.photos" @click="(id) => $emit('open', id)" />
+          <JustifiedGrid :photos="group.photos" :scroll-ref="timelineContent" @click="(id) => $emit('open', id)" />
         </div>
       </div>
     </template>

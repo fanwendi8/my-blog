@@ -6,7 +6,7 @@ import TabTags from '../components/gallery/TabTags.vue'
 import type { Photo, Tag } from '../components/gallery/types'
 
 vi.mock('virtua/vue', () => ({
-  WindowVirtualizer: {
+  Virtualizer: {
     props: ['data'],
     setup(props: any, { slots, attrs }: any) {
       return () => h(
