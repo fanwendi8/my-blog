@@ -13,6 +13,21 @@ vi.mock('virtua/vue', () => ({
       )
     },
   },
+  WindowVirtualizer: {
+    props: ['data', 'itemSize', 'bufferSize'],
+    setup(props: any, { slots, attrs }: any) {
+      return () => h(
+        'div',
+        {
+          ...attrs,
+          'data-virtualizer': 'window',
+          'data-item-size': props.itemSize,
+          'data-buffer-size': props.bufferSize,
+        },
+        props.data.map((item: any, index: number) => slots.default?.({ item, index })),
+      )
+    },
+  },
 }))
 
 import JustifiedGrid from '../components/gallery/JustifiedGrid.vue'
@@ -59,5 +74,19 @@ describe('JustifiedGrid', () => {
     expect(viewport.exists()).toBe(true)
     expect(viewport.attributes('style') ?? '').not.toContain('overflow-y')
     expect(viewport.attributes('style') ?? '').not.toContain('60vh')
+  })
+
+  it('virtualizes rows against window scroll', async () => {
+    const w = mount(JustifiedGrid, {
+      props: { photos: [photo('a', 600, 400), photo('b', 400, 600), photo('c', 800, 600)] },
+      attachTo: document.body,
+    })
+    Object.defineProperty(w.element, 'clientWidth', { value: 1000, configurable: true })
+    w.vm.$.exposed?.recompute?.()
+    await nextTick()
+
+    const viewport = w.find('.justified-grid__viewport')
+    expect(viewport.attributes('data-virtualizer')).toBe('window')
+    expect(viewport.attributes('data-buffer-size')).toBe('900')
   })
 })

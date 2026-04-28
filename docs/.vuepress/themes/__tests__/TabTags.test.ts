@@ -1,8 +1,22 @@
 // docs/.vuepress/themes/__tests__/TabTags.test.ts
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { h } from 'vue'
 import TabTags from '../components/gallery/TabTags.vue'
 import type { Photo, Tag } from '../components/gallery/types'
+
+vi.mock('virtua/vue', () => ({
+  WindowVirtualizer: {
+    props: ['data'],
+    setup(props: any, { slots, attrs }: any) {
+      return () => h(
+        'div',
+        attrs,
+        props.data.map((item: any, index: number) => slots.default?.({ item, index })),
+      )
+    },
+  },
+}))
 
 const tags: Tag[] = [{ name: 'street', count: 2 }, { name: 'film', count: 1 }]
 const photos: Photo[] = [

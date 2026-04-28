@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import justifiedLayout from 'justified-layout'
+import { WindowVirtualizer } from 'virtua/vue'
 import type { Photo } from './types'
 import PhotoTile from './PhotoTile.vue'
 
@@ -74,33 +75,39 @@ defineExpose({ recompute })
 
 <template>
   <div ref="root" class="justified-grid">
-    <div class="justified-grid__viewport">
-      <div
-        v-for="row in rows"
-        :key="row.items[0]?.photo.id"
-        class="justified-grid__row"
-        :style="{ height: row.height + 'px', marginBottom: gap + 'px', position: 'relative' }"
-      >
+    <WindowVirtualizer
+      class="justified-grid__viewport"
+      :data="rows"
+      :item-size="targetRowHeight + gap"
+      :buffer-size="900"
+    >
+      <template #default="{ item: row }">
         <div
-          v-for="it in row.items"
-          :key="it.photo.id"
-          class="justified-grid__cell"
-          :style="{
-            position: 'absolute',
-            left: it.left + 'px',
-            width: it.width + 'px',
-            height: it.height + 'px',
-          }"
-          @click="emit('click', it.photo.id)"
+          :key="row.items[0]?.photo.id"
+          class="justified-grid__row"
+          :style="{ height: row.height + 'px', marginBottom: gap + 'px', position: 'relative' }"
         >
-          <PhotoTile
-            :photo="it.photo"
-            :width="Math.round(it.width)"
-            :height="Math.round(it.height)"
-            :eager="it.eager"
-          />
+          <div
+            v-for="it in row.items"
+            :key="it.photo.id"
+            class="justified-grid__cell"
+            :style="{
+              position: 'absolute',
+              left: it.left + 'px',
+              width: it.width + 'px',
+              height: it.height + 'px',
+            }"
+            @click="emit('click', it.photo.id)"
+          >
+            <PhotoTile
+              :photo="it.photo"
+              :width="Math.round(it.width)"
+              :height="Math.round(it.height)"
+              :eager="it.eager"
+            />
+          </div>
         </div>
-      </div>
-    </div>
+      </template>
+    </WindowVirtualizer>
   </div>
 </template>

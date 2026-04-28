@@ -3,14 +3,16 @@ import { describe, it, expect, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 
 vi.mock('photoswipe', () => {
+  class MockPhotoSwipe {
+    init = vi.fn()
+    on = vi.fn()
+    destroy = vi.fn()
+    goTo = vi.fn()
+    close = vi.fn()
+  }
+
   return {
-    default: vi.fn().mockImplementation(() => ({
-      init: vi.fn(),
-      on: vi.fn(),
-      destroy: vi.fn(),
-      goTo: vi.fn(),
-      close: vi.fn(),
-    })),
+    default: MockPhotoSwipe,
   }
 })
 

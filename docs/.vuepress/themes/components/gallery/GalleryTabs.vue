@@ -13,7 +13,11 @@ const TABS: { id: GalleryTab; label: string }[] = [
 ]
 
 const tabEls = ref<HTMLButtonElement[]>([])
-const glowStyle = ref({ left: '0px', top: '0px', width: '0px', height: '0px' })
+const glowStyle = ref({
+  transform: 'translate3d(0px, 0px, 0px)',
+  width: '0px',
+  height: '0px',
+})
 
 const activeIndex = computed(() => TABS.findIndex(t => t.id === props.modelValue))
 
@@ -22,8 +26,7 @@ const updateGlow = async () => {
   const el = tabEls.value[activeIndex.value]
   if (!el) return
   glowStyle.value = {
-    left: `${el.offsetLeft}px`,
-    top: `${el.offsetTop}px`,
+    transform: `translate3d(${el.offsetLeft}px, ${el.offsetTop}px, 0px)`,
     width: `${el.offsetWidth}px`,
     height: `${el.offsetHeight}px`,
   }

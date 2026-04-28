@@ -641,6 +641,8 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 
 .gallery-tabs__glow {
   position: absolute;
+  left: 0;
+  top: 0;
   border-radius: 10px;
   z-index: 0;
   pointer-events: none;
@@ -648,9 +650,9 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
   box-shadow:
     0 14px 28px rgba(31, 39, 60, .08),
     0 8px 20px rgba(138, 103, 255, .10);
+  will-change: transform, width, height;
   transition:
-    left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    top 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }

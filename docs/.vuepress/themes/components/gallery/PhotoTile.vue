@@ -1,6 +1,6 @@
 <!-- docs/.vuepress/themes/components/gallery/PhotoTile.vue -->
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { decode } from 'blurhash'
 import type { Photo } from './types'
 import { publicSrc } from './cdn'
@@ -12,10 +12,13 @@ const props = withDefaults(defineProps<{
   eager?: boolean
 }>(), { eager: false })
 
+const root = ref<HTMLElement | null>(null)
 const canvas = ref<HTMLCanvasElement | null>(null)
 const loaded = ref(false)
 const errored = ref(false)
 const src = computed(() => publicSrc(props.photo.src.thumb))
+let observer: IntersectionObserver | null = null
+let decoded = false
 
 const displayDate = computed(() => {
   try {
@@ -30,8 +33,9 @@ const displayDate = computed(() => {
 
 function onError() { errored.value = true }
 
-onMounted(() => {
-  if (!canvas.value || !props.photo.blurhash) return
+function drawBlurhash() {
+  if (decoded || !canvas.value || !props.photo.blurhash) return
+  decoded = true
   try {
     const w = 32, h = Math.round(32 * (props.photo.h / props.photo.w))
     const px = decode(props.photo.blurhash, w, h)
@@ -42,11 +46,33 @@ onMounted(() => {
     imageData.data.set(px)
     ctx.putImageData(imageData, 0, 0)
   } catch { /* 解码失败退化为单色背景 */ }
+}
+
+onMounted(() => {
+  if (!root.value || !canvas.value || !props.photo.blurhash) return
+  if (typeof IntersectionObserver === 'undefined') {
+    drawBlurhash()
+    return
+  }
+
+  observer = new IntersectionObserver((entries) => {
+    if (!entries.some((entry) => entry.isIntersecting)) return
+    observer?.disconnect()
+    observer = null
+    drawBlurhash()
+  }, { rootMargin: '360px 0px' })
+
+  observer.observe(root.value)
+})
+
+onUnmounted(() => {
+  observer?.disconnect()
+  observer = null
 })
 </script>
 
 <template>
-  <div class="photo-tile" :style="{ width: width + 'px', height: height + 'px' }">
+  <div ref="root" class="photo-tile" :style="{ width: width + 'px', height: height + 'px' }">
     <canvas ref="canvas" class="photo-tile__bh" :class="{ 'is-hidden': loaded || errored }" />
     <img
       v-if="!errored"
