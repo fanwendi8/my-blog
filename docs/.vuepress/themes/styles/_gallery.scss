@@ -766,6 +766,8 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 .gallery-album-detail {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 0;
 }
 
 .gallery-album-detail {
