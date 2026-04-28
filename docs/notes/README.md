@@ -20,6 +20,4 @@ config:
         tags:
           - CSS
 title: 集萃
-createTime: 2026/04/26 16:06:21
-permalink: /notes/07n4u0cs/
 ---
