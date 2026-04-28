@@ -58,8 +58,8 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 }
 
 .gallery-home {
-  --gallery-sidebar-width: 140px;
-  --gallery-column-gap: 48px;
+  --gallery-sidebar-width: 120px;
+  --gallery-column-gap: 36px;
   --gallery-content-offset: calc(var(--gallery-sidebar-width) + var(--gallery-column-gap));
 
   width: min(calc(100% - clamp(48px, 10vw, 144px)), 1500px);
@@ -942,8 +942,8 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 
 @media (max-width: 1024px) {
   .gallery-home {
-    --gallery-sidebar-width: 110px;
-    --gallery-column-gap: 32px;
+    --gallery-sidebar-width: 96px;
+    --gallery-column-gap: 24px;
 
     width: min(calc(100% - clamp(36px, 7vw, 72px)), 100%);
   }
