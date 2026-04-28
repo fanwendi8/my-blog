@@ -38,7 +38,11 @@ const galleryYearRange = computed(() => {
 
 const visiblePhotos = computed(() => {
   if (activeAlbumId.value) {
-    return sortedPhotos.value.filter(p => p.albums.includes(activeAlbumId.value!))
+    let result = sortedPhotos.value.filter(p => p.albums.includes(activeAlbumId.value!))
+    if (activeTagName.value) {
+      result = result.filter(p => p.tags.includes(activeTagName.value!))
+    }
+    return result
   }
   if (activeTab.value === 'tags' && activeTagName.value) {
     return sortedPhotos.value.filter(p => p.tags.includes(activeTagName.value!))
@@ -148,8 +152,10 @@ onMounted(async () => { await import('photoswipe/style.css') })
             ref="albumDetail"
             :album="activeAlbum"
             :photos="sortedPhotos"
+            :active-tag="activeTagName"
             @back="backFromAlbum"
             @open="openPhoto"
+            @update:active-tag="activeTagName = $event"
           />
         </div>
       </template>
