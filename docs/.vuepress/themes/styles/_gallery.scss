@@ -1289,15 +1289,12 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
   .year-timeline {
     flex: 0 0 auto;
     width: 100%;
-    margin: 0 -16px 18px;
-    padding: 4px 16px 8px;
-    overflow-x: auto;
+    margin: 0 0 10px;
+    padding: 0 0 6px;
+    overflow: visible;
     background: transparent;
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
-    mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
     scrollbar-width: none;
     overscroll-behavior-x: contain;
-    scroll-snap-type: x proximity;
   }
 
   .year-timeline::-webkit-scrollbar {
@@ -1309,20 +1306,19 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
   }
 
   .year-timeline__list {
-    flex-direction: row;
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
     gap: 8px;
   }
 
   .year-timeline__item {
-    flex: 0 0 auto;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     padding: 5px 11px;
     border-radius: 999px;
     border: 1px solid rgba(143, 151, 170, .2);
     background: rgba(255, 255, 255, .64);
-    scroll-snap-align: start;
   }
 
   .year-timeline__item.is-active {
@@ -1359,8 +1355,7 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
   }
 
   .year-timeline__count {
-    font-size: 12px;
-    margin-top: 0;
+    display: none;
   }
 
   .timeline-year-section {
@@ -1496,7 +1491,7 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
     width: auto;
     min-width: 0;
     margin-left: 0;
-    margin-bottom: 14px;
+    margin-bottom: 0;
     box-sizing: border-box;
     grid-template-columns: repeat(2, minmax(66px, auto));
     border-radius: 12px;
