@@ -2,7 +2,15 @@
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { GalleryRoute, GalleryTab } from '../components/gallery/types'
 
-const TABS: GalleryTab[] = ['timeline', 'albums', 'tags']
+const TABS: GalleryTab[] = ['timeline', 'albums']
+
+function parseTags(value: string | null): string[] {
+  if (!value) return []
+  return value
+    .split(',')
+    .map((tag) => tag.trim())
+    .filter(Boolean)
+}
 
 export function parseHash(hash: string): GalleryRoute {
   const out: GalleryRoute = { tab: 'timeline' }
@@ -14,6 +22,9 @@ export function parseHash(hash: string): GalleryRoute {
   const p = params.get('p'); if (p) out.p = p
   const album = params.get('album'); if (album) out.album = album
   const tag = params.get('tag'); if (tag) out.tag = tag
+  const tags = parseTags(params.get('tags'))
+  if (tags.length > 0) out.tags = tags
+  else if (tag) out.tags = [tag]
   return out
 }
 
@@ -21,7 +32,8 @@ export function serializeHash(r: GalleryRoute): string {
   const params = new URLSearchParams()
   if (r.tab !== 'timeline') params.set('tab', r.tab)
   if (r.album) params.set('album', r.album)
-  if (r.tag) params.set('tag', r.tag)
+  if (r.tags?.length) params.set('tags', r.tags.join(','))
+  else if (r.tag) params.set('tag', r.tag)
   if (r.p) params.set('p', r.p)
   const q = params.toString()
   return q ? `#${q}` : ''

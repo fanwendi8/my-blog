@@ -17,7 +17,9 @@ describe('parseHash', () => {
     expect(parseHash('#tab=albums&album=x'))
       .toEqual({ tab: 'albums', album: 'x' })
     expect(parseHash('#tab=tags&tag=street'))
-      .toEqual({ tab: 'tags', tag: 'street' })
+      .toEqual({ tab: 'timeline', tag: 'street', tags: ['street'] })
+    expect(parseHash('#tags=street,film'))
+      .toEqual({ tab: 'timeline', tags: ['street', 'film'] })
   })
 
   it('falls back to timeline on unknown tab', () => {
@@ -35,7 +37,7 @@ describe('serializeHash', () => {
   })
 
   it('roundtrips parse → serialize', () => {
-    const r = { tab: 'tags' as const, tag: 'film', p: 'xyz' }
+    const r = { tab: 'timeline' as const, tags: ['film', 'street'], p: 'xyz' }
     expect(parseHash(serializeHash(r))).toEqual(r)
   })
 })

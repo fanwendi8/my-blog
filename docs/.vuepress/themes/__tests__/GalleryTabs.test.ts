@@ -13,8 +13,8 @@ describe('GalleryTabs', () => {
 
   it('emits update:modelValue when a tab is clicked', async () => {
     const w = mount(GalleryTabs, { props: { modelValue: 'timeline' } })
-    await w.findAll('.gallery-tab')[2].trigger('click')
-    expect(w.emitted('update:modelValue')?.[0]).toEqual(['tags'])
+    await w.findAll('.gallery-tab')[1].trigger('click')
+    expect(w.emitted('update:modelValue')?.[0]).toEqual(['albums'])
   })
 
   it('moves the glow with transform instead of layout offsets', async () => {

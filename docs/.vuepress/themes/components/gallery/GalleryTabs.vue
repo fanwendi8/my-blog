@@ -9,7 +9,6 @@ const emit = defineEmits<{ (e: 'update:modelValue', v: GalleryTab): void }>()
 const TABS: { id: GalleryTab; label: string }[] = [
   { id: 'timeline', label: '时间线' },
   { id: 'albums',   label: '专辑' },
-  { id: 'tags',     label: '标签' },
 ]
 
 const tabEls = ref<HTMLButtonElement[]>([])

@@ -41,7 +41,12 @@ vi.mock('../composables/useGalleryRoute', () => ({
 
 vi.mock('../components/gallery/TabTimeline.vue', () => ({
   default: defineComponent({
-    setup() {
+    setup(_, { expose }) {
+      expose({
+        scrollToTop: () => {
+          document.querySelector('.gallery-home__viewport')?.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+        },
+      })
       return () => h('section', { class: 'tab-timeline-stub' })
     },
   }),
@@ -82,6 +87,10 @@ vi.mock('../components/gallery/JustifiedGrid.vue', () => ({
 describe('GalleryHome', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
+    Object.defineProperty(window, 'scrollTo', {
+      configurable: true,
+      value: vi.fn(),
+    })
     document.documentElement.style.scrollBehavior = ''
     document.body.style.scrollBehavior = ''
   })
@@ -96,28 +105,25 @@ describe('GalleryHome', () => {
     })
     const wrapper = mount(GalleryHome)
 
-    await wrapper.findAll('.gallery-tab')[2].trigger('click')
-    await flushPromises()
-
-    expect(scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'auto' })
-    expect(wrapper.find('.gallery-home__viewport').element.scrollTop).toBe(0)
-  })
-
-  it('scrolls to the top when changing the active tag', async () => {
-    const scrollTo = vi.fn()
-    Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
-      configurable: true,
-      value: scrollTo,
-    })
-    const wrapper = mount(GalleryHome)
-
-    await wrapper.findAll('.gallery-tab')[2].trigger('click')
+    await wrapper.findAll('.gallery-tab')[1].trigger('click')
     await flushPromises()
     scrollTo.mockClear()
 
-    await wrapper.findAll('.gallery-chip')[1].trigger('click')
+    await wrapper.findAll('.gallery-tab')[0].trigger('click')
     await flushPromises()
 
-    expect(scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'auto' })
+    expect(window.scrollTo).toHaveBeenCalledWith(0, 0)
+    expect(wrapper.find('.gallery-home__viewport').element.scrollTop).toBe(0)
+  })
+
+  it('shows timeline tag filter and marks selected tags', async () => {
+    const wrapper = mount(GalleryHome)
+
+    await wrapper.find('.gallery-filter__toggle').trigger('click')
+    await wrapper.findAll('.gallery-filter__chip')[0].trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find('.gallery-filter__chip.is-active').text()).toContain('street')
+    expect(wrapper.find('.gallery-filter__toggle').text()).toContain('1')
   })
 })

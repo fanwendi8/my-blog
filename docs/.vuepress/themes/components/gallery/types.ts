@@ -32,11 +32,12 @@ export interface Album {
 
 export interface Tag { name: string; count: number }
 
-export type GalleryTab = 'timeline' | 'albums' | 'tags'
+export type GalleryTab = 'timeline' | 'albums'
 
 export interface GalleryRoute {
   tab: GalleryTab
   p?: string                            // active photo id
   album?: string
   tag?: string
+  tags?: string[]
 }
