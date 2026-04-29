@@ -7,8 +7,8 @@ const props = defineProps<{ modelValue: GalleryTab }>()
 const emit = defineEmits<{ (e: 'update:modelValue', v: GalleryTab): void }>()
 
 const TABS: { id: GalleryTab; label: string }[] = [
-  { id: 'timeline', label: '时序' },
-  { id: 'albums',   label: '辑册' },
+  { id: 'timeline', label: '拾光' },
+  { id: 'albums',   label: '画境' },
 ]
 
 const tabEls = ref<HTMLButtonElement[]>([])

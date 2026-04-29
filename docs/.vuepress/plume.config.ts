@@ -22,6 +22,9 @@ export default defineThemeConfig({
 
   appearance: false,
 
+  tagText: '萤火',
+  archiveText: '流年',
+
   social: [
     { icon: 'github', link: 'https://github.com/fanwendi8' },
     { icon: 'xbox', link: 'https://www.xbox.com/play/user/FanWendi8' },

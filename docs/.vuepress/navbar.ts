@@ -7,9 +7,9 @@
 import { defineNavbarConfig } from 'vuepress-theme-plume'
 
 export default defineNavbarConfig([
-  { text: '墨痕', link: '/blog/', icon: "solar:documents-linear" },
+  { text: '星痕', link: '/blog/', icon: "solar:documents-linear" },
   { text: '萤火', link: '/blog/tags/', icon: "solar:tag-linear" },
   { text: '流年', link: '/blog/archives/', icon: "solar:calendar-linear" },
-  { text: '集萃', link: '/notes/', icon: "solar:notes-linear" },
+  { text: '片羽', link: '/notes/', icon: "solar:notes-linear" },
   { text: '瞳画', link: '/gallery/', icon: "solar:gallery-linear" },
 ])
