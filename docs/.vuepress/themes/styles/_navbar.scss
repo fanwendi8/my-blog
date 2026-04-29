@@ -5,7 +5,7 @@
 
   border-bottom: 1px solid var(--nav-border);
   background: var(--nav-surface);
-  box-shadow: 0 10px 32px rgba(28, 36, 58, .05);
+  box-shadow: var(--vp-shadow-nav);
   backdrop-filter: saturate(180%) blur(18px);
 
   .vp-navbar-menu[aria-labelledby="main-nav-aria-label"] {
@@ -39,21 +39,21 @@
   .navbar-menu-link.active {
     border-color: rgba(236, 127, 34, .18);
     background: rgba(255, 255, 255, .92);
-    box-shadow: 0 12px 32px rgba(236, 127, 34, .12);
+    box-shadow: var(--vp-shadow-nav);
     color: #b45309;
   }
 }
 
 @media (max-width: 768px) {
   .vp-navbar {
-    box-shadow: 0 8px 24px rgba(28, 36, 58, .06);
+    box-shadow: var(--vp-shadow-nav);
   }
 }
 
 [data-theme="dark"] .vp-navbar {
   --nav-surface: rgba(27, 27, 31, .82);
   --nav-border: rgba(255, 255, 255, .08);
-  box-shadow: 0 10px 32px rgba(0, 0, 0, .24);
+  box-shadow: var(--vp-shadow-nav);
 
   .navbar-menu-link:hover,
   .navbar-menu-link.active {

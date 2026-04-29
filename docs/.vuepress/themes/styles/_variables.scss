@@ -35,6 +35,14 @@
   --vp-local-nav-bg-color: #fff; /* 页面内导航栏 */
   --vp-sidebar-bg-color: #f6f6f7; /* 侧边栏背景 */
   --vp-code-block-bg: #f6f8fa; /* 代码块背景 */
+
+  /**
+   * 阴影
+   * -------------------------------------------------------------------------- */
+
+  --vp-shadow-nav: 0 8px 24px rgba(48, 42, 34, .04);
+  --vp-shadow-card: 0 16px 42px rgba(48, 42, 34, .052);
+  --vp-shadow-card-hover: 0 22px 54px rgba(48, 42, 34, .07);
 }
 
 [data-theme="dark"] {
@@ -66,4 +74,12 @@
   --vp-local-nav-bg-color: #1b1b1f; /* 页面内导航栏 */
   --vp-sidebar-bg-color: #161618; /* 侧边栏背景 */
   --vp-code-block-bg: #202127; /* 代码块背景 */
+
+  /**
+   * 阴影
+   * -------------------------------------------------------------------------- */
+
+  --vp-shadow-nav: 0 8px 24px rgba(0, 0, 0, .24);
+  --vp-shadow-card: 0 16px 42px rgba(0, 0, 0, .28);
+  --vp-shadow-card-hover: 0 22px 54px rgba(0, 0, 0, .34);
 }
