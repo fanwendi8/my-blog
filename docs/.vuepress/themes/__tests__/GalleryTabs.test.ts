@@ -8,7 +8,7 @@ describe('GalleryTabs', () => {
   it('marks the active tab', () => {
     const w = mount(GalleryTabs, { props: { modelValue: 'albums' } })
     const active = w.find('.gallery-tab.is-active')
-    expect(active.text()).toBe('专辑')
+    expect(active.text()).toBe('辑册')
   })
 
   it('emits update:modelValue when a tab is clicked', async () => {
