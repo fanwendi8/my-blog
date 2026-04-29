@@ -57,6 +57,8 @@ async function open(id: string) {
     bgOpacity: 0.35,
     showHideAnimationType: 'fade',
     appendToEl: container,
+    initialZoomLevel: 'fit',
+    secondaryZoomLevel: 'fill',
     getViewportSizeFn: () => ({
       x: container.clientWidth,
       y: container.clientHeight,

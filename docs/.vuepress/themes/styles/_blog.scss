@@ -1,16 +1,10 @@
 .vp-posts {
   min-height: calc(100vh - var(--vp-nav-height, 64px));
-  background:
-    radial-gradient(circle at 18% 10%, rgba(255, 166, 77, .13), transparent 28rem),
-    radial-gradient(circle at 82% 6%, rgba(138, 103, 255, .12), transparent 30rem),
-    linear-gradient(180deg, #fbfcff 0%, #fff 42%, #fbfbfd 100%);
+  background: var(--vp-c-bg-warm);
 }
 
 .vp-layout:not(.gallery-page) {
-  background:
-    radial-gradient(circle at 18% 8%, rgba(255, 166, 77, .11), transparent 30rem),
-    radial-gradient(circle at 82% 4%, rgba(138, 103, 255, .10), transparent 32rem),
-    linear-gradient(180deg, #fbfcff 0%, #fff 44%, #fbfbfd 100%);
+  background: var(--vp-c-bg-warm);
 }
 
 .vp-layout:not(.gallery-page) .vp-content {
@@ -21,8 +15,7 @@
   position: relative;
   overflow: hidden;
   border-top: 0;
-  background:
-    linear-gradient(180deg, rgba(251, 251, 253, 0), rgba(251, 251, 253, .84) 22%, rgba(251, 251, 253, .96) 100%);
+  background: var(--vp-c-bg-warm);
 }
 
 .vp-layout:not(.gallery-page) .vp-footer::before {
@@ -139,22 +132,15 @@
 }
 
 [data-theme="dark"] .vp-posts {
-  background:
-    radial-gradient(circle at 18% 10%, rgba(236, 127, 34, .1), transparent 28rem),
-    radial-gradient(circle at 82% 6%, rgba(138, 103, 255, .11), transparent 30rem),
-    linear-gradient(180deg, #1b1b1f 0%, #161618 100%);
+  background: var(--vp-c-bg-warm);
 }
 
 [data-theme="dark"] .vp-layout:not(.gallery-page) {
-  background:
-    radial-gradient(circle at 18% 8%, rgba(236, 127, 34, .08), transparent 30rem),
-    radial-gradient(circle at 82% 4%, rgba(138, 103, 255, .10), transparent 32rem),
-    linear-gradient(180deg, #1b1b1f 0%, #161618 100%);
+  background: var(--vp-c-bg-warm);
 }
 
 [data-theme="dark"] .vp-layout:not(.gallery-page) .vp-footer {
-  background:
-    linear-gradient(180deg, rgba(22, 22, 24, 0), rgba(22, 22, 24, .84) 22%, rgba(22, 22, 24, .96) 100%);
+  background: var(--vp-c-bg-warm);
 }
 
 [data-theme="dark"] .vp-layout:not(.gallery-page) .vp-footer::before {
