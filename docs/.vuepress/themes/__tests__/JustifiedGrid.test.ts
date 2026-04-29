@@ -94,7 +94,7 @@ describe('JustifiedGrid', () => {
     expect(viewport.attributes('data-has-scroll-ref')).toBe('true')
   })
 
-  it('justifies widow rows so the grid does not leave a pale trailing block', async () => {
+  it('keeps widow rows at their natural width', async () => {
     const w = mount(JustifiedGrid, {
       props: { photos: [photo('a', 600, 400)] },
       attachTo: document.body,
@@ -103,6 +103,6 @@ describe('JustifiedGrid', () => {
     w.vm.$.exposed?.recompute?.()
     await nextTick()
 
-    expect(w.find('.justified-grid__cell').attributes('style')).toContain('width: 1000px')
+    expect(w.find('.justified-grid__cell').attributes('style')).not.toContain('width: 1000px')
   })
 })
