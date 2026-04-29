@@ -72,7 +72,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="root" class="photo-tile" :style="{ width: width + 'px', height: height + 'px' }">
+  <div ref="root" class="photo-tile">
     <canvas ref="canvas" class="photo-tile__bh" :class="{ 'is-hidden': loaded || errored }" />
     <img
       v-if="!errored"

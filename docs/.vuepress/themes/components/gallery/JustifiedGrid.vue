@@ -49,6 +49,7 @@ function recompute() {
     targetRowHeight: props.targetRowHeight,
     boxSpacing: props.gap,
     containerPadding: 0,
+    widowLayoutStyle: 'justify',
   })
   const map = new Map<number, RowItem[]>()
   layout.boxes.forEach((b, i) => {

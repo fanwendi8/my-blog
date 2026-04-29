@@ -93,4 +93,16 @@ describe('JustifiedGrid', () => {
     expect(viewport.attributes('data-buffer-size')).toBe('900')
     expect(viewport.attributes('data-has-scroll-ref')).toBe('true')
   })
+
+  it('justifies widow rows so the grid does not leave a pale trailing block', async () => {
+    const w = mount(JustifiedGrid, {
+      props: { photos: [photo('a', 600, 400)] },
+      attachTo: document.body,
+    })
+    Object.defineProperty(w.element, 'clientWidth', { value: 1000, configurable: true })
+    w.vm.$.exposed?.recompute?.()
+    await nextTick()
+
+    expect(w.find('.justified-grid__cell').attributes('style')).toContain('width: 1000px')
+  })
 })
