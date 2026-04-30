@@ -1,6 +1,11 @@
 // docs/.vuepress/themes/__tests__/PhotoInfoPanel.test.ts
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+
+vi.mock('vuepress-theme-plume/components/VPIcon.vue', () => ({
+  default: { name: 'VPIcon', template: '<span />' },
+}))
+
 import PhotoInfoPanel from '../components/gallery/PhotoInfoPanel.vue'
 
 const photo = {

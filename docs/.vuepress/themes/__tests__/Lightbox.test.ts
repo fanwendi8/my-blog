@@ -16,6 +16,10 @@ vi.mock('photoswipe', () => {
   }
 })
 
+vi.mock('vuepress-theme-plume/components/VPIcon.vue', () => ({
+  default: { name: 'VPIcon', template: '<span />' },
+}))
+
 import Lightbox from '../components/gallery/Lightbox.vue'
 
 const photo = (id: string) => ({

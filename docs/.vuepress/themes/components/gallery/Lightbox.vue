@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { Photo } from './types'
 import { publicSrc } from './cdn'
 import PhotoInfoPanel from './PhotoInfoPanel.vue'
@@ -16,7 +16,66 @@ const emit = defineEmits<{
 
 const pswpContainer = ref<HTMLElement | null>(null)
 const currentPhoto = ref<Photo | null>(null)
+const drawerHeight = ref(28)
+const isDrawerDragging = ref(false)
 let pswp: any = null
+let drawerStartY = 0
+let drawerStartHeight = 28
+let drawerMoved = false
+
+const drawerStyle = computed(() => ({
+  '--gallery-drawer-height': `${drawerHeight.value}px`,
+}))
+const isDrawerFullscreen = computed(() => drawerHeight.value > drawerMaxHeight() * 0.82)
+
+function drawerMaxHeight() {
+  if (typeof window === 'undefined') return 720
+  return window.innerHeight
+}
+
+function clampDrawerHeight(height: number) {
+  return Math.max(28, Math.min(drawerMaxHeight(), height))
+}
+
+function resetDrawer() {
+  drawerHeight.value = 28
+  isDrawerDragging.value = false
+}
+
+function setDrawerHeight(height: number) {
+  drawerHeight.value = clampDrawerHeight(height)
+}
+
+function onDrawerPointerDown(event: PointerEvent) {
+  if (typeof window === 'undefined') return
+  isDrawerDragging.value = true
+  drawerMoved = false
+  drawerStartY = event.clientY
+  drawerStartHeight = drawerHeight.value
+  ;(event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId)
+}
+
+function onDrawerPointerMove(event: PointerEvent) {
+  if (!isDrawerDragging.value) return
+  if (Math.abs(event.clientY - drawerStartY) > 4) drawerMoved = true
+  setDrawerHeight(drawerStartHeight + drawerStartY - event.clientY)
+}
+
+function onDrawerPointerUp(event: PointerEvent) {
+  if (!isDrawerDragging.value) return
+  isDrawerDragging.value = false
+  ;(event.currentTarget as HTMLElement).releasePointerCapture?.(event.pointerId)
+  if (drawerHeight.value < 96) setDrawerHeight(28)
+}
+
+function toggleDrawer() {
+  if (drawerMoved) {
+    drawerMoved = false
+    return
+  }
+  const max = drawerMaxHeight()
+  setDrawerHeight(drawerHeight.value <= 40 ? max * 0.52 : 28)
+}
 
 async function ensureLib() {
   // @ts-ignore - photoswipe v5 esm
@@ -97,6 +156,7 @@ function close() {
   // 不等 destroy 事件，立即清理引用，让下次 watch 走 open() 重建路径
   pswp = null
   currentPhoto.value = null
+  resetDrawer()
 }
 
 watch(() => props.activeId, async (id, prev) => {
@@ -107,6 +167,7 @@ watch(() => props.activeId, async (id, prev) => {
       else if (idx < 0) close()
     } else {
       await nextTick()
+      resetDrawer()
       await open(id)
     }
   } else if (!id && pswp) {
@@ -125,7 +186,21 @@ onBeforeUnmount(() => { pswp?.destroy?.() })
 <template>
   <div v-if="activeId" class="gallery-lightbox">
     <div ref="pswpContainer" class="gallery-lightbox__stage gallery-lightbox__stage-shell"></div>
-    <div class="gallery-lightbox__panel">
+    <div
+      class="gallery-lightbox__panel"
+      :class="{ 'is-dragging': isDrawerDragging, 'is-fullscreen': isDrawerFullscreen }"
+      :style="drawerStyle"
+    >
+      <button
+        type="button"
+        class="gallery-lightbox__drawer-handle"
+        aria-label="拖动照片信息"
+        @click="toggleDrawer"
+        @pointerdown="onDrawerPointerDown"
+        @pointermove="onDrawerPointerMove"
+        @pointerup="onDrawerPointerUp"
+        @pointercancel="onDrawerPointerUp"
+      ></button>
       <PhotoInfoPanel v-if="currentPhoto" :photo="currentPhoto" />
     </div>
   </div>

@@ -33,7 +33,7 @@ export default defineThemeConfig({
   /* 站点页脚 */
   footer: {
     message: '',
-    copyright: 'Copyright © 2026 𝓦𝓮𝓷𝓭𝓲',
+    copyright: 'Copyright © 2026 Wendi',
   },
 
   /**
@@ -41,9 +41,9 @@ export default defineThemeConfig({
    */
   profile: {
     avatar: '/logo.png',
-    name: '𝓦𝓮𝓷𝓭𝓲',
+    name: 'Wendi',
     description: '代码如诗，光影为辞',
-    location: '𝐵𝑒𝒾𝒥𝒾𝓃𝑔, 𝒞𝒽𝒾𝓃𝒶',
+    location: 'Beijing, China',
   },
 
   navbar,

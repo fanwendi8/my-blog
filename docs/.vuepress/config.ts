@@ -20,7 +20,7 @@ export default defineUserConfig({
 
   base: '/',
   lang: 'zh-CN',
-  title: '𝓦𝓮𝓷𝓭𝓲',
+  title: 'Wendi',
   description: '代码如诗，光影为辞',
 
   bundler: viteBundler({

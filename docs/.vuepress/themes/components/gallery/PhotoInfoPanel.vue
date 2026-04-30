@@ -1,5 +1,6 @@
 <!-- docs/.vuepress/themes/components/gallery/PhotoInfoPanel.vue -->
 <script setup lang="ts">
+import VPIcon from 'vuepress-theme-plume/components/VPIcon.vue'
 import { computed } from 'vue'
 import type { Photo } from './types'
 
@@ -15,6 +16,20 @@ const gpsHref = computed(() => {
   const { lat, lon } = props.photo.gps
   return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=15/${lat}/${lon}`
 })
+
+const exifItems = computed(() => {
+  const exif = props.photo.exif
+  if (!exif) return []
+
+  return [
+    exif.camera ? { key: 'camera', icon: 'solar:camera-linear', label: '相机', value: exif.camera } : null,
+    exif.lens ? { key: 'lens', icon: 'streamline-freehand:lens-horizontal', label: '镜头', value: exif.lens } : null,
+    exif.fl != null ? { key: 'fl', icon: 'arcticons:hyperfocal-pro', label: '焦距', value: `${exif.fl}mm` } : null,
+    exif.fn != null ? { key: 'fn', icon: 'et:aperture', label: '光圈', value: `f/${exif.fn}` } : null,
+    exif.iso != null ? { key: 'iso', icon: 'carbon:iso-outline', label: 'ISO', value: `ISO ${exif.iso}` } : null,
+    exif.exp ? { key: 'exp', icon: 'material-symbols-light:shutter-speed-outline', label: '快门', value: exif.exp } : null,
+  ].filter(Boolean) as Array<{ key: string, icon: string, label: string, value: string }>
+})
 </script>
 
 <template>
@@ -26,14 +41,18 @@ const gpsHref = computed(() => {
 
     <p v-if="photo.desc" class="gallery-info__desc">{{ photo.desc }}</p>
 
-    <section v-if="photo.exif" class="gallery-info__section">
+    <section v-if="exifItems.length" class="gallery-info__section">
       <dl class="gallery-info__exif">
-        <template v-if="photo.exif.camera"><dt>相机</dt><dd>{{ photo.exif.camera }}</dd></template>
-        <template v-if="photo.exif.lens"><dt>镜头</dt><dd>{{ photo.exif.lens }}</dd></template>
-        <template v-if="photo.exif.fl != null"><dt>焦距</dt><dd>{{ photo.exif.fl }}mm</dd></template>
-        <template v-if="photo.exif.fn != null"><dt>光圈</dt><dd>f/{{ photo.exif.fn }}</dd></template>
-        <template v-if="photo.exif.iso != null"><dt>ISO</dt><dd>ISO {{ photo.exif.iso }}</dd></template>
-        <template v-if="photo.exif.exp"><dt>快门</dt><dd>{{ photo.exif.exp }}</dd></template>
+        <div
+          v-for="item in exifItems"
+          :key="item.key"
+          class="gallery-info__exif-item"
+          :class="`gallery-info__exif-item--${item.key}`"
+        >
+          <VPIcon class="gallery-info__exif-icon" :name="item.icon" />
+          <dt>{{ item.label }}</dt>
+          <dd>{{ item.value }}</dd>
+        </div>
       </dl>
     </section>
 
@@ -42,7 +61,11 @@ const gpsHref = computed(() => {
     </div>
 
     <a v-if="gpsHref" :href="gpsHref" class="gallery-info__gps" target="_blank" rel="noopener">
-      在地图打开 <span aria-hidden="true">↗</span>
+      <span class="gallery-info__gps-label">
+        <VPIcon class="gallery-info__gps-icon" name="solar:map-point-linear" />
+        在地图打开
+      </span>
+      <VPIcon class="gallery-info__gps-arrow" name="solar:arrow-right-up-linear" />
     </a>
   </aside>
 </template>
