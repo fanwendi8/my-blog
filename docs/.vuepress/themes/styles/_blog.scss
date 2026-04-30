@@ -1,5 +1,6 @@
-.vp-posts {
-  min-height: calc(100vh - var(--vp-nav-height, 64px));
+.vp-layout:not(.gallery-page) .vp-posts {
+  box-sizing: border-box;
+  min-height: calc(100dvh - var(--vp-nav-height, 64px) - var(--vp-footer-height, 64px));
   background: var(--vp-c-bg-warm);
 }
 
@@ -35,14 +36,14 @@
 }
 
 .notes-page .vp-home {
-  min-height: calc(100vh - var(--vp-nav-height, 64px) - var(--vp-footer-height, 0px));
+  min-height: calc(100dvh - var(--vp-nav-height, 64px) - var(--vp-footer-height, 64px));
   background: transparent;
 }
 
 .notes-page .vp-home-box.notes-home {
   display: flex;
   align-items: flex-start;
-  min-height: calc(100vh - var(--vp-nav-height, 64px) - var(--vp-footer-height, 0px));
+  min-height: calc(100dvh - var(--vp-nav-height, 64px) - var(--vp-footer-height, 64px));
   padding-block: clamp(28px, 5vh, 56px) clamp(48px, 8vh, 88px);
 }
 
@@ -131,7 +132,7 @@
   }
 }
 
-[data-theme="dark"] .vp-posts {
+[data-theme="dark"] .vp-layout:not(.gallery-page) .vp-posts {
   background: var(--vp-c-bg-warm);
 }
 
