@@ -74,7 +74,8 @@ function toggleDrawer() {
     return
   }
   const max = drawerMaxHeight()
-  setDrawerHeight(drawerHeight.value <= 40 ? max * 0.52 : 28)
+  const compactHeight = Math.min(Math.max(max * 0.42, 340), 390)
+  setDrawerHeight(drawerHeight.value <= 40 ? compactHeight : 28)
 }
 
 async function ensureLib() {
