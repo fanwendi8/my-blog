@@ -1,0 +1,51 @@
+:root {
+  /**
+   * code blog theme
+   * -------------------------------------------------------------------------- */
+
+  --vp-font-family-mono: "fira-code", "Consolas", "Courier New", monospace;
+  --vp-code-font-size: 0.9em;
+  --vp-code-line-height: 1.3em;
+
+  /**
+   * 主题色
+   * -------------------------------------------------------------------------- */
+
+  --vp-c-brand-1: #333; /* 链接颜色、强调色 */
+  --vp-c-brand-2: #333; /* 链接、按钮 hover 颜色 */
+  --vp-c-brand-3: #333; /* 背景色、边框色 */
+  --vp-c-brand-soft: rgb(0 0 0 / 0.05); /* 辅助色,用于 tip badge / 提示框 / 标签等的浅底 */
+
+  /**
+   * 文本颜色
+   * -------------------------------------------------------------------------- */
+
+  --vp-c-text-1: #111; /* 主要文本 */
+  --vp-c-text-2: #333; /* 次要文本 */
+  --vp-c-text-3: #666; /* 辅助文本 */
+
+  /**
+   * 背景色
+   * -------------------------------------------------------------------------- */
+
+  --vp-c-bg: #fff; /* 主体背景 */
+  --vp-c-bg-warm: #fff; /* 全站背景 */
+  --vp-nav-bg-color: #fff; /* 导航栏背景 */
+  --vp-nav-screen-bg-color: #fff; /* 移动端导航栏 */
+  --vp-local-nav-bg-color: #fff; /* 页面内导航栏 */
+  --vp-sidebar-bg-color: #fff; /* 侧边栏背景 */
+  --vp-code-block-bg: #f6f8fa; /* 代码块背景,浅灰以区分白底页面 */
+  --vp-c-bg-soft: #fff;
+  --vp-c-bg-mute: #fff;
+  --vp-c-border: #ddd;
+  --vp-c-divider: #ddd;
+  --vp-c-gutter: #ddd;
+
+  /**
+   * 阴影
+   * -------------------------------------------------------------------------- */
+
+  --vp-shadow-card: none;
+  --vp-shadow-card-hover: none;
+  --vp-shadow-nav: none;
+}

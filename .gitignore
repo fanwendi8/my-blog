@@ -1,0 +1,27 @@
+node_modules/
+**/node_modules/
+
+docs/.vuepress/.cache
+docs/.vuepress/.temp
+docs/.vuepress/dist/
+
+.DS_Store
+*.log
+.codex/
+.playwright-mcp/
+.superpowers/
+
+gallery-staging
+
+docs/.vuepress/public/gallery-img/
+docs/.vuepress/public/gallery/*
+!docs/.vuepress/public/gallery/data/
+!docs/.vuepress/public/gallery/data/photos.json
+scripts/gallery/__tests__/perf/gallery-staging-perf/
+docs/.vuepress/public/gallery-img
+
+# Terminal Paste Image folder
+.cp-images/
+
+# Worktrees
+.worktrees/

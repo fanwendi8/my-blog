@@ -1,0 +1,33 @@
+@use "fonts";
+@use "variables";
+@use "navbar";
+@use "blog";
+@use "icons";
+@use "gallery";
+
+@supports (scrollbar-gutter: stable) and (selector(:has(*))) {
+  html:has(.vp-navbar.screen-open),
+  html:has(body[style*="overflow: hidden"]) {
+    scrollbar-gutter: stable;
+  }
+}
+
+body {
+  font-family: "ZWZT", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  background: var(--vp-c-bg-warm);
+}
+
+.vp-breadcrumb {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

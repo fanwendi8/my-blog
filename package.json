@@ -1,0 +1,49 @@
+{
+  "name": "my-blog",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "基于 vuepress-theme-plume 的个人博客",
+  "author": "fanwendi8 <psbc_fanwendi@163.com>",
+  "license": "MIT",
+  "scripts": {
+    "docs:build": "vuepress build docs --clean-cache --clean-temp",
+    "docs:dev": "vuepress dev docs",
+    "docs:dev-clean": "vuepress dev docs --clean-cache --clean-temp",
+    "docs:preview": "http-server docs/.vuepress/dist",
+    "vp-update": "npx vp-update",
+    "gallery:build": "node scripts/gallery/build.mjs",
+    "gallery:sync": "node scripts/gallery/sync.mjs",
+    "gallery:publish": "npm run gallery:build && npm run gallery:sync && npm run docs:build",
+    "gallery:test": "vitest run scripts/gallery",
+    "test": "vitest run",
+    "build": "npm run gallery:build && npm run docs:build"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1037.0",
+    "@aws-sdk/lib-storage": "^3.1037.0",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vue/test-utils": "^2.4.8",
+    "@vuepress/bundler-vite": "2.0.0-rc.28",
+    "http-server": "^14.1.1",
+    "jsdom": "^29.0.2",
+    "playwright": "^1.59.1",
+    "sass": "^1.99.0",
+    "sharp": "^0.34.5",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.5",
+    "vue": "^3.5.34",
+    "vuepress": "2.0.0-rc.28",
+    "vuepress-theme-plume": "1.0.0-rc.200"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.0.0"
+  },
+  "dependencies": {
+    "artplayer": "^5.4.0",
+    "echarts": "^6.0.0",
+    "flowchart.ts": "^3.0.1",
+    "mermaid": "^11.14.0",
+    "swiper": "^12.1.3"
+  }
+}

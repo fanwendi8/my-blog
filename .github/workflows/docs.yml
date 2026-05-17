@@ -1,0 +1,40 @@
+name: docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build VuePress site
+        run: npm run docs:build
+        env:
+          GALLERY_CDN_BASE: https://img.fanwendi.fun/story-img
+
+      - name: Deploy to GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: gh-pages
+          build_dir: docs/.vuepress/dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
