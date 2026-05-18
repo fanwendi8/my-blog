@@ -17,11 +17,18 @@
 - `docs/.vuepress/`: VuePress 与 Plume 主题配置。
 - `docs/.vuepress/config.ts`: VuePress 用户配置，修改后通常会重启 dev server。
 - `docs/.vuepress/plume.config.ts`: Plume 主题配置，部分配置支持热更新。
+- `docs/.vuepress/theme.ts`: Plume 主题实例、Markdown 增强、Giscus 和 PhotoSwipe 插件配置。
 - `docs/.vuepress/navbar.ts`: 导航配置。
+- `docs/.vuepress/collections.ts`: Plume collection 配置，目前 `docs/blog/` 作为文章集合，首页路由为 `/`。
 - `docs/.vuepress/galleryStories.ts`: 图库相关 Vite 插件。
+- `docs/.vuepress/client.ts`: 客户端组件注册、PhotoSwipe 运行时配置和路由修复入口。
+- `docs/.vuepress/themes/`: 自定义主题扩展，包括布局、组件、composables、图库 helper、样式和 Vitest 测试。
+- `docs/.vuepress/themes/components/gallery/`: 摄影故事 Markdown 可直接使用的组件：`PhotoStoryHeader`、`StoryPhoto`、`StoryPhotos`、`StorySplit`。
+- `docs/.vuepress/themes/layouts/`: 自定义页面布局，例如 `GalleryHome` 和 `NotesHome`。
 - `gallery-staging/`: 图库源图暂存目录。
 - `scripts/gallery/`: 图库扫描、派生图、manifest 和上传脚本。
 - `scripts/gallery/__tests__/`: 图库相关 Vitest 测试。
+- `.github/workflows/docs.yml`: GitHub Pages 构建部署流程。
 - `docs/.vuepress/public/gallery-img/`: 生成的图库图片资源。
 - `docs/.vuepress/public/gallery/data/photos.json`: 生成的图库照片数据。
 - `docs/.vuepress/dist/`: 生产构建输出。
@@ -37,8 +44,11 @@ npm run docs:dev-clean
 npm run docs:build
 npm run docs:preview
 npm run gallery:build
+npm run gallery:sync
+npm run gallery:publish
 npm run gallery:test
 npm test
+npm run build
 ```
 
 修改图库脚本前后优先运行：
@@ -50,8 +60,11 @@ npm run gallery:test
 修改站点配置、主题、组件或内容导航后，视影响范围运行：
 
 ```bash
+npm test
 npm run docs:build
 ```
+
+`npm run build` 会先运行 `gallery:build` 再运行 `docs:build`。`docs:build` 只构建 VuePress，不会重新生成图库衍生图。
 
 ## 编辑约定
 
@@ -61,10 +74,22 @@ npm run docs:build
 - 不要手动编辑构建产物，除非任务明确要求。优先修改源内容、配置或脚本，再重新生成。
 - 不要在 `docs/.vuepress/config.ts` 和 `docs/.vuepress/plume.config.ts` 中重复配置同一项；`plume.config.ts` 的配置会覆盖 `config.ts` 中相同主题项。
 - 涉及可见页面改动时，尽量用本地 dev server 或 build 结果验证。
+- `.claude/claude.md` 是指向根目录 `AGENTS.md` 的软链接；更新项目指南时只编辑 `AGENTS.md`。
+- `gallery-staging/`、`docs/.vuepress/public/gallery-img/`、`docs/.vuepress/dist/`、`.playwright-mcp/` 等路径被 git ignore。生成或调试后如果它们变化，通常不要提交。
+- 图库 story 页面会由 `galleryStoryPagesPlugin` 默认关闭 aside 和 outline；不要在每篇 story 中重复做同样配置，除非该页面确实需要覆盖。
+
+## 站点与主题扩展
+
+- 站点基础信息在 `docs/.vuepress/config.ts`，品牌名为 `Wendi`，语言为 `zh-CN`，描述为 `Code in verse, chiaroscuro in words.`。
+- 主题配置拆在 `docs/.vuepress/theme.ts` 与 `docs/.vuepress/plume.config.ts`。`theme.ts` 负责 Plume 实例级能力，`plume.config.ts` 负责主题外观、profile、navbar 和 collections。
+- Navbar 当前三项是 `墨痕`(`/`)、`片羽`(`/notes/`) 和 `瞳画`(`/gallery/`)。
+- Giscus 评论配置在 `docs/.vuepress/theme.ts`；不要把 repo id、category id 等配置复制到其他文件。
+- `docs/.vuepress/client.ts` 注册自定义组件和布局，同时调用 `definePhotoSwipeConfig()`、`setupOutlineRouteReset()`、`setupPhotoSwipeClickToClose()`。
+- 自定义样式入口为 `docs/.vuepress/themes/styles/index.scss`。新增全局样式时优先放到对应分文件，例如 `_gallery.scss`、`_navbar.scss`、`_blog.scss`。
 
 ## 图库流程
 
-图库源图放在 `gallery-staging/`。运行 `npm run gallery:build` 会根据脚本生成图库 metadata 和图片派生资源。
+图库源图放在 `gallery-staging/`。运行 `npm run gallery:build` 会根据脚本生成图库 metadata 和图片派生资源，并清理 `docs/.vuepress/public/gallery-img/` 中不再由当前 staging 引用的文件。
 
 图库相关代码集中在 `scripts/gallery/`：
 
@@ -73,7 +98,37 @@ npm run docs:build
 - `manifest.mjs`: 生成 manifest。
 - `uploader.mjs`: 上传逻辑。
 - `build.mjs`: 串联图库构建流程。
+- `sync.mjs`: 将本地生成结果同步到 R2，并支持 dry-run/prune。
 - `config.mjs`: 图库构建配置。
+
+图库故事是 markdown-first：`docs/gallery/*.md` 是故事页面，文件名是 story slug。`galleryStoriesPlugin` 从 frontmatter 读取 `title`、`date`、`location`、`cover` 和 `permalink`，没有 `cover` 的 Markdown 不会进入图库首页。
+
+图库故事常用 frontmatter：
+
+```yaml
+---
+title: Example Story
+date: 2026-05-06
+location: Beijing
+cover: 723dcc13be01
+permalink: /gallery/example-story/
+pageClass: photo-story-page
+---
+```
+
+图库 story Markdown 可直接使用这些全局组件：
+
+- `<PhotoStoryHeader />`: 读取页面 frontmatter 渲染故事标题、日期、地点。
+- `<StoryPhoto id="..." caption="..." />`: 单张照片。
+- `<StoryPhotos :ids="['...', '...']" caption="..." />`: 多张横向排列照片。
+- `<StorySplit :left="['...']" :right="['...', '...']" reverse vertical caption="..." />`: 分栏/上下布局。
+
+底层图片组件使用 `large.avif`，并通过显式链接打开 PhotoSwipe。普通左键打开 PhotoSwipe，修饰键点击和非左键点击保留浏览器原生链接行为。图片本身带 `no-view`，避免被全局 PhotoSwipe 选择器重复接管。
+
+PhotoSwipe 行为集中在：
+
+- `docs/.vuepress/themes/gallery/photoSwipeOptions.ts`: 关闭循环/箭头/双击，点击或背景关闭。
+- `docs/.vuepress/themes/gallery/photoSwipeClickToClose.ts`: 将图片区域的 pointer/click 交互和滚轮滚动转成关闭 lightbox。
 
 图库上传和 CDN 相关环境变量包括：
 
@@ -81,10 +136,29 @@ npm run docs:build
 - `R2_ACCESS_KEY_ID`
 - `R2_SECRET_ACCESS_KEY`
 - `R2_BUCKET`
+- `R2_KEY_PREFIX`
 - `R2_PUBLIC_BASE`
 - `GALLERY_CDN_BASE`
 
 不要把 Cloudflare R2 凭证写入仓库。
+
+R2 同步常用命令：
+
+```bash
+npm run gallery:build
+npm run gallery:sync -- --dry-run
+npm run gallery:sync
+npm run gallery:sync -- --prune
+```
+
+如果 story 图片发布到 R2 的 `story-img/` 前缀，通常设置：
+
+```bash
+export R2_KEY_PREFIX="story-img"
+export GALLERY_CDN_BASE="https://img.fanwendi.fun/story-img"
+```
+
+`GALLERY_CDN_BASE` 会在 VuePress 编译期注入为 `__GALLERY_CDN_BASE__`，前端通过 `docs/.vuepress/themes/gallery/cdn.ts` 拼出图片 URL。CI 构建时使用 `https://img.fanwendi.fun/story-img`。
 
 ## 测试与验证
 
@@ -92,7 +166,17 @@ Vitest 配置位于 `vitest.config.ts`，测试环境为 `jsdom`，并启用 glo
 
 - 只改图库脚本：运行 `npm run gallery:test`。
 - 改动共享配置、插件、主题或更广的站点行为：运行 `npm test`，必要时再运行 `npm run docs:build`。
+- 改动 PhotoSwipe、图库 story 组件或 `docs/.vuepress/themes/gallery/` helper：至少运行相关 `docs/.vuepress/themes/__tests__/*`，通常直接运行 `npm test` 更稳。
+- 改动图库 CDN、构建、manifest 或 R2 同步逻辑：运行 `npm run gallery:test`，必要时再用 `npm run gallery:sync -- --dry-run` 检查远端差异。
 - 改动前端视觉或交互时，启动 `npm run docs:dev` 并在浏览器中检查关键页面。
+- 改动 GitHub Pages 构建路径、生产 CDN、VuePress 配置或插件时，运行 `npm run docs:build`。
+
+## 发布与 CI
+
+- GitHub Actions 工作流位于 `.github/workflows/docs.yml`，在 `main` push 和手动触发时运行。
+- CI 使用 Node 22、`npm ci`、`npm run docs:build`，并部署 `docs/.vuepress/dist` 到 `gh-pages`。
+- CI 的 VuePress 构建设置 `GALLERY_CDN_BASE=https://img.fanwendi.fun/story-img`。如果新增依赖本地生成图库资源的页面，确认线上 CDN/R2 已有对应对象。
+- 本地完整生产构建使用 `npm run build`；需要先同步 R2 时使用 `npm run gallery:publish`。
 
 ## 提交信息
 
@@ -105,6 +189,8 @@ Vitest 配置位于 `vitest.config.ts`，测试环境为 `jsdom`，并启用 glo
 - `chore(images): regenerate gallery assets`
 
 PR 描述应包含改动摘要、验证命令、相关 issue，以及可见页面或图库改动的截图。
+
+从 `dev` 合并回 `main` 时使用 squash merge，保持 `main` 分支提交历史干净、聚合且可读。
 
 ## 协作注意事项
 
