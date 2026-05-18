@@ -17,11 +17,20 @@ export function setupPhotoSwipeClickToClose(): () => void {
     photoSwipe.querySelector<HTMLButtonElement>('.pswp__button--close')?.click()
   }
 
-  document.addEventListener('pointerdown', closeOnLightboxInteraction, true)
+  const closeOnWheel = () => {
+    document
+      .querySelector<HTMLElement>('.pswp.pswp--open')
+      ?.querySelector<HTMLButtonElement>('.pswp__button--close')
+      ?.click()
+  }
+
+  document.addEventListener('pointerup', closeOnLightboxInteraction, true)
   document.addEventListener('click', closeOnLightboxInteraction, true)
+  document.addEventListener('wheel', closeOnWheel, true)
 
   return () => {
-    document.removeEventListener('pointerdown', closeOnLightboxInteraction, true)
+    document.removeEventListener('pointerup', closeOnLightboxInteraction, true)
     document.removeEventListener('click', closeOnLightboxInteraction, true)
+    document.removeEventListener('wheel', closeOnWheel, true)
   }
 }

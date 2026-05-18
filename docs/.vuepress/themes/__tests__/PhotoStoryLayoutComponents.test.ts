@@ -29,6 +29,31 @@ describe('photo story layout components', () => {
     expect(wrapper.get('figcaption').text()).toBe('Alpha')
   })
 
+  it('renders story photos as explicit PhotoSwipe links outside the global image selector', () => {
+    const wrapper = mount(StoryPhoto, { props: { id: 'b' } })
+
+    const link = wrapper.get('a.photo-story-gallery__link')
+    const image = wrapper.get('img.photo-story-gallery__image')
+    expect(link.attributes('href')).toBe('/gallery-img/b/large.avif')
+    expect(link.attributes('data-pswp-width')).toBe('400')
+    expect(link.attributes('data-pswp-height')).toBe('600')
+    expect(image.attributes('no-view')).toBe('')
+  })
+
+  it('preserves native modified-click behavior on story photo links', async () => {
+    const wrapper = mount(StoryPhoto, { props: { id: 'b' } })
+    const event = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      metaKey: true,
+    })
+
+    wrapper.get('a.photo-story-gallery__link').element.dispatchEvent(event)
+    await wrapper.vm.$nextTick()
+
+    expect(event.defaultPrevented).toBe(false)
+  })
+
   it('renders a row of story photos in the requested order', () => {
     const wrapper = mount(StoryPhotos, { props: { ids: ['b', 'a'] } })
 

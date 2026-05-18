@@ -277,7 +277,16 @@ section.photo-story-gallery > figure.photo-story-gallery__figure,
   justify-self: stretch;
 }
 
-figure.photo-story-gallery__figure > img.photo-story-gallery__image {
+figure.photo-story-gallery__figure > .photo-story-gallery__link {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  color: inherit;
+  text-decoration: none;
+  cursor: zoom-in;
+}
+
+figure.photo-story-gallery__figure > .photo-story-gallery__link > img.photo-story-gallery__image {
   display: block !important;
   width: 100% !important;
   height: auto !important;
@@ -288,7 +297,7 @@ figure.photo-story-gallery__figure > img.photo-story-gallery__image {
   cursor: zoom-in;
 }
 
-figure.photo-story-gallery__figure--tile > img.photo-story-gallery__image {
+figure.photo-story-gallery__figure--tile > .photo-story-gallery__link > img.photo-story-gallery__image {
   height: auto !important;
   object-fit: contain;
 }

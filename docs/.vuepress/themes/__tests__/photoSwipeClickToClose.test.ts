@@ -6,7 +6,7 @@ describe('setupPhotoSwipeClickToClose', () => {
     document.body.innerHTML = ''
   })
 
-  it('routes pointer presses on the open PhotoSwipe image to the built-in close control', () => {
+  it('waits for pointer release on the open PhotoSwipe image before closing', () => {
     document.body.innerHTML = `
       <div class="pswp pswp--open">
         <button class="pswp__button--close" type="button"></button>
@@ -22,6 +22,25 @@ describe('setupPhotoSwipeClickToClose', () => {
     const dispose = setupPhotoSwipeClickToClose()
 
     document.querySelector('.pswp__img')!.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }))
+    expect(clickClose).not.toHaveBeenCalled()
+
+    document.querySelector('.pswp__img')!.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }))
+
+    expect(clickClose).toHaveBeenCalledTimes(1)
+    dispose()
+  })
+
+  it('closes the open PhotoSwipe on wheel scrolling', () => {
+    document.body.innerHTML = `
+      <div class="pswp pswp--open">
+        <button class="pswp__button--close" type="button"></button>
+      </div>
+    `
+    const close = document.querySelector<HTMLButtonElement>('.pswp__button--close')!
+    const clickClose = vi.spyOn(close, 'click')
+    const dispose = setupPhotoSwipeClickToClose()
+
+    document.dispatchEvent(new WheelEvent('wheel', { bubbles: true }))
 
     expect(clickClose).toHaveBeenCalledTimes(1)
     dispose()
