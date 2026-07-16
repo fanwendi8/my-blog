@@ -44,5 +44,17 @@ export function configureStoryAlbumPhotoSwipe(photoSwipe: PhotoSwipe): void {
         updateCaption()
       },
     })
+    photoSwipe.ui.registerElement({
+      name: 'story-album-close-proxy',
+      className: 'pswp__button pswp__button--close',
+      isButton: true,
+      appendTo: 'root',
+      onInit(element, instance) {
+        element.hidden = true
+        element.setAttribute('aria-hidden', 'true')
+        element.tabIndex = -1
+        element.addEventListener('click', () => instance.close())
+      },
+    })
   })
 }
