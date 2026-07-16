@@ -115,6 +115,9 @@ describe('galleryPhotoSwipeOptions', () => {
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow:hover', /opacity:\s*\.9/)
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow:focus-visible', /opacity:\s*\.9/)
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__counter', /display:\s*block/)
+    expect(styles).not.toMatch(
+      /\.pswp\.story-album-lightbox\s+\.pswp__button--close\s*(?:,|\{)[^{]*\{[^}]*display\s*:/,
+    )
     expect(styles).not.toContain('.pswp .pswp__button--arrow--prev')
     expect(styles).toContain('border: 1px solid #cfcfcf')
     expect(styles).toContain('padding: 6px')

@@ -4,7 +4,14 @@ import { galleryPhotoSwipeOptions } from './photoSwipeOptions'
 
 export const storyAlbumPhotoSwipeOptions: PhotoSwipeOptions = {
   ...galleryPhotoSwipeOptions,
+  allowPanToNext: true,
+  arrowNext: true,
+  arrowPrev: true,
   arrowKeys: true,
+  close: false,
+  closeOnVerticalDrag: true,
+  counter: true,
+  escKey: true,
   mainClass: 'story-album-lightbox',
   padding: {
     top: 48,

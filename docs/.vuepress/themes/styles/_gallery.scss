@@ -663,7 +663,6 @@ figure.photo-story-gallery__figure > figcaption {
 }
 
 .pswp.story-album-lightbox .pswp__counter,
-.pswp.story-album-lightbox .pswp__button--close,
 .pswp.story-album-lightbox .pswp__button--arrow {
   display: block;
 }
@@ -681,26 +680,38 @@ figure.photo-story-gallery__figure > figcaption {
 
 .pswp.story-album-lightbox .pswp__button--arrow {
   top: 50%;
-  width: 44px;
-  height: 44px;
-  margin-top: -22px;
+  width: 36px;
+  height: 36px;
+  margin-top: -18px;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  opacity: .55;
+  transition: opacity .12s ease;
   visibility: visible;
 }
 
 .pswp.story-album-lightbox .pswp__button--arrow--prev {
-  left: max(18px, env(safe-area-inset-left));
+  left: 8px;
 }
 
 .pswp.story-album-lightbox .pswp__button--arrow--next {
-  right: max(18px, env(safe-area-inset-right));
+  right: 8px;
 }
 
 .pswp.story-album-lightbox .pswp__button--arrow .pswp__icn {
   top: 50%;
   left: 50%;
-  width: 26px;
-  height: 26px;
+  width: 20px;
+  height: 20px;
   margin-top: 0;
+}
+
+.pswp.story-album-lightbox .pswp__button--arrow:hover,
+.pswp.story-album-lightbox .pswp__button--arrow:focus-visible {
+  background: transparent;
+  opacity: .9;
 }
 
 .pswp.story-album-lightbox .pswp__button--arrow--next .pswp__icn {
