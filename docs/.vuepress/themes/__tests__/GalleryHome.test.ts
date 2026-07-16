@@ -30,8 +30,6 @@ vi.mock('../composables/useGalleryData', () => ({
         w: 600,
         h: 400,
         alt: 'B',
-        placeholder: 'data:image/jpeg;base64,abc',
-        bg: '#123456',
       },
     ]),
     stories: ref([
@@ -55,13 +53,11 @@ describe('GalleryHome', () => {
     expect(wrapper.find('.router-link-stub').attributes('href')).toBe('/gallery/late/')
   })
 
-  it('resolves object photo sources for story covers', () => {
+  it('resolves object photo sources without placeholder styling for story covers', () => {
     const wrapper = mount(GalleryHome)
 
     const images = wrapper.findAll('.gallery-story-card__cover img')
     expect(images[1].attributes('src')).toBe('/gallery-img/b-thumb.webp')
-    expect(images[1].attributes('style')).toContain('background-color: rgb(18, 52, 86)')
-    expect(images[1].attributes('style')).toContain('data:image/jpeg;base64,abc')
-    expect(images[1].attributes('style')).toContain('background-size: cover')
+    expect(images[1].attributes('style')).toBeUndefined()
   })
 })

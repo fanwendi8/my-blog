@@ -6,8 +6,6 @@ export interface Photo {
   alt?: string
   title?: string | null
   caption?: string | null
-  placeholder?: string | null
-  bg?: string | null
 }
 
 export interface PhotoSourceSet {
