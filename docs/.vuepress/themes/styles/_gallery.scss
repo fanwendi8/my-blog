@@ -242,7 +242,7 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
   aspect-ratio: 4 / 3;
   place-items: center;
   overflow: hidden;
-  background: var(--gallery-panel);
+  background: var(--gallery-panel, #fff);
   color: inherit;
   text-decoration: none;
 }
