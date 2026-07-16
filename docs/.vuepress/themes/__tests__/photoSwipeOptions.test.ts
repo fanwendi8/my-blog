@@ -34,6 +34,17 @@ describe('galleryPhotoSwipeOptions', () => {
     expect(storyAlbumPhotoSwipeOptions.arrowKeys).toBe(true)
     expect(storyAlbumPhotoSwipeOptions.allowPanToNext).toBe(true)
     expect(storyAlbumPhotoSwipeOptions.mainClass).toBe('story-album-lightbox')
+
+    expect(storyAlbumPhotoSwipeOptions.padding).toEqual({
+      top: 48,
+      right: expect.any(Number),
+      bottom: 48,
+      left: expect.any(Number),
+    })
+    const padding = storyAlbumPhotoSwipeOptions.padding
+    if (!padding) throw new Error('Story album padding must be configured')
+    expect(padding.left).toBeGreaterThanOrEqual(44)
+    expect(padding.right).toBeGreaterThanOrEqual(44)
   })
 
   it('keeps the original narrower horizontal global padding', () => {
