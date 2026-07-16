@@ -98,7 +98,7 @@ describe('galleryStoriesPlugin', () => {
 })
 
 describe('galleryStoryPagesPlugin', () => {
-  it('disables aside and outline for gallery story pages only', () => {
+  it('disables aside, outline, and comments for gallery story pages only', () => {
     const plugin = galleryStoryPagesPlugin('/project/docs/gallery')
     const story = {
       filePath: '/project/docs/gallery/daily.md',
@@ -112,7 +112,11 @@ describe('galleryStoryPagesPlugin', () => {
     plugin.extendsPage?.(story as never)
     plugin.extendsPage?.(home as never)
 
-    expect(story.frontmatter).toMatchObject({ aside: false, outline: false })
+    expect(story.frontmatter).toMatchObject({
+      aside: false,
+      outline: false,
+      comments: false,
+    })
     expect(home.frontmatter).toEqual({})
   })
 })
@@ -128,14 +132,14 @@ describe('galleryPhotosPlugin', () => {
           src: { thumb: { webp: 'a/thumb.webp', w: 480 }, large: { avif: 'a/large.avif', w: 2560 } },
           w: 600,
           h: 400,
-          placeholder: 'data:image/jpeg;base64,abc',
-          bg: '#123456',
         },
       ]))
       const plugin = galleryPhotosPlugin(manifest)
 
       expect(plugin.resolveId?.('virtual:gallery-photos')).toBe('\0virtual:gallery-photos')
-      expect(await plugin.load?.('\0virtual:gallery-photos')).toContain('data:image/jpeg;base64,abc')
+      const result = await plugin.load?.('\0virtual:gallery-photos')
+      expect(result).not.toContain('placeholder')
+      expect(result).not.toContain('bg')
     } finally {
       await rm(root, { recursive: true, force: true })
     }

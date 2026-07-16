@@ -146,6 +146,7 @@ export function galleryStoryPagesPlugin(galleryDir: string): PluginObject {
       if (!isGalleryStoryPage(page.filePath)) return
       page.frontmatter.aside ??= false
       page.frontmatter.outline ??= false
+      page.frontmatter.comments ??= false
     },
   }
 }
