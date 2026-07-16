@@ -9,6 +9,7 @@ import PhotoStoryHeader from './themes/components/gallery/PhotoStoryHeader.vue'
 import StoryPhoto from './themes/components/gallery/StoryPhoto.vue'
 import StoryPhotos from './themes/components/gallery/StoryPhotos.vue'
 import StorySplit from './themes/components/gallery/StorySplit.vue'
+import StoryAlbum from './themes/components/gallery/StoryAlbum.vue'
 import { setupOutlineRouteReset } from './themes/composables/setupOutlineRouteReset'
 import { setupPhotoSwipeClickToClose } from './themes/gallery/photoSwipeClickToClose'
 import { galleryPhotoSwipeOptions } from './themes/gallery/photoSwipeOptions'
@@ -31,6 +32,7 @@ export default defineClientConfig({
     app.component('StoryPhoto', StoryPhoto)
     app.component('StoryPhotos', StoryPhotos)
     app.component('StorySplit', StorySplit)
+    app.component('StoryAlbum', StoryAlbum)
   },
   setup() {
     definePhotoSwipeConfig(galleryPhotoSwipeOptions)
