@@ -70,6 +70,7 @@ describe('galleryPhotoSwipeOptions', () => {
       expectScopedStyle(styles, selector, /display:\s*none/)
     }
     expectScopedStyle(styles, 'html:has(.photo-story-page)', /--vp-layout-top-height:\s*0px/)
+    expectScopedStyle(styles, 'html:has(.photo-story-page)', /--vp-nav-height:\s*0px/)
 
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow', /width:\s*36px/)
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow', /height:\s*36px/)
