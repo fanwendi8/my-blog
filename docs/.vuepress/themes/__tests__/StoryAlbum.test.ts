@@ -105,6 +105,16 @@ describe('StoryAlbum', () => {
     expect(wrapper.find('.story-album__back').attributes('href')).toBe('/gallery/')
   })
 
+  it('renders an icon-only back link with an accessible name and tooltip', () => {
+    const wrapper = mount(StoryAlbum, { props: { ids: ['b'] } })
+    const back = wrapper.get('.story-album__back')
+
+    expect(back.attributes('aria-label')).toBe('返回瞳画')
+    expect(back.attributes('title')).toBe('返回瞳画')
+    expect(back.text()).toBe('')
+    expect(back.find('svg').exists()).toBe(true)
+  })
+
   it('opens an ordered story lightbox at the clicked item', async () => {
     const wrapper = mount(StoryAlbum, {
       props: { ids: ['b', 'missing', 'a'], captions: { b: 'Stacked sky' } },
