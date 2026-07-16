@@ -51,6 +51,8 @@ describe('GalleryHome', () => {
     expect(wrapper.text()).toContain('2024')
     expect(wrapper.findAll('.gallery-story-card')).toHaveLength(2)
     expect(wrapper.find('.router-link-stub').attributes('href')).toBe('/gallery/late/')
+    expect(wrapper.find('.gallery-story-card time').attributes('datetime')).toBe('2025-01-01')
+    expect(wrapper.find('.gallery-story-card time').text()).toBe('2025-01-01')
   })
 
   it('resolves object photo sources without placeholder styling for story covers', () => {

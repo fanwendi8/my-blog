@@ -76,6 +76,7 @@ function srcOf(photo: Photo) {
               </span>
               <span class="gallery-story-card__title">{{ story.title }}</span>
               <span v-if="story.location" class="gallery-story-card__meta">{{ story.location }}</span>
+              <time class="gallery-story-card__meta" :datetime="story.date">{{ story.date }}</time>
             </RouterLink>
           </div>
         </div>
