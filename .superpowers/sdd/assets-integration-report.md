@@ -20,7 +20,14 @@ The remaining IDs retain their original order: `9f59a0e0c481`, `98a9c0597e73`, `
 
 ## Publication status
 
-No `gallery:sync` command was run, and no R2 or CDN upload was attempted. The local derivatives are ready, but publishing the seven CDN thumbnails still requires authorized R2/CDN release access.
+The current HEAD CDN check found the following status:
+
+- Thumbnails: `afb0b234ec65-thumb.webp` = `200`; `21a2f94b9ca5-thumb.webp`, `98a9c0597e73-thumb.webp`, `9f59a0e0c481-thumb.webp`, `001ecf2a8ee4-thumb.webp`, `09702dde0f54-thumb.webp`, and `eac7d5eae3f3-thumb.webp` = `404`.
+- Large derivatives: `21a2f94b9ca5-large.avif`, `98a9c0597e73-large.avif`, `9f59a0e0c481-large.avif`, and `afb0b234ec65-large.avif` = `200`; `001ecf2a8ee4-large.avif`, `09702dde0f54-large.avif`, and `eac7d5eae3f3-large.avif` = `404`.
+
+These new derivative files have not yet been synced with `gallery:sync`; local generation must not be treated as online publication. Consequently, the online story lightbox large assets for the three new IDs (`eac7d5eae3f3`, `09702dde0f54`, and `001ecf2a8ee4`) will also return `404` until they are published.
+
+No `gallery:sync` command was run, and no R2 or CDN upload was attempted. Publishing still requires authorized R2/CDN release access.
 
 ## Verification
 
