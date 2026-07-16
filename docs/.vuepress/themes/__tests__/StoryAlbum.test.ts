@@ -117,8 +117,10 @@ describe('StoryAlbum', () => {
     expect(back.attributes('title')).toBe('返回瞳画')
     expect(back.text()).toBe('')
     expect(back.find('svg').exists()).toBe(true)
+    expect(back.find('path').attributes('d')).toBe('M11.5 4.5 6 10l5.5 5.5')
     expect(backRule).toMatch(/min-width:\s*32px/)
     expect(backRule).toMatch(/min-height:\s*32px/)
+    expect(backRule).toMatch(/display:\s*inline-flex/)
   })
 
   it('opens an ordered story lightbox at the clicked item', async () => {
