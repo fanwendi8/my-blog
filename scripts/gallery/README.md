@@ -13,7 +13,7 @@ The image build writes:
 - `docs/.vuepress/public/gallery/data/photos.json`
 - `docs/.vuepress/public/gallery-img/<photo-id>-<size>.<format>`
 
-`gallery:build` writes derivatives directly to `docs/.vuepress/public/gallery-img/` and prunes that directory to the current files in `gallery-staging/`.
+`gallery:build` writes derivatives directly to `docs/.vuepress/public/gallery-img/` and prunes that directory to the current files in `gallery-staging/`. Both cover and story photos generate `thumb.webp`; `large.avif` is reserved for large-image viewing.
 
 ## R2 同步
 
@@ -126,5 +126,3 @@ pageClass: photo-story-page
 |---|---|
 | `thumb.webp` | 长边 480, 图库网格和专辑封面 |
 | `large.avif` | 长边 3840, 故事正文和 Lightbox |
-
-manifest 还会为每张图片写入 `placeholder` 和 `bg`,用于图片加载前的低清占位和主色背景。

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
 import { PATHS, R2, DERIVATIVES } from './config.mjs'
 import { scanDirectory, contentHash } from './scan.mjs'
-import { derivativeManifest, generateDerivatives, generatePlaceholder } from './derivatives.mjs'
+import { derivativeManifest, generateDerivatives } from './derivatives.mjs'
 import {
   mergePhotos, writeManifest, readPhotosOrEmpty,
 } from './manifest.mjs'
@@ -21,6 +21,18 @@ export function fileMetaKey(file, stagingRoot = PATHS.staging) {
   const normalized = file.replaceAll('\\', '/')
   if (!path.isAbsolute(file)) return normalized.replace(/^\/+/, '')
   return path.relative(stagingRoot, file).replaceAll('\\', '/')
+}
+
+export function createPhotoRecord({ id, src, size, fileMeta = {}, previous = null }) {
+  return {
+    id,
+    src,
+    w: previous?.w ?? size.w,
+    h: previous?.h ?? size.h,
+    title: fileMeta.title ?? previous?.title ?? null,
+    alt: fileMeta.alt ?? previous?.alt ?? previous?.title ?? '',
+    caption: fileMeta.caption ?? previous?.caption ?? null,
+  }
 }
 
 async function readImageSize(file) {
@@ -71,40 +83,27 @@ async function main() {
     if (prevById.has(id) && !DRY) {
       await generateDerivatives(file, id, PATHS.publicImages, specs)
       const prevPhoto = prevById.get(id)
-      const preview = isBlurredPlaceholder(prevPhoto.placeholder) && prevPhoto.bg
-        ? { placeholder: prevPhoto.placeholder, bg: prevPhoto.bg }
-        : await generatePlaceholder(file)
-      const p = {
+      next.push(createPhotoRecord({
         id,
         src: derivativeManifest(id, specs),
-        w: prevPhoto.w,
-        h: prevPhoto.h,
-        title: prevPhoto.title ?? null,
-        alt: prevPhoto.alt ?? prevPhoto.title ?? '',
-        caption: prevPhoto.caption ?? null,
-        ...preview,
-      }
-      next.push(p)
+        size: prevPhoto,
+        previous: prevPhoto,
+      }))
       continue
     }
     console.log(`[gallery] ${id}  ${path.relative(PATHS.staging, file)}`)
     const src = await generateDerivatives(file, id, PATHS.publicImages, specs)
     const size = await readImageSize(file)
-    const preview = await generatePlaceholder(file)
 
     // 从 meta.json 读取轻量标题和配文
     const fileMeta = fileMetaMap.get(fileMetaKey(file))
 
-    next.push({
+    next.push(createPhotoRecord({
       id,
       src,
-      w: size.w,
-      h: size.h,
-      title: fileMeta?.title ?? null,
-      alt: fileMeta?.alt ?? fileMeta?.title ?? '',
-      caption: fileMeta?.caption ?? null,
-      ...preview,
-    })
+      size,
+      fileMeta,
+    }))
   }
 
   // 只保留当前存在的文件对应的照片（清理已删除的文件）
@@ -150,10 +149,4 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
     console.error('[gallery] build failed:', e.message)
     process.exit(1)
   })
-}
-
-function isBlurredPlaceholder(value) {
-  return typeof value === 'string'
-    && value.startsWith('data:image/svg+xml;charset=utf-8,')
-    && decodeURIComponent(value).includes('gallery-placeholder-v5')
 }

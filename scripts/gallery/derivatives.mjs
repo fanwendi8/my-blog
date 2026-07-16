@@ -43,55 +43,6 @@ export function derivativeManifest(id, specs) {
   return result
 }
 
-export async function generatePlaceholder(srcPath) {
-  const image = sharp(srcPath)
-  const { dominant } = await image.clone().stats()
-  const placeholder = await image
-    .clone()
-    .resize({ width: 128, withoutEnlargement: true })
-    .jpeg({ quality: 55, mozjpeg: true })
-    .toBuffer()
-  const placeholderMeta = await sharp(placeholder).metadata()
-
-  return {
-    placeholder: svgPlaceholder(
-      `data:image/jpeg;base64,${placeholder.toString('base64')}`,
-      placeholderMeta.width ?? 128,
-      placeholderMeta.height ?? 86,
-    ),
-    bg: rgbToHex(dominant.r, dominant.g, dominant.b),
-  }
-}
-
-function svgPlaceholder(imageHref, width, height) {
-  const svg = [
-    `<svg xmlns='http://www.w3.org/2000/svg' width='${width}' height='${height}' viewBox='0 0 ${width} ${height}'>`,
-    '<metadata>gallery-placeholder-v5</metadata>',
-    "<filter id='b' color-interpolation-filters='sRGB' x='-20%' y='-20%' width='140%' height='140%'>",
-    "<feGaussianBlur stdDeviation='4'/>",
-    "<feColorMatrix values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 100 -1' result='s'/>",
-    "<feFlood x='0' y='0' width='100%' height='100%'/>",
-    "<feComposite operator='out' in='s'/>",
-    "<feComposite in2='SourceGraphic'/>",
-    "<feGaussianBlur stdDeviation='4'/>",
-    '</filter>',
-    `<image width='${width}' height='${height}' x='0' y='0' preserveAspectRatio='xMidYMid' style='filter:url(#b);' href='${imageHref}'/>`,
-    '</svg>',
-  ].join('')
-  return `data:image/svg+xml;charset=utf-8,${encodeSvgData(svg)}`
-}
-
-function encodeSvgData(svg) {
-  return encodeURIComponent(svg)
-    .replace(/[!'()*]/g, char => `%${char.charCodeAt(0).toString(16).toUpperCase()}`)
-}
-
-function rgbToHex(r, g, b) {
-  return `#${[r, g, b]
-    .map(channel => Math.round(channel).toString(16).padStart(2, '0'))
-    .join('')}`
-}
-
 async function exists(p) {
   try { await fs.access(p); return true } catch { return false }
 }
