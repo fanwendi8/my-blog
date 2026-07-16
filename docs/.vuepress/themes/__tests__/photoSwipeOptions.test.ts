@@ -81,6 +81,7 @@ describe('galleryPhotoSwipeOptions', () => {
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow .pswp__icn', /height:\s*20px/)
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow:hover', /opacity:\s*\.9/)
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow:focus-visible', /opacity:\s*\.9/)
+    expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__counter', /display:\s*block/)
     expect(styles).not.toContain('.pswp .pswp__button--arrow--prev')
   })
 })
