@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useGalleryData } from '../../composables/useGalleryData'
 import { largeSrc, thumbSrc } from '../../gallery/photoSources'
-import { galleryPhotoSwipeOptions } from '../../gallery/photoSwipeOptions'
+import { configureStoryAlbumPhotoSwipe, storyAlbumPhotoSwipeOptions } from '../../gallery/storyAlbumPhotoSwipe'
 import { createStoryPhotoSwipeItems } from '../../gallery/storyPhotoSwipe'
 import type { Photo } from '../../gallery/types'
 
@@ -27,6 +27,14 @@ function captionOf(photo: Photo) {
   return props.captions?.[photo.id] ?? photo.caption ?? undefined
 }
 
+function captionId(index: number) {
+  return `story-album-caption-${index + 1}`
+}
+
+function accessibleLabel(photo: Photo, index: number) {
+  return photo.alt?.trim() || photo.title?.trim() || `查看照片 ${index + 1}`
+}
+
 async function openPhotoSwipe(event: MouseEvent, index: number) {
   if (typeof window === 'undefined') return
   if (event.button !== 0 || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return
@@ -35,15 +43,15 @@ async function openPhotoSwipe(event: MouseEvent, index: number) {
 
   const { default: PhotoSwipe } = await import('photoswipe')
   const pswp = new PhotoSwipe({
-    ...galleryPhotoSwipeOptions,
+    ...storyAlbumPhotoSwipeOptions,
     dataSource: createStoryPhotoSwipeItems(photos.value, props.ids, props.captions),
     index,
     preloaderDelay: 0,
     showHideAnimationType: 'zoom',
     closeOnVerticalDrag: true,
-    wheelToZoom: false,
   })
 
+  configureStoryAlbumPhotoSwipe(pswp)
   pswp.init()
 }
 </script>
@@ -58,6 +66,8 @@ async function openPhotoSwipe(event: MouseEvent, index: number) {
       <a
         class="story-album__frame"
         :href="largeSrc(photo)"
+        :aria-label="accessibleLabel(photo, index)"
+        :aria-describedby="captionOf(photo) ? captionId(index) : undefined"
         @click="openPhotoSwipe($event, index)"
       >
         <img
@@ -71,7 +81,7 @@ async function openPhotoSwipe(event: MouseEvent, index: number) {
           no-view
         >
       </a>
-      <figcaption v-if="captionOf(photo)" class="story-album__caption">
+      <figcaption v-if="captionOf(photo)" :id="captionId(index)" class="story-album__caption">
         {{ captionOf(photo) }}
       </figcaption>
     </figure>

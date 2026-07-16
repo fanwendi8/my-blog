@@ -119,6 +119,18 @@ describe('galleryStoryPagesPlugin', () => {
     })
     expect(home.frontmatter).toEqual({})
   })
+
+  it('overrides an explicitly enabled comment setting on gallery stories', () => {
+    const plugin = galleryStoryPagesPlugin('/project/docs/gallery')
+    const story = {
+      filePath: '/project/docs/gallery/daily.md',
+      frontmatter: { comments: true },
+    }
+
+    plugin.extendsPage?.(story as never)
+
+    expect(story.frontmatter.comments).toBe(false)
+  })
 })
 
 describe('galleryPhotosPlugin', () => {

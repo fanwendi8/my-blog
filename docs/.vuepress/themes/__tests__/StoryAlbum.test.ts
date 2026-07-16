@@ -4,12 +4,19 @@ import { defineComponent, h, ref } from 'vue'
 import StoryAlbum from '../components/gallery/StoryAlbum.vue'
 
 const photoSwipe = vi.hoisted(() => ({
+  addFilter: vi.fn(),
   construct: vi.fn(),
   init: vi.fn(),
+  on: vi.fn(),
+  registerElement: vi.fn(),
 }))
 
 vi.mock('photoswipe', () => ({
   default: class PhotoSwipe {
+    addFilter = photoSwipe.addFilter
+    on = photoSwipe.on
+    ui = { registerElement: photoSwipe.registerElement }
+
     constructor(options: unknown) {
       photoSwipe.construct(options)
     }
@@ -62,6 +69,15 @@ vi.mock('../composables/useGalleryData', () => ({
         h: 600,
         alt: 'C',
       },
+      {
+        id: 'empty',
+        src: {
+          thumb: { webp: 'empty-thumb.webp' },
+          large: { avif: 'empty-large.avif' },
+        },
+        w: 800,
+        h: 600,
+      },
     ]),
     stories: ref([]),
     ready: ref(true),
@@ -73,6 +89,7 @@ vi.mock('../composables/useGalleryData', () => ({
 describe('StoryAlbum', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    photoSwipe.on.mockReset()
   })
 
   it('renders photos in ids order with 4:3 frames and optional captions', () => {
@@ -109,8 +126,70 @@ describe('StoryAlbum', () => {
         }),
       ],
       index: 0,
+      mainClass: 'story-album-lightbox',
+      zoom: false,
+      pinchToClose: false,
+      wheelToZoom: false,
     }))
+    expect(photoSwipe.addFilter).toHaveBeenCalledWith('isContentZoomable', expect.any(Function))
+    expect(photoSwipe.addFilter.mock.calls[0][1](true)).toBe(false)
     expect(photoSwipe.init).toHaveBeenCalledOnce()
+  })
+
+  it('registers a visible lightbox caption from the active story slide', async () => {
+    let uiRegister: (() => void) | undefined
+    let onChange: (() => void) | undefined
+    photoSwipe.on.mockImplementation((event: string, handler: () => void) => {
+      if (event === 'uiRegister') uiRegister = handler
+      if (event === 'change') onChange = handler
+    })
+    const wrapper = mount(StoryAlbum, {
+      props: { ids: ['b'], captions: { b: 'Stacked sky' } },
+    })
+
+    await wrapper.find('.story-album__frame').trigger('click')
+    await vi.dynamicImportSettled()
+
+    expect(uiRegister).toEqual(expect.any(Function))
+    uiRegister?.()
+    expect(photoSwipe.registerElement).toHaveBeenCalledWith(expect.objectContaining({
+      name: 'story-album-caption',
+      className: 'story-album-lightbox__caption',
+      appendTo: 'root',
+      onInit: expect.any(Function),
+    }))
+    const options = photoSwipe.registerElement.mock.calls[0][0]
+    const element = document.createElement('div')
+    const instance = {
+      currSlide: { data: { caption: 'Stacked sky' } },
+      on: photoSwipe.on,
+    }
+
+    options.onInit(element, instance)
+    expect(element.textContent).toBe('Stacked sky')
+    expect(element.hidden).toBe(false)
+
+    instance.currSlide.data.caption = undefined
+    onChange?.()
+    expect(element.textContent).toBe('')
+    expect(element.hidden).toBe(true)
+  })
+
+  it('gives every album frame an accessible name when metadata is empty', () => {
+    const wrapper = mount(StoryAlbum, { props: { ids: ['empty'] } })
+
+    expect(wrapper.findAll('.story-album__frame').map((frame) => frame.attributes('aria-label')))
+      .toEqual(['查看照片 1'])
+  })
+
+  it('associates a provided caption with its frame accessible name', () => {
+    const wrapper = mount(StoryAlbum, {
+      props: { ids: ['b'], captions: { b: 'Stacked sky' } },
+    })
+
+    const frame = wrapper.get('.story-album__frame')
+    const caption = wrapper.get('.story-album__caption')
+    expect(frame.attributes('aria-describedby')).toBe(caption.attributes('id'))
   })
 
   it('preserves native modified-click behavior on album links', async () => {

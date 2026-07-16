@@ -2,7 +2,7 @@ import type { PhotoSwipeOptions } from 'photoswipe'
 
 export const galleryPhotoSwipeOptions: PhotoSwipeOptions = {
   allowPanToNext: false,
-  arrowKeys: true,
+  arrowKeys: false,
   bgClickAction: 'close',
   bgOpacity: 1,
   doubleTapAction: false,
@@ -10,9 +10,9 @@ export const galleryPhotoSwipeOptions: PhotoSwipeOptions = {
   loop: false,
   padding: {
     top: 48,
-    right: 48,
+    right: 24,
     bottom: 48,
-    left: 48,
+    left: 24,
   },
   tapAction: 'close',
 }
