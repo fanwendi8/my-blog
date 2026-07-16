@@ -9,6 +9,39 @@ function expectScopedStyle(styles: string, selector: string, declaration: RegExp
   expect(styles).toMatch(new RegExp(`${escapedSelector}(?=\\s*(?:,|\\{))[^{}]*\\{[^{}]*${declaration.source}`))
 }
 
+function expectNoUnscopedStoryNavigationStyles(styles: string): void {
+  const unscopedNavbarRules: string[] = []
+  const unscopedHeightRules: string[] = []
+  const cssWithoutComments = styles.replace(/\/\*[\s\S]*?\*\//g, '')
+
+  for (const [, rawSelector, declarations] of cssWithoutComments.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const selectors = rawSelector
+      .split(',')
+      .map(selector => selector.replace(/\s+/g, ' ').trim())
+      .filter(Boolean)
+    const isStoryScoped = (selector: string): boolean =>
+      /^(?:html:has\(\s*\.photo-story-page\s*\)|\.photo-story-page)(?:\s|[>+~]|$)/.test(selector)
+    const hasNavbarTarget = (selector: string): boolean =>
+      /(?:^|[\s>+~])\.(?:vp-nav|vp-navbar-title|vp-navbar-menu|vp-navbar-hamburger|vp-nav-screen)(?=$|[\s.#:[>+~])/.test(selector)
+    const hasHeightReset = /(?:^|;)\s*--vp-(?:layout-top-height|nav-height)\s*:\s*0(?:px)?\b/.test(declarations)
+    const hasDisplayNone = /(?:^|;)\s*display\s*:\s*none\b/.test(declarations)
+
+    if (hasDisplayNone) {
+      unscopedNavbarRules.push(
+        ...selectors.filter(selector => hasNavbarTarget(selector) && !isStoryScoped(selector)),
+      )
+    }
+    if (hasHeightReset) {
+      unscopedHeightRules.push(
+        ...selectors.filter(selector => !isStoryScoped(selector)),
+      )
+    }
+  }
+
+  expect(unscopedNavbarRules).toEqual([])
+  expect(unscopedHeightRules).toEqual([])
+}
+
 describe('galleryPhotoSwipeOptions', () => {
   it('keeps the existing global image click behavior', () => {
     expect(galleryPhotoSwipeOptions.imageClickAction).toBe('close')
@@ -83,5 +116,11 @@ describe('galleryPhotoSwipeOptions', () => {
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow:focus-visible', /opacity:\s*\.9/)
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__counter', /display:\s*block/)
     expect(styles).not.toContain('.pswp .pswp__button--arrow--prev')
+  })
+
+  it('rejects unscoped story navigation hiding and height resets', () => {
+    const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
+
+    expectNoUnscopedStoryNavigationStyles(styles)
   })
 })
