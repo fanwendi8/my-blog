@@ -127,6 +127,16 @@ describe('StoryAlbum', () => {
     expect(backRule).toMatch(/display:\s*inline-flex/)
   })
 
+  it('keeps the StoryAlbum grid gap at 20px on mobile', () => {
+    const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
+    const mobileAlbumRule = styles.match(
+      /@media\s*\(max-width:\s*719px\)[\s\S]*?\.story-album\s*\{([^}]*)\}/,
+    )?.[1] ?? ''
+
+    expect(mobileAlbumRule).toMatch(/gap:\s*20px/)
+    expect(mobileAlbumRule).not.toMatch(/gap:\s*12px/)
+  })
+
   it('opens an ordered story lightbox at the clicked item', async () => {
     const wrapper = mount(StoryAlbum, {
       props: { ids: ['b', 'missing', 'a'], captions: { b: 'Stacked sky' } },
