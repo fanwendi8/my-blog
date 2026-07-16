@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent, h, ref } from 'vue'
@@ -108,11 +110,15 @@ describe('StoryAlbum', () => {
   it('renders an icon-only back link with an accessible name and tooltip', () => {
     const wrapper = mount(StoryAlbum, { props: { ids: ['b'] } })
     const back = wrapper.get('.story-album__back')
+    const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
+    const backRule = styles.match(/\.story-album__back\s*\{[^}]*\}/)?.[0] ?? ''
 
     expect(back.attributes('aria-label')).toBe('返回瞳画')
     expect(back.attributes('title')).toBe('返回瞳画')
     expect(back.text()).toBe('')
     expect(back.find('svg').exists()).toBe(true)
+    expect(backRule).toMatch(/min-width:\s*32px/)
+    expect(backRule).toMatch(/min-height:\s*32px/)
   })
 
   it('opens an ordered story lightbox at the clicked item', async () => {

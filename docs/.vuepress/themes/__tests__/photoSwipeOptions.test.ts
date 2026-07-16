@@ -4,6 +4,11 @@ import { describe, expect, it } from 'vitest'
 import { galleryPhotoSwipeOptions } from '../gallery/photoSwipeOptions'
 import { storyAlbumPhotoSwipeOptions } from '../gallery/storyAlbumPhotoSwipe'
 
+function expectScopedStyle(styles: string, selector: string, declaration: RegExp): void {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  expect(styles).toMatch(new RegExp(`${escapedSelector}(?=\\s*(?:,|\\{))[^{}]*\\{[^{}]*${declaration.source}`))
+}
+
 describe('galleryPhotoSwipeOptions', () => {
   it('keeps the existing global image click behavior', () => {
     expect(galleryPhotoSwipeOptions.imageClickAction).toBe('close')
@@ -17,12 +22,15 @@ describe('galleryPhotoSwipeOptions', () => {
     expect(galleryPhotoSwipeOptions.allowPanToNext).toBe(false)
   })
 
-  it('keeps story navigation controls enabled without a close button', () => {
+  it('keeps story navigation, keyboard, swipe, and close behavior explicit', () => {
     expect(storyAlbumPhotoSwipeOptions.close).toBe(false)
     expect(storyAlbumPhotoSwipeOptions.arrowPrev).toBe(true)
     expect(storyAlbumPhotoSwipeOptions.arrowNext).toBe(true)
     expect(storyAlbumPhotoSwipeOptions.counter).toBe(true)
     expect(storyAlbumPhotoSwipeOptions.loop).toBe(false)
+    expect(storyAlbumPhotoSwipeOptions.closeOnVerticalDrag).toBe(true)
+    expect(storyAlbumPhotoSwipeOptions.arrowKeys).toBe(true)
+    expect(storyAlbumPhotoSwipeOptions.allowPanToNext).toBe(false)
     expect(storyAlbumPhotoSwipeOptions.mainClass).toBe('story-album-lightbox')
   })
 
@@ -39,12 +47,24 @@ describe('galleryPhotoSwipeOptions', () => {
   it('scopes album-only PhotoSwipe controls to the StoryAlbum main class', () => {
     const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
 
-    expect(styles).toContain('html:has(.photo-story-page) .vp-nav')
-    expect(styles).toContain('html:has(.photo-story-page) .vp-nav-screen')
-    expect(styles).toContain('html:has(.photo-story-page) .vp-navbar-hamburger')
-    expect(styles).toContain('--vp-layout-top-height: 0px')
-    expect(styles).toContain('.pswp.story-album-lightbox .pswp__button--arrow')
-    expect(styles).toContain('.pswp.story-album-lightbox .story-album-lightbox__caption')
+    for (const selector of [
+      'html:has(.photo-story-page) .vp-nav',
+      'html:has(.photo-story-page) .vp-navbar-title',
+      'html:has(.photo-story-page) .vp-navbar-menu',
+      'html:has(.photo-story-page) .vp-navbar-hamburger',
+      'html:has(.photo-story-page) .vp-nav-screen',
+    ]) {
+      expectScopedStyle(styles, selector, /display:\s*none/)
+    }
+    expectScopedStyle(styles, 'html:has(.photo-story-page)', /--vp-layout-top-height:\s*0px/)
+
+    expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow', /width:\s*36px/)
+    expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow', /height:\s*36px/)
+    expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow', /opacity:\s*\.55/)
+    expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow .pswp__icn', /width:\s*20px/)
+    expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow .pswp__icn', /height:\s*20px/)
+    expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow:hover', /opacity:\s*\.9/)
+    expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow:focus-visible', /opacity:\s*\.9/)
     expect(styles).not.toContain('.pswp .pswp__button--arrow--prev')
   })
 })
