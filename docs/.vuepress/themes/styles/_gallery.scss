@@ -237,7 +237,7 @@ html:has(.photo-story-page) .vp-nav-screen {
 .story-album {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  gap: 20px;
   width: 100%;
   max-width: var(--story-media-width);
   margin: 0 0 48px;
@@ -255,7 +255,11 @@ html:has(.photo-story-page) .vp-nav-screen {
   aspect-ratio: 4 / 3;
   place-items: center;
   overflow: hidden;
+  border: 1px solid #cfcfcf;
+  border-radius: 0;
+  padding: 6px;
   background: var(--gallery-panel, #fff);
+  box-shadow: none;
   color: inherit;
   text-decoration: none;
 }
