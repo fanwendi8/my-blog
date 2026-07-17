@@ -125,6 +125,7 @@ describe('StoryAlbum', () => {
     expect(backRule).toMatch(/min-width:\s*32px/)
     expect(backRule).toMatch(/min-height:\s*32px/)
     expect(backRule).toMatch(/display:\s*inline-flex/)
+    expect(backRule).toMatch(/justify-self:\s*center/)
   })
 
   it('keeps the StoryAlbum grid gap at 20px on mobile', () => {
@@ -135,6 +136,24 @@ describe('StoryAlbum', () => {
 
     expect(mobileAlbumRule).toMatch(/gap:\s*20px/)
     expect(mobileAlbumRule).not.toMatch(/gap:\s*12px/)
+  })
+
+  it('uses a white 6px mat with four subtle corner marks instead of a continuous frame', () => {
+    const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
+    const frameRule = styles.match(/\.story-album__frame\s*\{([^}]*)\}/)?.[1] ?? ''
+    const imageRule = styles.match(/\.story-album__image\s*\{([^}]*)\}/)?.[1] ?? ''
+    const hoverRule = styles.match(/\.story-album__frame:hover \.story-album__image\s*\{([^}]*)\}/)?.[1] ?? ''
+    const cornerLines = frameRule.match(/linear-gradient\(#cfcfcf 0 0\)/g) ?? []
+
+    expect(frameRule).toMatch(/aspect-ratio:\s*4\s*\/\s*3/)
+    expect(frameRule).toMatch(/padding:\s*6px/)
+    expect(frameRule).toMatch(/background-color:\s*#fff/)
+    expect(cornerLines).toHaveLength(8)
+    expect(frameRule).toMatch(/background-size:[\s\S]*?var\(--story-frame-corner-length\)\s+1px/)
+    expect(frameRule).not.toMatch(/\bborder\s*:/)
+    expect(frameRule).not.toMatch(/border-radius|box-shadow/)
+    expect(imageRule).toMatch(/object-fit:\s*contain/)
+    expect(hoverRule).toMatch(/^\s*opacity:\s*\.64\s*;?\s*$/)
   })
 
   it('opens an ordered story lightbox at the clicked item', async () => {

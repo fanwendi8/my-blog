@@ -115,14 +115,12 @@ describe('galleryPhotoSwipeOptions', () => {
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow:hover', /opacity:\s*\.9/)
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__button--arrow:focus-visible', /opacity:\s*\.9/)
     expectScopedStyle(styles, '.pswp.story-album-lightbox .pswp__counter', /display:\s*block/)
+    const storyCounterRule = styles.match(/\.pswp\.story-album-lightbox \.pswp__counter\s*\{([^}]*)\}/)?.[1] ?? ''
+    expect(storyCounterRule).not.toMatch(/(?:^|;)\s*(?:position|top|right|bottom|left|text-align)\s*:/)
     expect(styles).not.toMatch(
       /\.pswp\.story-album-lightbox\s+\.pswp__button--close\s*(?:,|\{)[^{]*\{[^}]*display\s*:/,
     )
     expect(styles).not.toContain('.pswp .pswp__button--arrow--prev')
-    expect(styles).toContain('border: 1px solid #cfcfcf')
-    expect(styles).toContain('padding: 6px')
-    expect(styles).toContain('gap: 20px')
-    expect(styles).toContain('box-shadow: none')
   })
 
   it('rejects unscoped story navigation hiding and height resets', () => {

@@ -135,8 +135,6 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 }
 
 .photo-story-page {
-  --story-title-width: 720px;
-  --story-text-width: 600px;
   --story-media-width: min(1080px, calc(100vw - 48px));
   --story-page-gutter: 24px;
 }
@@ -171,10 +169,10 @@ html:has(.photo-story-page) .vp-nav-screen {
 }
 
 .photo-story-header {
-  max-width: var(--story-title-width);
-  margin: 12px auto 28px;
+  max-width: var(--story-media-width);
+  margin: 12px 0 28px;
   padding: 0;
-  text-align: center;
+  text-align: left;
 }
 
 .photo-story-header h1 {
@@ -189,7 +187,7 @@ html:has(.photo-story-page) .vp-nav-screen {
 .photo-story-header__meta {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 8px 18px;
   margin: 20px 0 0;
   color: var(--vp-c-text-3);
@@ -213,7 +211,7 @@ html:has(.photo-story-page) .vp-nav-screen {
 .photo-story-page .vp-doc > div > blockquote,
 .photo-story-page .vp-doc > .hint-container,
 .photo-story-page .vp-doc > div > .hint-container {
-  max-width: var(--story-text-width);
+  max-width: var(--story-media-width);
   margin-right: auto;
   margin-left: auto;
 }
@@ -221,14 +219,14 @@ html:has(.photo-story-page) .vp-nav-screen {
 /* Plume 容器组件（hint-container、details 等）在 story 中同步收窄 */
 .photo-story-page .vp-doc .hint-container,
 .photo-story-page .vp-doc details {
-  max-width: var(--story-text-width);
+  max-width: var(--story-media-width);
   margin-right: auto;
   margin-left: auto;
 }
 
 .photo-story-page .vp-doc > p,
 .photo-story-page .vp-doc > div > p {
-  margin: 0 auto 32px;
+  margin: 0 auto 28px 0;
   color: var(--vp-c-text-1);
   font-size: 15px;
   line-height: 1.65;
@@ -251,20 +249,49 @@ html:has(.photo-story-page) .vp-nav-screen {
 }
 
 .story-album__frame {
+  --story-frame-corner-length: 12px;
+
+  box-sizing: border-box;
   display: grid;
   aspect-ratio: 4 / 3;
   place-items: center;
   overflow: hidden;
-  border: 1px solid #cfcfcf;
-  border-radius: 0;
   padding: 6px;
-  background: var(--gallery-panel, #fff);
-  box-shadow: none;
+  background-color: #fff;
+  background-image:
+    linear-gradient(#cfcfcf 0 0),
+    linear-gradient(#cfcfcf 0 0),
+    linear-gradient(#cfcfcf 0 0),
+    linear-gradient(#cfcfcf 0 0),
+    linear-gradient(#cfcfcf 0 0),
+    linear-gradient(#cfcfcf 0 0),
+    linear-gradient(#cfcfcf 0 0),
+    linear-gradient(#cfcfcf 0 0);
+  background-position:
+    top left,
+    top left,
+    top right,
+    top right,
+    bottom right,
+    bottom right,
+    bottom left,
+    bottom left;
+  background-size:
+    var(--story-frame-corner-length) 1px,
+    1px var(--story-frame-corner-length),
+    var(--story-frame-corner-length) 1px,
+    1px var(--story-frame-corner-length),
+    var(--story-frame-corner-length) 1px,
+    1px var(--story-frame-corner-length),
+    var(--story-frame-corner-length) 1px,
+    1px var(--story-frame-corner-length);
+  background-repeat: no-repeat;
   color: inherit;
   text-decoration: none;
 }
 
 .story-album__image {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -289,6 +316,7 @@ html:has(.photo-story-page) .vp-nav-screen {
 
 .story-album__back {
   grid-column: 1 / -1;
+  justify-self: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -494,7 +522,7 @@ figure.photo-story-gallery__figure > figcaption {
 
   .photo-story-page .vp-doc > p,
   .photo-story-page .vp-doc > div > p {
-    margin-bottom: 32px;
+    margin-bottom: 28px;
     font-size: 15px;
     line-height: 1.65;
   }
@@ -539,7 +567,6 @@ figure.photo-story-gallery__figure > figcaption {
 @media (min-width: 720px) and (max-width: 959px) {
   .photo-story-page {
     --story-page-gutter: 24px;
-    --story-text-width: min(600px, calc(100% - 48px));
     --story-media-width: min(1080px, calc(100vw - 48px));
   }
 
