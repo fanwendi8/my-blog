@@ -142,18 +142,23 @@ describe('StoryAlbum', () => {
   it('uses a graphite gallery frame with a white mat and cover-fit image', () => {
     const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
     const frameRule = styles.match(/\.story-album__frame\s*\{([^}]*)\}/)?.[1] ?? ''
+    const frameLipRule = styles.match(/\.story-album__frame::before\s*\{([^}]*)\}/)?.[1] ?? ''
     const imageRule = styles.match(/\.story-album__image\s*\{([^}]*)\}/)?.[1] ?? ''
     const hoverRule = styles.match(/\.story-album__frame:hover \.story-album__image\s*\{([^}]*)\}/)?.[1] ?? ''
     const captionRule = styles.match(/\.story-album__caption\s*\{([^}]*)\}/)?.[1] ?? ''
     const captionLineRule = styles.match(/\.story-album__caption::before\s*\{([^}]*)\}/)?.[1] ?? ''
 
     expect(frameRule).toMatch(/aspect-ratio:\s*var\(--story-photo-ratio,\s*4\s*\/\s*3\)/)
-    expect(frameRule).toMatch(/border:\s*1px solid var\(--story-frame-color\)/)
-    expect(frameRule).toMatch(/padding:\s*12px/)
-    expect(frameRule).toMatch(/background:\s*var\(--story-mat-color\)/)
-    expect(frameRule).toMatch(/box-shadow:/)
+    expect(frameRule).toMatch(/border:\s*1px solid transparent/)
+    expect(frameRule).toMatch(/padding:\s*var\(--story-mat-inset\)/)
+    expect(frameRule).toMatch(/linear-gradient\(var\(--story-mat-color\),\s*var\(--story-mat-color\)\) padding-box/)
+    expect(frameRule).toMatch(/linear-gradient\(140deg,\s*var\(--story-frame-color\)/)
+    expect(frameRule).toMatch(/0 9px 16px rgba\(38, 36, 31, \.16\)/)
     expect(frameRule).not.toMatch(/border-radius/)
+    expect(frameLipRule).toMatch(/inset:\s*var\(--story-mat-inset\)/)
+    expect(frameLipRule).toMatch(/border:\s*1px solid rgba\(51, 50, 46, \.18\)/)
     expect(imageRule).toMatch(/object-fit:\s*cover/)
+    expect(imageRule).toMatch(/border:\s*1px solid rgba\(45, 45, 42, \.13\)/)
     expect(hoverRule).toMatch(/^\s*opacity:\s*\.9\s*;?\s*$/)
     expect(captionRule).toMatch(/font-size:\s*12px/)
     expect(captionLineRule).toMatch(/width:\s*48px/)
