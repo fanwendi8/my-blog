@@ -27,6 +27,17 @@ function captionOf(photo: Photo) {
   return props.captions?.[photo.id] ?? photo.caption ?? undefined
 }
 
+const desktopOffsets = [0, 14, -6, 18, 10, -4, 8]
+const tabletOffsets = [0, 8, -4]
+
+function desktopOffsetFor(index: number) {
+  return desktopOffsets[index] ?? 0
+}
+
+function tabletOffsetFor(index: number) {
+  return tabletOffsets[index % tabletOffsets.length] ?? 0
+}
+
 function captionId(index: number) {
   return `story-album-caption-${index + 1}`
 }
@@ -62,6 +73,10 @@ async function openPhotoSwipe(event: MouseEvent, index: number) {
       v-for="({ id, photo }, index) in albumPhotos"
       :key="`${id}-${index}`"
       class="story-album__item"
+      :style="{
+        '--story-desktop-offset': `${desktopOffsetFor(index)}px`,
+        '--story-tablet-offset': `${tabletOffsetFor(index)}px`,
+      }"
     >
       <a
         class="story-album__frame"
