@@ -214,7 +214,6 @@ Expected: 创建只包含组件 offset 清理的提交。
 ~~~scss
 .story-album {
   --story-row-height: 220px;
-  --story-mat-inset: clamp(24px, 2vw, 28px);
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -242,6 +241,7 @@ Expected: 创建只包含组件 offset 清理的提交。
 
 ~~~scss
 .story-album__frame {
+  --story-mat-inset: clamp(24px, 2vw, 28px);
   box-sizing: border-box;
   display: grid;
   width: auto;
@@ -290,21 +290,24 @@ Expected: 创建只包含组件 offset 清理的提交。
 @media (min-width: 720px) and (max-width: 1199px) {
   .story-album {
     --story-row-height: 185px;
-    --story-mat-inset: clamp(20px, 2vw, 24px);
     max-width: min(1120px, calc(100vw - 48px));
     gap: 28px 20px;
+  }
+
+  .story-album__frame {
+    --story-mat-inset: clamp(20px, 2vw, 24px);
   }
 }
 
 @media (max-width: 719px) {
   .story-album {
     --story-row-height: 140px;
-    --story-mat-inset: 10px;
     max-width: calc(100vw - 32px);
     gap: 22px 12px;
   }
 
   .story-album__frame {
+    --story-mat-inset: 10px;
     max-width: 100%;
   }
 }
