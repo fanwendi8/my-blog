@@ -47,6 +47,9 @@ describe('PhotoStoryHeader', () => {
     const mobileIntroRule = styles.match(
       /@media\s*\(max-width:\s*719px\)[\s\S]*?\.photo-story-page \.vp-doc > p,\s*\.photo-story-page \.vp-doc > div > p\s*\{([^}]*)\}/,
     )?.[1] ?? ''
+    const desktopWideIntroRule = styles.match(
+      /@media\s*\(min-width:\s*1280px\)[\s\S]*?\.photo-story-page \.vp-doc > p,\s*\.photo-story-page \.vp-doc > div > p\s*\{([^}]*)\}/,
+    )?.[1] ?? ''
 
     expect(headerRule).toMatch(/max-width:\s*min\(620px,\s*100%\)/)
     expect(headerRule).toMatch(/margin:\s*12px 0 28px/)
@@ -56,7 +59,9 @@ describe('PhotoStoryHeader', () => {
     expect(textContainerRule).toMatch(/max-width:\s*var\(--story-media-width\)/)
     expect(paragraphRule).toMatch(/max-width:\s*min\(620px,\s*100%\)/)
     expect(paragraphRule).toMatch(/margin:\s*0 0 28px/)
+    expect(paragraphRule).toMatch(/line-height:\s*1\.75/)
     expect(mobileIntroRule).toMatch(/margin-bottom:\s*28px/)
+    expect(desktopWideIntroRule).toMatch(/line-height:\s*1\.75/)
     expect(styles).not.toMatch(/--story-text-width/)
     expect(styles).toMatch(/--story-wall-color:\s*#f5f2ec/)
     expect(styles).toMatch(/background-image:[\s\S]*radial-gradient\(rgba\(54, 50, 44, \.022\)/)

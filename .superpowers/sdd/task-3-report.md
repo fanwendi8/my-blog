@@ -30,3 +30,21 @@ Self-review:
 
 Concerns:
 - This turn verified via Vitest only; I did not spin up `docs:dev`, so any final visual nuance should be checked in-browser if you want pixel-level confirmation.
+
+Review fix follow-up (2026-07-17):
+
+- Fixed the wide desktop cascade regression in `docs/.vuepress/themes/styles/_gallery.scss` by keeping the Story paragraph rule at `line-height: 1.75` inside `@media (min-width: 1280px)`, so the approved reading-column contract now holds at 1440px without touching unrelated typography.
+- Added the smallest focused style-string regression assertion in `docs/.vuepress/themes/__tests__/PhotoStoryHeader.test.ts` to verify the 1280px Story paragraph rule preserves `line-height: 1.75`.
+
+Exact commands and outputs:
+
+- `npm test -- docs/.vuepress/themes/__tests__/PhotoStoryHeader.test.ts docs/.vuepress/themes/__tests__/StoryAlbum.test.ts`
+  - Output:
+    - `Test Files  2 passed (2)`
+    - `Tests  11 passed (11)`
+    - `Duration  540ms (transform 99ms, setup 0ms, import 237ms, tests 59ms, environment 606ms)`
+- `npm test`
+  - Output:
+    - `Test Files  20 passed (20)`
+    - `Tests  79 passed (79)`
+    - `Duration  2.71s (transform 813ms, setup 0ms, import 2.14s, tests 1.62s, environment 15.45s)`
