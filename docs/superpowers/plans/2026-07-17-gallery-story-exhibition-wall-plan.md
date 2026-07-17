@@ -66,7 +66,7 @@ expect(frameRule).toMatch(/--story-mat-inset:\s*clamp\(18px,\s*1\.5vw,\s*22px\)/
 expect(frameRule).toMatch(/padding:\s*var\(--story-mat-inset\)/)
 expect(frameRule).toMatch(/0 10px 18px rgba\(38, 36, 31, \.18\)/)
 expect(frameRule).toMatch(/border-radius:\s*0/)
-expect(frameRule).toMatch(/object-fit:\s*cover/)
+expect(imageRule).toMatch(/object-fit:\s*cover/)
 
 const desktopAlbumRule =
   styles.match(/@media\s*\(min-width:\s*960px\)[\s\S]*?\.story-album\s*\{([^}]*)\}/)?.[1] ?? ''
