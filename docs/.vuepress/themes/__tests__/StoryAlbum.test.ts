@@ -94,7 +94,7 @@ describe('StoryAlbum', () => {
     photoSwipe.on.mockReset()
   })
 
-  it('renders photos in ids order with 4:3 frames and optional captions', () => {
+  it('renders photos in ids order with source-ratio frames and optional captions', () => {
     const wrapper = mount(StoryAlbum, {
       props: { ids: ['b', 'a', 'missing'], captions: { b: 'Stacked sky' } },
     })
@@ -103,6 +103,8 @@ describe('StoryAlbum', () => {
     expect(wrapper.findAll('.story-album__frame')).toHaveLength(2)
     expect(wrapper.findAll('.story-album__image').map((image) => image.attributes('src')))
       .toEqual(['/gallery-img/b-thumb.webp', '/gallery-img/a-thumb.webp'])
+    expect(wrapper.findAll('.story-album__frame')[0].attributes('style'))
+      .toContain('--story-photo-ratio: 400 / 600')
     expect(wrapper.find('.story-album__caption').text()).toBe('Stacked sky')
     expect(wrapper.find('.story-album__back').attributes('href')).toBe('/gallery/')
   })
@@ -128,32 +130,34 @@ describe('StoryAlbum', () => {
     expect(backRule).toMatch(/justify-self:\s*center/)
   })
 
-  it('keeps the StoryAlbum grid gap at 20px on mobile', () => {
+  it('keeps the StoryAlbum grid rhythm compact on mobile', () => {
     const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
     const mobileAlbumRule = styles.match(
       /@media\s*\(max-width:\s*719px\)[\s\S]*?\.story-album\s*\{([^}]*)\}/,
     )?.[1] ?? ''
 
-    expect(mobileAlbumRule).toMatch(/gap:\s*20px/)
-    expect(mobileAlbumRule).not.toMatch(/gap:\s*12px/)
+    expect(mobileAlbumRule).toMatch(/gap:\s*26px 16px/)
   })
 
-  it('uses a white 6px mat with four subtle corner marks instead of a continuous frame', () => {
+  it('uses a graphite gallery frame with a white mat and cover-fit image', () => {
     const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
     const frameRule = styles.match(/\.story-album__frame\s*\{([^}]*)\}/)?.[1] ?? ''
     const imageRule = styles.match(/\.story-album__image\s*\{([^}]*)\}/)?.[1] ?? ''
     const hoverRule = styles.match(/\.story-album__frame:hover \.story-album__image\s*\{([^}]*)\}/)?.[1] ?? ''
-    const cornerLines = frameRule.match(/linear-gradient\(#cfcfcf 0 0\)/g) ?? []
+    const captionRule = styles.match(/\.story-album__caption\s*\{([^}]*)\}/)?.[1] ?? ''
+    const captionLineRule = styles.match(/\.story-album__caption::before\s*\{([^}]*)\}/)?.[1] ?? ''
 
-    expect(frameRule).toMatch(/aspect-ratio:\s*4\s*\/\s*3/)
-    expect(frameRule).toMatch(/padding:\s*6px/)
-    expect(frameRule).toMatch(/background-color:\s*#fff/)
-    expect(cornerLines).toHaveLength(8)
-    expect(frameRule).toMatch(/background-size:[\s\S]*?var\(--story-frame-corner-length\)\s+1px/)
-    expect(frameRule).not.toMatch(/\bborder\s*:/)
-    expect(frameRule).not.toMatch(/border-radius|box-shadow/)
-    expect(imageRule).toMatch(/object-fit:\s*contain/)
-    expect(hoverRule).toMatch(/^\s*opacity:\s*\.64\s*;?\s*$/)
+    expect(frameRule).toMatch(/aspect-ratio:\s*var\(--story-photo-ratio,\s*4\s*\/\s*3\)/)
+    expect(frameRule).toMatch(/border:\s*1px solid var\(--story-frame-color\)/)
+    expect(frameRule).toMatch(/padding:\s*12px/)
+    expect(frameRule).toMatch(/background:\s*var\(--story-mat-color\)/)
+    expect(frameRule).toMatch(/box-shadow:/)
+    expect(frameRule).not.toMatch(/border-radius/)
+    expect(imageRule).toMatch(/object-fit:\s*cover/)
+    expect(hoverRule).toMatch(/^\s*opacity:\s*\.9\s*;?\s*$/)
+    expect(captionRule).toMatch(/font-size:\s*12px/)
+    expect(captionLineRule).toMatch(/width:\s*48px/)
+    expect(captionLineRule).toMatch(/height:\s*1px/)
   })
 
   it('opens an ordered story lightbox at the clicked item', async () => {

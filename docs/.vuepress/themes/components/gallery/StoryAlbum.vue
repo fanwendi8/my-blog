@@ -66,6 +66,7 @@ async function openPhotoSwipe(event: MouseEvent, index: number) {
       <a
         class="story-album__frame"
         :href="largeSrc(photo)"
+        :style="{ '--story-photo-ratio': `${photo.w} / ${photo.h}` }"
         :aria-label="accessibleLabel(photo, index)"
         :aria-describedby="captionOf(photo) ? captionId(index) : undefined"
         @click="openPhotoSwipe($event, index)"

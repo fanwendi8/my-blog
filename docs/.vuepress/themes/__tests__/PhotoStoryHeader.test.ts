@@ -57,5 +57,7 @@ describe('PhotoStoryHeader', () => {
     expect(paragraphRule).toMatch(/margin:\s*0 auto 28px 0/)
     expect(mobileIntroRule).toMatch(/margin-bottom:\s*28px/)
     expect(styles).not.toMatch(/--story-text-width/)
+    expect(styles).toMatch(/--story-wall-color:\s*#f5f2ec/)
+    expect(styles).toMatch(/background-image:[\s\S]*radial-gradient\(rgba\(54, 50, 44, \.022\)/)
   })
 })
