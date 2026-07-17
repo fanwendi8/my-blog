@@ -608,6 +608,10 @@ figure.photo-story-gallery__figure > figcaption {
     gap: 22px 12px;
   }
 
+  .story-album__item {
+    max-width: 100%;
+  }
+
   .story-album__frame {
     --story-row-height: 140px;
     --story-mat-inset: 10px;
