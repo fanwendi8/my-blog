@@ -31,7 +31,7 @@ describe('PhotoStoryHeader', () => {
     expect(wrapper.get('.photo-story-header__meta').text()).toContain('北京')
   })
 
-  it('gives story text, headers, and text containers the album media width', () => {
+  it('gives story text, headers, and text containers a narrow reading column', () => {
     const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
     const headerRule = styles.match(/\.photo-story-header\s*\{([^}]*)\}/)?.[1] ?? ''
     const metadataRule = styles.match(/\.photo-story-header__meta\s*\{([^}]*)\}/)?.[1] ?? ''
@@ -48,12 +48,13 @@ describe('PhotoStoryHeader', () => {
       /@media\s*\(max-width:\s*719px\)[\s\S]*?\.photo-story-page \.vp-doc > p,\s*\.photo-story-page \.vp-doc > div > p\s*\{([^}]*)\}/,
     )?.[1] ?? ''
 
-    expect(headerRule).toMatch(/max-width:\s*var\(--story-media-width\)/)
+    expect(headerRule).toMatch(/max-width:\s*min\(620px,\s*100%\)/)
     expect(headerRule).toMatch(/margin:\s*12px 0 28px/)
     expect(headerRule).toMatch(/text-align:\s*left/)
     expect(metadataRule).toMatch(/justify-content:\s*flex-start/)
     expect(textRule).toMatch(/max-width:\s*var\(--story-media-width\)/)
     expect(textContainerRule).toMatch(/max-width:\s*var\(--story-media-width\)/)
+    expect(paragraphRule).toMatch(/max-width:\s*min\(620px,\s*100%\)/)
     expect(paragraphRule).toMatch(/margin:\s*0 auto 28px 0/)
     expect(mobileIntroRule).toMatch(/margin-bottom:\s*28px/)
     expect(styles).not.toMatch(/--story-text-width/)

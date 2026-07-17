@@ -96,15 +96,21 @@ describe('StoryAlbum', () => {
 
   it('renders photos in ids order with source-ratio frames and optional captions', () => {
     const wrapper = mount(StoryAlbum, {
-      props: { ids: ['b', 'a', 'missing'], captions: { b: 'Stacked sky' } },
+      props: { ids: ['b', 'a', 'c'], captions: { b: 'Stacked sky' } },
     })
+    const albumItems = wrapper.findAll('.story-album__item')
 
-    expect(wrapper.findAll('.story-album__item')).toHaveLength(2)
-    expect(wrapper.findAll('.story-album__frame')).toHaveLength(2)
+    expect(albumItems).toHaveLength(3)
+    expect(wrapper.findAll('.story-album__frame')).toHaveLength(3)
     expect(wrapper.findAll('.story-album__image').map((image) => image.attributes('src')))
-      .toEqual(['/gallery-img/b-thumb.webp', '/gallery-img/a-thumb.webp'])
+      .toEqual(['/gallery-img/b-thumb.webp', '/gallery-img/a-thumb.webp', '/gallery-img/c-thumb.webp'])
     expect(wrapper.findAll('.story-album__frame')[0].attributes('style'))
       .toContain('--story-photo-ratio: 400 / 600')
+    expect(albumItems[0].attributes('style') ?? '').toContain('--story-desktop-offset: 0px')
+    expect(albumItems[1].attributes('style') ?? '').toContain('--story-desktop-offset: 14px')
+    expect(albumItems[1].attributes('style') ?? '').toContain('--story-tablet-offset: 8px')
+    expect(albumItems[2].attributes('style') ?? '').toContain('--story-desktop-offset: -6px')
+    expect(albumItems[2].attributes('style') ?? '').toContain('--story-tablet-offset: -4px')
     expect(wrapper.find('.story-album__caption').text()).toBe('Stacked sky')
     expect(wrapper.find('.story-album__back').attributes('href')).toBe('/gallery/')
   })
@@ -147,14 +153,21 @@ describe('StoryAlbum', () => {
     const hoverRule = styles.match(/\.story-album__frame:hover \.story-album__image\s*\{([^}]*)\}/)?.[1] ?? ''
     const captionRule = styles.match(/\.story-album__caption\s*\{([^}]*)\}/)?.[1] ?? ''
     const captionLineRule = styles.match(/\.story-album__caption::before\s*\{([^}]*)\}/)?.[1] ?? ''
+    const desktopAlbumRule =
+      styles.match(/@media\s*\(min-width:\s*960px\)[\s\S]*?\.story-album\s*\{([^}]*)\}/)?.[1] ?? ''
+    const desktopItemRule =
+      styles.match(/@media\s*\(min-width:\s*960px\)[\s\S]*?\.story-album__item\s*\{([^}]*)\}/)?.[1] ?? ''
+    const mobileItemRule =
+      styles.match(/@media\s*\(max-width:\s*719px\)[\s\S]*?\.story-album__item\s*\{([^}]*)\}/)?.[1] ?? ''
 
-    expect(frameRule).toMatch(/aspect-ratio:\s*var\(--story-photo-ratio,\s*4\s*\/\s*3\)/)
-    expect(frameRule).toMatch(/border:\s*1px solid transparent/)
+    expect(frameRule).toMatch(/aspect-ratio:\s*var\(--story-photo-ratio, 4 \/ 3\)/)
+    expect(frameRule).toMatch(/border:\s*2px solid transparent/)
+    expect(frameRule).toMatch(/--story-mat-inset:\s*clamp\(18px,\s*1\.5vw,\s*22px\)/)
     expect(frameRule).toMatch(/padding:\s*var\(--story-mat-inset\)/)
     expect(frameRule).toMatch(/linear-gradient\(var\(--story-mat-color\),\s*var\(--story-mat-color\)\) padding-box/)
     expect(frameRule).toMatch(/linear-gradient\(140deg,\s*var\(--story-frame-color\)/)
-    expect(frameRule).toMatch(/0 9px 16px rgba\(38, 36, 31, \.16\)/)
-    expect(frameRule).not.toMatch(/border-radius/)
+    expect(frameRule).toMatch(/0 10px 18px rgba\(38, 36, 31, \.18\)/)
+    expect(frameRule).toMatch(/border-radius:\s*0/)
     expect(frameLipRule).toMatch(/inset:\s*var\(--story-mat-inset\)/)
     expect(frameLipRule).toMatch(/border:\s*1px solid rgba\(51, 50, 46, \.18\)/)
     expect(imageRule).toMatch(/object-fit:\s*cover/)
@@ -163,6 +176,9 @@ describe('StoryAlbum', () => {
     expect(captionRule).toMatch(/font-size:\s*12px/)
     expect(captionLineRule).toMatch(/width:\s*48px/)
     expect(captionLineRule).toMatch(/height:\s*1px/)
+    expect(desktopAlbumRule).toMatch(/gap:\s*44px 28px/)
+    expect(desktopItemRule).toMatch(/--story-album-offset:\s*var\(--story-desktop-offset,\s*0px\)/)
+    expect(mobileItemRule).toMatch(/transform:\s*none/)
   })
 
   it('opens an ordered story lightbox at the clicked item', async () => {
