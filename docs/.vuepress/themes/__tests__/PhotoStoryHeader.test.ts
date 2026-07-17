@@ -55,7 +55,7 @@ describe('PhotoStoryHeader', () => {
     expect(textRule).toMatch(/max-width:\s*var\(--story-media-width\)/)
     expect(textContainerRule).toMatch(/max-width:\s*var\(--story-media-width\)/)
     expect(paragraphRule).toMatch(/max-width:\s*min\(620px,\s*100%\)/)
-    expect(paragraphRule).toMatch(/margin:\s*0 auto 28px 0/)
+    expect(paragraphRule).toMatch(/margin:\s*0 0 28px/)
     expect(mobileIntroRule).toMatch(/margin-bottom:\s*28px/)
     expect(styles).not.toMatch(/--story-text-width/)
     expect(styles).toMatch(/--story-wall-color:\s*#f5f2ec/)

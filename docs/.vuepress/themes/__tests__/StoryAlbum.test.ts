@@ -142,7 +142,7 @@ describe('StoryAlbum', () => {
       /@media\s*\(max-width:\s*719px\)[\s\S]*?\.story-album\s*\{([^}]*)\}/,
     )?.[1] ?? ''
 
-    expect(mobileAlbumRule).toMatch(/gap:\s*26px 16px/)
+    expect(mobileAlbumRule).toMatch(/gap:\s*32px 16px/)
   })
 
   it('uses a graphite gallery frame with a white mat and cover-fit image', () => {
@@ -153,8 +153,7 @@ describe('StoryAlbum', () => {
     const hoverRule = styles.match(/\.story-album__frame:hover \.story-album__image\s*\{([^}]*)\}/)?.[1] ?? ''
     const captionRule = styles.match(/\.story-album__caption\s*\{([^}]*)\}/)?.[1] ?? ''
     const captionLineRule = styles.match(/\.story-album__caption::before\s*\{([^}]*)\}/)?.[1] ?? ''
-    const desktopAlbumRule =
-      styles.match(/@media\s*\(min-width:\s*960px\)[\s\S]*?\.story-album\s*\{([^}]*)\}/)?.[1] ?? ''
+    const albumRule = styles.match(/\.story-album\s*\{([^}]*)\}/)?.[1] ?? ''
     const desktopItemRule =
       styles.match(/@media\s*\(min-width:\s*960px\)[\s\S]*?\.story-album__item\s*\{([^}]*)\}/)?.[1] ?? ''
     const mobileItemRule =
@@ -176,7 +175,7 @@ describe('StoryAlbum', () => {
     expect(captionRule).toMatch(/font-size:\s*12px/)
     expect(captionLineRule).toMatch(/width:\s*48px/)
     expect(captionLineRule).toMatch(/height:\s*1px/)
-    expect(desktopAlbumRule).toMatch(/gap:\s*44px 28px/)
+    expect(albumRule).toMatch(/gap:\s*44px 28px/)
     expect(desktopItemRule).toMatch(/--story-album-offset:\s*var\(--story-desktop-offset,\s*0px\)/)
     expect(mobileItemRule).toMatch(/transform:\s*none/)
   })
