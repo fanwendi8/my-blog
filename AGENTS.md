@@ -78,8 +78,8 @@ npm run docs:build
 - 不要在 `docs/.vuepress/config.ts` 和 `docs/.vuepress/plume.config.ts` 中重复配置同一项；`plume.config.ts` 的配置会覆盖 `config.ts` 中相同主题项。
 - 涉及可见页面改动时，尽量用本地 dev server 或 build 结果验证。
 - `.claude/claude.md` 是指向根目录 `AGENTS.md` 的软链接；更新项目指南时只编辑 `AGENTS.md`。
-- `gallery-staging/`、`docs/.vuepress/public/gallery-img/`、`docs/.vuepress/dist/`、`.playwright-mcp/` 等路径被 git ignore。生成或调试后如果它们变化，通常不要提交。
-- 图库 story 页面会由 `galleryStoryPagesPlugin` 默认关闭 aside 和 outline；不要在每篇 story 中重复做同样配置，除非该页面确实需要覆盖。
+- `gallery-staging/`、`docs/.vuepress/public/gallery-img/`、`docs/.vuepress/dist/`、`.playwright-mcp/`、`.superpowers/`、`superpowers/` 和 `docs/superpowers/` 等路径被 git ignore。生成或调试后如果它们变化，通常不要提交；清理缓存时不要删除 `gallery-staging/` 源图。
+- 图库 story 页面会由 `galleryStoryPagesPlugin` 默认关闭 aside、outline 和 comments；不要在每篇 story 中重复做同样配置，除非该页面确实需要覆盖。
 
 ## 站点与主题扩展
 
