@@ -35,15 +35,6 @@ function srcOf(photo: Photo) {
   return thumbSrc(photo)
 }
 
-function placeholderStyle(photo: Photo) {
-  return {
-    backgroundColor: photo.bg ?? undefined,
-    backgroundImage: photo.placeholder ? `url(${photo.placeholder})` : undefined,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-  }
-}
 </script>
 
 <template>
@@ -81,11 +72,11 @@ function placeholderStyle(photo: Photo) {
                   :alt="story.title"
                   loading="lazy"
                   decoding="async"
-                  :style="placeholderStyle(coverFor(story)!)"
                 >
               </span>
               <span class="gallery-story-card__title">{{ story.title }}</span>
               <span v-if="story.location" class="gallery-story-card__meta">{{ story.location }}</span>
+              <time class="gallery-story-card__meta" :datetime="story.date">{{ story.date }}</time>
             </RouterLink>
           </div>
         </div>

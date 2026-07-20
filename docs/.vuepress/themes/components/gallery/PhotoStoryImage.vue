@@ -27,16 +27,6 @@ function srcOf(item: Photo) {
   return largeSrc(item, { viewportWidth: 1280, devicePixelRatio: 1 })
 }
 
-function placeholderStyle(item: Photo) {
-  return {
-    backgroundColor: item.bg ?? undefined,
-    backgroundImage: item.placeholder ? `url(${item.placeholder})` : undefined,
-    backgroundSize: 'contain',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-  }
-}
-
 async function openPhotoSwipe(event: MouseEvent) {
   if (!photo.value || typeof window === 'undefined') return
   if (event.button !== 0 || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return
@@ -90,7 +80,6 @@ async function openPhotoSwipe(event: MouseEvent) {
         no-view
         :width="photo.w"
         :height="photo.h"
-        :style="placeholderStyle(photo)"
       >
     </a>
     <figcaption v-if="mode === 'single' && resolvedCaption">{{ resolvedCaption }}</figcaption>

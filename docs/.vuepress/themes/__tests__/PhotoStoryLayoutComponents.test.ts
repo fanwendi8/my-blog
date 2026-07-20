@@ -1,15 +1,25 @@
 import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { ref } from 'vue'
+import { defineComponent, h, ref } from 'vue'
 import StoryPhoto from '../components/gallery/StoryPhoto.vue'
 import StoryPhotos from '../components/gallery/StoryPhotos.vue'
 import StorySplit from '../components/gallery/StorySplit.vue'
+import StoryAlbum from '../components/gallery/StoryAlbum.vue'
+
+vi.mock('vue-router', () => ({
+  RouterLink: defineComponent({
+    props: ['to'],
+    setup(props, { slots }) {
+      return () => h('a', { href: props.to }, slots.default?.())
+    },
+  }),
+}))
 
 vi.mock('../composables/useGalleryData', () => ({
   useGalleryData: () => ({
     photos: ref([
       { id: 'a', src: '/a.webp', w: 600, h: 400, alt: 'A', caption: 'Alpha' },
-      { id: 'b', src: { large: { avif: 'b/large.avif', w: 2560 } }, w: 400, h: 600, alt: 'B' },
+      { id: 'b', src: { thumb: { webp: 'b/thumb.webp', w: 480 }, large: { avif: 'b/large.avif', w: 2560 } }, w: 400, h: 600, alt: 'B' },
       { id: 'c', src: '/c.webp', w: 700, h: 700, title: 'C' },
     ]),
     stories: ref([]),
@@ -41,17 +51,28 @@ describe('photo story layout components', () => {
   })
 
   it('preserves native modified-click behavior on story photo links', async () => {
-    const wrapper = mount(StoryPhoto, { props: { id: 'b' } })
+    const wrapper = mount(StoryPhoto, {
+      attachTo: document.body,
+      props: { id: 'b' },
+    })
+    let componentPreventedDefault: boolean | undefined
+    const stopNavigation = (clickEvent: MouseEvent) => {
+      componentPreventedDefault = clickEvent.defaultPrevented
+      clickEvent.preventDefault()
+    }
     const event = new MouseEvent('click', {
       bubbles: true,
       cancelable: true,
       metaKey: true,
     })
 
+    document.addEventListener('click', stopNavigation)
     wrapper.get('a.photo-story-gallery__link').element.dispatchEvent(event)
+    document.removeEventListener('click', stopNavigation)
     await wrapper.vm.$nextTick()
 
-    expect(event.defaultPrevented).toBe(false)
+    expect(componentPreventedDefault).toBe(false)
+    wrapper.unmount()
   })
 
   it('renders a row of story photos in the requested order', () => {
@@ -85,5 +106,18 @@ describe('photo story layout components', () => {
     expect(wrapper.classes()).toContain('photo-story-split--reverse')
     expect(wrapper.findAll('.photo-story-split__primary img')).toHaveLength(1)
     expect(wrapper.findAll('.photo-story-split__secondary img')).toHaveLength(2)
+  })
+
+  it('renders StoryAlbum thumbnails with explicit links outside the global image selector', () => {
+    const wrapper = mount(StoryAlbum, { props: { ids: ['b', 'missing', 'a'] } })
+
+    const links = wrapper.findAll('.story-album__frame')
+    expect(links).toHaveLength(2)
+    expect(links[0].attributes('href')).toBe('/gallery-img/b/large.avif')
+    expect(wrapper.findAll('.story-album__image').map((image) => image.attributes('src'))).toEqual([
+      '/gallery-img/b/thumb.webp',
+      '/a.webp',
+    ])
+    expect(wrapper.findAll('.story-album__image')[0].attributes('no-view')).toBe('')
   })
 })

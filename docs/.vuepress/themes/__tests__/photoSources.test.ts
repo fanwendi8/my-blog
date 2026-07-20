@@ -23,6 +23,7 @@ const coverPhoto: Photo = {
 const storyPhoto: Photo = {
   id: 'story',
   src: {
+    thumb: { webp: 'story-thumb.webp', w: 480 },
     large: { avif: 'story-large.avif', w: 3840 },
   },
   w: 600,
@@ -50,8 +51,8 @@ describe('photoSources', () => {
       .toBe('/gallery-img/cover-large.avif')
   })
 
-  it('falls back to large when thumb is absent', () => {
-    expect(thumbSrc(storyPhoto)).toBe('/gallery-img/story-large.avif')
+  it('uses the story thumb source when available', () => {
+    expect(thumbSrc(storyPhoto)).toBe('/gallery-img/story-thumb.webp')
     expect(largeSrc(storyPhoto, { viewportWidth: 1440, devicePixelRatio: 1 }))
       .toBe('/gallery-img/story-large.avif')
   })

@@ -4,7 +4,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import os from 'node:os'
 import sharp from 'sharp'
-import { generateDerivatives, generatePlaceholder } from '../derivatives.mjs'
+import { generateDerivatives } from '../derivatives.mjs'
 
 const FIX = path.resolve(import.meta.dirname, '../__fixtures__/sample-1.jpg')
 let TMP
@@ -15,6 +15,7 @@ const COVER_SPECS = [
 ]
 
 const STORY_SPECS = [
+  { name: 'thumb', width: 480, formats: ['webp'] },
   { name: 'large', width: 3840, formats: ['avif'] },
 ]
 
@@ -36,12 +37,14 @@ describe('generateDerivatives', () => {
     })
   })
 
-  it('only generates large for story specs', async () => {
+  it('writes thumb and large for story specs', async () => {
     const out = await generateDerivatives(FIX, 'story123', TMP, STORY_SPECS)
+    const thumb = path.join(TMP, 'story123-thumb.webp')
     const large = path.join(TMP, 'story123-large.avif')
+    expect(await fs.access(thumb).then(() => true, () => false)).toBe(true)
     expect(await fs.access(large).then(() => true, () => false)).toBe(true)
-    await expect(fs.access(path.join(TMP, 'story123-thumb.webp'))).rejects.toThrow()
     expect(out).toEqual({
+      thumb: { webp: 'story123-thumb.webp', w: 480 },
       large: { avif: 'story123-large.avif', w: 3840 },
     })
   })
@@ -111,27 +114,9 @@ describe('generateDerivatives', () => {
     await generateDerivatives(FIX, 'switchRole', TMP, COVER_SPECS)
     expect(await fs.access(path.join(TMP, 'switchRole-thumb.webp')).then(() => true, () => false)).toBe(true)
 
-    // Then generate with story specs (large only)
+    // Then generate with story specs (thumb + large)
     await generateDerivatives(FIX, 'switchRole', TMP, STORY_SPECS)
-    await expect(fs.access(path.join(TMP, 'switchRole-thumb.webp'))).rejects.toThrow()
+    expect(await fs.access(path.join(TMP, 'switchRole-thumb.webp')).then(() => true, () => false)).toBe(true)
     expect(await fs.access(path.join(TMP, 'switchRole-large.avif')).then(() => true, () => false)).toBe(true)
-  })
-
-  it('extracts a blurred svg placeholder and dominant background color', async () => {
-    const preview = await generatePlaceholder(FIX)
-    const svg = decodeURIComponent(preview.placeholder.replace('data:image/svg+xml;charset=utf-8,', ''))
-
-    expect(preview.placeholder).toMatch(/^data:image\/svg\+xml;charset=utf-8,/)
-    expect(svg).toContain('gallery-placeholder-v5')
-    expect(svg).toContain('feGaussianBlur')
-    expect(svg).toContain("stdDeviation='4'")
-    expect(svg).toContain('data:image/jpeg;base64,')
-    expect(svg).toContain("preserveAspectRatio='xMidYMid'")
-    expect(preview.placeholder).not.toMatch(/[()']/)
-    const metadata = await sharp(Buffer.from(svg)).metadata()
-    expect(metadata).toMatchObject({ format: 'svg', height: expect.any(Number) })
-    expect(metadata.width).toBeGreaterThanOrEqual(96)
-    expect(preview.placeholder.length).toBeLessThan(4200)
-    expect(preview.bg).toMatch(/^#[0-9a-f]{6}$/)
   })
 })

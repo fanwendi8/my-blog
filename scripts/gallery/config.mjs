@@ -30,6 +30,7 @@ export const DERIVATIVES = {
     { name: 'large', width: 3840, formats: ['avif'] },
   ],
   story: [
+    { name: 'thumb', width: 480, formats: ['webp'] },
     { name: 'large', width: 3840, formats: ['avif'] },
   ],
 }
