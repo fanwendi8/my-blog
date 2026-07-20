@@ -34,7 +34,7 @@ function accessibleLabel(photo: Photo, index: number) {
 
 function gridSpanForRatio(ratio: number, columns: number, targetArea: number, maxSpan = columns) {
   const safeRatio = Math.min(4, Math.max(.25, ratio))
-  return Math.min(columns, maxSpan, Math.max(1, Math.round(Math.sqrt(safeRatio * targetArea))))
+  return Math.min(columns, maxSpan, Math.max(1, Math.floor(Math.sqrt(safeRatio * targetArea))))
 }
 
 function flexBasisForSpan(span: number, columns: number, gap: number) {

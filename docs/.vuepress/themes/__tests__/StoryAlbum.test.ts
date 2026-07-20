@@ -94,6 +94,18 @@ vi.mock('../composables/useGalleryData', () => ({
         storyOrder: 3,
       },
       {
+        id: 'compact',
+        src: {
+          thumb: { webp: 'compact-thumb.webp' },
+          large: { avif: 'compact-large.avif' },
+        },
+        w: 700,
+        h: 800,
+        alt: 'Compact portrait',
+        storySlug: '2026-05-06',
+        storyOrder: 4,
+      },
+      {
         id: 'c',
         src: {
           thumb: { webp: 'c-thumb.webp' },
@@ -136,10 +148,15 @@ describe('StoryAlbum', () => {
     })
     const albumItems = wrapper.findAll('.story-album__item')
 
-    expect(albumItems).toHaveLength(3)
-    expect(wrapper.findAll('.story-album__frame')).toHaveLength(3)
+    expect(albumItems).toHaveLength(4)
+    expect(wrapper.findAll('.story-album__frame')).toHaveLength(4)
     expect(wrapper.findAll('.story-album__image').map((image) => image.attributes('src')))
-      .toEqual(['/gallery-img/b-thumb.webp', '/gallery-img/a-thumb.webp', '/gallery-img/wide-thumb.webp'])
+      .toEqual([
+        '/gallery-img/b-thumb.webp',
+        '/gallery-img/a-thumb.webp',
+        '/gallery-img/wide-thumb.webp',
+        '/gallery-img/compact-thumb.webp',
+      ])
     expect(wrapper.findAll('.story-album__frame')[0].attributes('style'))
       .toContain('--story-photo-ratio: 400 / 600')
     expect(wrapper.findAll('.story-album__item')[0].attributes('style'))
@@ -156,6 +173,8 @@ describe('StoryAlbum', () => {
       .toContain('--story-flex-basis-mobile: 100%')
     expect(wrapper.findAll('.story-album__item')[2].attributes('style'))
       .toContain('--story-flex-basis: calc(33.3333% - 13.3333px)')
+    expect(wrapper.findAll('.story-album__item')[3].attributes('style'))
+      .toContain('--story-flex-basis: calc(16.6667% - 16.6667px)')
     expect(wrapper.find('.story-album__caption').text()).toBe('Stacked sky')
     expect(wrapper.find('.story-album__back').attributes('href')).toBe('/gallery/')
   })
@@ -272,7 +291,7 @@ describe('StoryAlbum', () => {
 
     expect(storyPhotoSwipe.create).toHaveBeenCalledWith(
       expect.any(Array),
-      ['b', 'a', 'wide'],
+      ['b', 'a', 'wide', 'compact'],
       { b: 'Stacked sky' },
     )
 
@@ -290,6 +309,10 @@ describe('StoryAlbum', () => {
         expect.objectContaining({
           src: '/gallery-img/wide-large.avif',
           msrc: '/gallery-img/wide-thumb.webp',
+        }),
+        expect.objectContaining({
+          src: '/gallery-img/compact-large.avif',
+          msrc: '/gallery-img/compact-thumb.webp',
         }),
       ],
       index: 0,
