@@ -18,9 +18,26 @@ vi.mock('vue-router', () => ({
 vi.mock('../composables/useGalleryData', () => ({
   useGalleryData: () => ({
     photos: ref([
-      { id: 'a', src: '/a.webp', w: 600, h: 400, alt: 'A', caption: 'Alpha' },
-      { id: 'b', src: { thumb: { webp: 'b/thumb.webp', w: 480 }, large: { avif: 'b/large.avif', w: 2560 } }, w: 400, h: 600, alt: 'B' },
-      { id: 'c', src: '/c.webp', w: 700, h: 700, title: 'C' },
+      {
+        id: 'a',
+        src: '/a.webp',
+        w: 600,
+        h: 400,
+        alt: 'A',
+        caption: 'Alpha',
+        storySlug: 'layout-album',
+        storyOrder: 2,
+      },
+      {
+        id: 'b',
+        src: { thumb: { webp: 'b/thumb.webp', w: 480 }, large: { avif: 'b/large.avif', w: 2560 } },
+        w: 400,
+        h: 600,
+        alt: 'B',
+        storySlug: 'layout-album',
+        storyOrder: 1,
+      },
+      { id: 'c', src: '/c.webp', w: 700, h: 700, title: 'C', storySlug: 'another-album', storyOrder: 1 },
     ]),
     stories: ref([]),
     ready: ref(true),
@@ -109,7 +126,7 @@ describe('photo story layout components', () => {
   })
 
   it('renders StoryAlbum thumbnails with explicit links outside the global image selector', () => {
-    const wrapper = mount(StoryAlbum, { props: { ids: ['b', 'missing', 'a'] } })
+    const wrapper = mount(StoryAlbum, { props: { story: 'layout-album' } })
 
     const links = wrapper.findAll('.story-album__frame')
     expect(links).toHaveLength(2)
