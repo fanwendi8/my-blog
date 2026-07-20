@@ -23,9 +23,11 @@
 - `docs/.vuepress/galleryStories.ts`: 图库相关 Vite 插件。
 - `docs/.vuepress/client.ts`: 客户端组件注册、PhotoSwipe 运行时配置和路由修复入口。
 - `docs/.vuepress/themes/`: 自定义主题扩展，包括布局、组件、composables、图库 helper、样式和 Vitest 测试。
-- `docs/.vuepress/themes/components/gallery/`: 摄影故事 Markdown 可直接使用的组件：`PhotoStoryHeader`、`StoryAlbum`、`StoryPhoto`、`StoryPhotos`、`StorySplit`。
+- `docs/.vuepress/themes/components/gallery/`: 摄影故事 Markdown 可直接使用的组件：`PhotoStoryHeader`、`StoryAlbum`、`StoryPhoto`、`StoryPhotos`、`StorySplit`；`PhotoStoryImage` 是这些组件共用的底层图片组件。
+- `docs/.vuepress/themes/gallery/`: 图库数据、图片来源、PhotoSwipe 和 CDN helper；修改这些 helper 时优先运行图库相关主题测试。
 - `docs/.vuepress/themes/layouts/`: 自定义页面布局，例如 `GalleryHome` 和 `NotesHome`。
 - `gallery-staging/`: 图库源图暂存目录。
+- `gallery-staging/meta.json`: 可选的图库图片元数据，路径相对于 `gallery-staging/`。
 - `scripts/gallery/`: 图库扫描、派生图、manifest 和上传脚本。
 - `scripts/gallery/__tests__/`: 图库相关 Vitest 测试。
 - `.github/workflows/docs.yml`: GitHub Pages 构建部署流程。
@@ -71,6 +73,7 @@ npm run docs:build
 - 保持现有代码风格：JSON/YAML 两空格缩进，TS 模块使用简洁 named exports，Node 脚本使用 `.mjs`。
 - Markdown 内容应包含清晰 frontmatter，并避免轻易改动已有 slug。
 - 新增 gallery story 时，在 `docs/gallery/` 下创建类似 `example-story.md` 的文件。
+- Plume 的 `<Icon>` 在 Vue 组件中使用时，需要把 Iconify 名称加入 `docs/.vuepress/theme.ts` 的 `markdown.icon.preload`，确保图标在构建时作为本地资源生成；当前 `StoryAlbum` 使用 `material-symbols:arrow-back-rounded`。
 - 不要手动编辑构建产物，除非任务明确要求。优先修改源内容、配置或脚本，再重新生成。
 - 不要在 `docs/.vuepress/config.ts` 和 `docs/.vuepress/plume.config.ts` 中重复配置同一项；`plume.config.ts` 的配置会覆盖 `config.ts` 中相同主题项。
 - 涉及可见页面改动时，尽量用本地 dev server 或 build 结果验证。
@@ -82,6 +85,7 @@ npm run docs:build
 
 - 站点基础信息在 `docs/.vuepress/config.ts`，品牌名为 `Wendi`，语言为 `zh-CN`，描述为 `Code in verse, chiaroscuro in words.`。
 - 主题配置拆在 `docs/.vuepress/theme.ts` 与 `docs/.vuepress/plume.config.ts`。`theme.ts` 负责 Plume 实例级能力，`plume.config.ts` 负责主题外观、profile、navbar 和 collections。
+- `docs/.vuepress/theme.ts` 的 `markdown.icon.preload` 负责为 SFC 内直接使用的 Iconify 图标预加载本地 SVG/CSS 数据；Markdown 页面中直接出现的 `<Icon>` 可由 Plume 自动扫描，但组件内图标不要省略 preload。
 - Navbar 当前三项是 `墨痕`(`/`)、`片羽`(`/notes/`) 和 `瞳画`(`/gallery/`)。
 - Giscus 评论配置在 `docs/.vuepress/theme.ts`；不要把 repo id、category id 等配置复制到其他文件。
 - `docs/.vuepress/client.ts` 注册自定义组件和布局，同时调用 `definePhotoSwipeConfig()`、`setupOutlineRouteReset()`、`setupPhotoSwipeClickToClose()`。
@@ -89,7 +93,9 @@ npm run docs:build
 
 ## 图库流程
 
-图库源图按故事放在 `gallery-staging/<story-slug>/`。每个故事目录可选 `order.json` 指定图片相对路径顺序，也可选 `cover.jpg` 标记图库卡片封面；没有 `cover.*` 时使用排序后的第一张照片。运行 `npm run gallery:build` 会根据脚本生成图库 metadata 和图片派生资源，并清理 `docs/.vuepress/public/gallery-img/` 中不再由当前 staging 引用的文件。
+图库源图按故事放在 `gallery-staging/<story-slug>/`，不再拆分为独立的 `covers/` 和 `stories/` 目录。每个故事目录可递归包含 `.jpg`、`.jpeg`、`.png` 图片，可选 `order.json` 指定图片相对路径顺序，也可选不区分大小写的 `cover.*` 标记图库卡片封面。封面是故事中的普通照片，可以通过 `order.json` 排在中间；没有 `cover.*` 时使用排序后的第一张照片。`order.json` 一旦存在，必须把所有图片路径各列出一次；缺少时按相对路径的确定性字典序排列。
+
+运行 `npm run gallery:build` 会扫描每个 story 目录，生成带有 `storySlug`、`storyOrder`、`isCover` 和图片尺寸/文案 metadata 的 manifest 及图片派生资源，并清理 `docs/.vuepress/public/gallery-img/` 中不再由当前 staging 引用的文件。
 
 图库相关代码集中在 `scripts/gallery/`：
 
@@ -102,7 +108,7 @@ npm run docs:build
 - `sync.mjs`: 将本地生成结果同步到 R2，并支持 dry-run/prune。
 - `config.mjs`: 图库构建配置。
 
-图库故事是 markdown-first：`docs/gallery/*.md` 是故事页面，文件名是 story slug。`galleryStoriesPlugin` 从 frontmatter 读取 `title`、`date`、`location`、可选的旧版 `cover` 和 `permalink`。`cover` 不是必填项；`GalleryHome` 会从 manifest 中与 story slug 匹配且 `isCover` 为真的照片解析封面。
+图库故事是 markdown-first：`docs/gallery/*.md` 是故事页面，文件名是 story slug。`galleryStoriesPlugin` 从 frontmatter 读取 `title`、`date`、`location`、可选的旧版 `cover` 和 `permalink`。`cover` 不是必填项；`GalleryHome` 优先使用旧版 frontmatter cover，否则从 manifest 中与 story slug 匹配且 `isCover` 为真的照片解析封面，再回退到最低 `storyOrder` 的照片。
 
 图库故事常用 frontmatter：
 
@@ -124,7 +130,9 @@ pageClass: photo-story-page
 - `<StoryPhotos :ids="['...', '...']" caption="..." />`: 多张横向排列照片。
 - `<StorySplit :left="['...']" :right="['...', '...']" reverse vertical caption="..." />`: 分栏/上下布局。
 
-`StoryAlbum` 是新故事的默认自动相册；保留 ID 驱动的 `StoryPhoto`、`StoryPhotos` 和 `StorySplit` 用于需要特殊选图或排版的页面。
+`StoryAlbum` 是新故事的默认自动相册：按 manifest 的 `storySlug` 过滤并按 `storyOrder` 排序，不需要在 Markdown 中逐张维护图片 ID。它使用 `thumb.webp` 渲染相册，点击图片时通过 `large.avif` 打开 PhotoSwipe；照片按原始 `w / h` 计算比例感知的 flex 宽度，每行居中，竖图会自然窄于横图，超宽图可在桌面端占更长的横向跨度。保留 ID 驱动的 `StoryPhoto`、`StoryPhotos` 和 `StorySplit` 用于需要特殊选图或排版的页面。
+
+`StoryAlbum` 底部返回入口的 `.story-album__back-row` 只负责占满一行并居中；真正的 `.story-album__back` 链接只包住 40px 图标热区，不能把整行容器改成链接。默认图标是 Plume Iconify 的 `material-symbols:arrow-back-rounded`。故事页媒体宽度通常最多 1600px，CSS 视口达到 3200px 时最多 2200px；同一断点下返回区域额外上间距为 48px。
 
 底层图片组件使用 `large.avif`，并通过显式链接打开 PhotoSwipe。普通左键打开 PhotoSwipe，修饰键点击和非左键点击保留浏览器原生链接行为。图片本身带 `no-view`，避免被全局 PhotoSwipe 选择器重复接管。
 
