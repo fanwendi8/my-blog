@@ -8,20 +8,17 @@ import { createStoryPhotoSwipeItems } from '../../gallery/storyPhotoSwipe'
 import type { Photo } from '../../gallery/types'
 
 const props = defineProps<{
-  ids: string[]
+  story: string
   captions?: Record<string, string | undefined>
 }>()
 
 const { photos } = useGalleryData()
 
-const albumPhotos = computed(() => {
-  const photosById = new Map(photos.value.map((photo) => [photo.id, photo]))
+const albumPhotos = computed(() => photos.value
+  .filter((photo) => photo.storySlug === props.story)
+  .sort((a, b) => (a.storyOrder ?? 0) - (b.storyOrder ?? 0)))
 
-  return props.ids.flatMap((id) => {
-    const photo = photosById.get(id)
-    return photo ? [{ id, photo }] : []
-  })
-})
+const albumIds = computed(() => albumPhotos.value.map(({ id }) => id))
 
 function captionOf(photo: Photo) {
   return props.captions?.[photo.id] ?? photo.caption ?? undefined
@@ -44,7 +41,7 @@ async function openPhotoSwipe(event: MouseEvent, index: number) {
   const { default: PhotoSwipe } = await import('photoswipe')
   const pswp = new PhotoSwipe({
     ...storyAlbumPhotoSwipeOptions,
-    dataSource: createStoryPhotoSwipeItems(photos.value, props.ids, props.captions),
+    dataSource: createStoryPhotoSwipeItems(photos.value, albumIds.value, props.captions),
     index,
     preloaderDelay: 0,
     showHideAnimationType: 'zoom',
@@ -59,8 +56,8 @@ async function openPhotoSwipe(event: MouseEvent, index: number) {
 <template>
   <section class="story-album">
     <figure
-      v-for="({ id, photo }, index) in albumPhotos"
-      :key="`${id}-${index}`"
+      v-for="(photo, index) in albumPhotos"
+      :key="`${photo.id}-${index}`"
       class="story-album__item"
     >
       <a

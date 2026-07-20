@@ -13,6 +13,10 @@ const photoSwipe = vi.hoisted(() => ({
   registerElement: vi.fn(),
 }))
 
+const storyPhotoSwipe = vi.hoisted(() => ({
+  create: vi.fn(),
+}))
+
 vi.mock('photoswipe', () => ({
   default: class PhotoSwipe {
     addFilter = photoSwipe.addFilter
@@ -28,6 +32,18 @@ vi.mock('photoswipe', () => ({
     }
   },
 }))
+
+vi.mock('../gallery/storyPhotoSwipe', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../gallery/storyPhotoSwipe')>()
+
+  return {
+    ...actual,
+    createStoryPhotoSwipeItems: (...args: Parameters<typeof actual.createStoryPhotoSwipeItems>) => {
+      storyPhotoSwipe.create(...args)
+      return actual.createStoryPhotoSwipeItems(...args)
+    },
+  }
+})
 
 vi.mock('vue-router', () => ({
   RouterLink: defineComponent({
@@ -50,6 +66,8 @@ vi.mock('../composables/useGalleryData', () => ({
         w: 600,
         h: 400,
         alt: 'A',
+        storySlug: '2026-05-06',
+        storyOrder: 2,
       },
       {
         id: 'b',
@@ -60,6 +78,8 @@ vi.mock('../composables/useGalleryData', () => ({
         w: 400,
         h: 600,
         alt: 'B',
+        storySlug: '2026-05-06',
+        storyOrder: 1,
       },
       {
         id: 'c',
@@ -70,6 +90,8 @@ vi.mock('../composables/useGalleryData', () => ({
         w: 800,
         h: 600,
         alt: 'C',
+        storySlug: 'another-story',
+        storyOrder: 1,
       },
       {
         id: 'empty',
@@ -79,6 +101,8 @@ vi.mock('../composables/useGalleryData', () => ({
         },
         w: 800,
         h: 600,
+        storySlug: 'empty-story',
+        storyOrder: 1,
       },
     ]),
     stories: ref([]),
@@ -94,16 +118,16 @@ describe('StoryAlbum', () => {
     photoSwipe.on.mockReset()
   })
 
-  it('renders photos in ids order with source-ratio frames and optional captions', () => {
+  it('renders story photos in story order with source-ratio frames and optional captions', () => {
     const wrapper = mount(StoryAlbum, {
-      props: { ids: ['b', 'a', 'c'], captions: { b: 'Stacked sky' } },
+      props: { story: '2026-05-06', captions: { b: 'Stacked sky' } },
     })
     const albumItems = wrapper.findAll('.story-album__item')
 
-    expect(albumItems).toHaveLength(3)
-    expect(wrapper.findAll('.story-album__frame')).toHaveLength(3)
+    expect(albumItems).toHaveLength(2)
+    expect(wrapper.findAll('.story-album__frame')).toHaveLength(2)
     expect(wrapper.findAll('.story-album__image').map((image) => image.attributes('src')))
-      .toEqual(['/gallery-img/b-thumb.webp', '/gallery-img/a-thumb.webp', '/gallery-img/c-thumb.webp'])
+      .toEqual(['/gallery-img/b-thumb.webp', '/gallery-img/a-thumb.webp'])
     expect(wrapper.findAll('.story-album__frame')[0].attributes('style'))
       .toContain('--story-photo-ratio: 400 / 600')
     expect(albumItems.every((item) => item.attributes('style') === undefined)).toBe(true)
@@ -112,7 +136,7 @@ describe('StoryAlbum', () => {
   })
 
   it('renders an icon-only back link with an accessible name and tooltip', () => {
-    const wrapper = mount(StoryAlbum, { props: { ids: ['b'] } })
+    const wrapper = mount(StoryAlbum, { props: { story: '2026-05-06' } })
     const back = wrapper.get('.story-album__back')
     const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
     const backRule = styles.match(/\.story-album__back\s*\{[^}]*\}/)?.[0] ?? ''
@@ -205,13 +229,19 @@ describe('StoryAlbum', () => {
     expect(mobileFrameRule).toMatch(/--story-mat-inset:\s*8px/)
   })
 
-  it('opens an ordered story lightbox at the clicked item', async () => {
+  it('opens a filtered and ordered story lightbox at the clicked item', async () => {
     const wrapper = mount(StoryAlbum, {
-      props: { ids: ['b', 'missing', 'a'], captions: { b: 'Stacked sky' } },
+      props: { story: '2026-05-06', captions: { b: 'Stacked sky' } },
     })
 
     await wrapper.findAll('.story-album__frame')[0].trigger('click')
     await vi.dynamicImportSettled()
+
+    expect(storyPhotoSwipe.create).toHaveBeenCalledWith(
+      expect.any(Array),
+      ['b', 'a'],
+      { b: 'Stacked sky' },
+    )
 
     expect(photoSwipe.construct).toHaveBeenCalledWith(expect.objectContaining({
       dataSource: [
@@ -249,7 +279,7 @@ describe('StoryAlbum', () => {
       if (event === 'change') onChange = handler
     })
     const wrapper = mount(StoryAlbum, {
-      props: { ids: ['b'], captions: { b: 'Stacked sky' } },
+      props: { story: '2026-05-06', captions: { b: 'Stacked sky' } },
     })
 
     await wrapper.find('.story-album__frame').trigger('click')
@@ -281,7 +311,7 @@ describe('StoryAlbum', () => {
   })
 
   it('gives every album frame an accessible name when metadata is empty', () => {
-    const wrapper = mount(StoryAlbum, { props: { ids: ['empty'] } })
+    const wrapper = mount(StoryAlbum, { props: { story: 'empty-story' } })
 
     expect(wrapper.findAll('.story-album__frame').map((frame) => frame.attributes('aria-label')))
       .toEqual(['查看照片 1'])
@@ -289,7 +319,7 @@ describe('StoryAlbum', () => {
 
   it('associates a provided caption with its frame accessible name', () => {
     const wrapper = mount(StoryAlbum, {
-      props: { ids: ['b'], captions: { b: 'Stacked sky' } },
+      props: { story: '2026-05-06', captions: { b: 'Stacked sky' } },
     })
 
     const frame = wrapper.get('.story-album__frame')
@@ -300,7 +330,7 @@ describe('StoryAlbum', () => {
   it('preserves native modified-click behavior on album links', async () => {
     const wrapper = mount(StoryAlbum, {
       attachTo: document.body,
-      props: { ids: ['b'] },
+      props: { story: '2026-05-06' },
     })
     let componentPreventedDefault: boolean | undefined
     const stopNavigation = (clickEvent: MouseEvent) => {

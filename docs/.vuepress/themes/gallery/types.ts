@@ -6,6 +6,9 @@ export interface Photo {
   alt?: string
   title?: string | null
   caption?: string | null
+  storySlug?: string
+  storyOrder?: number
+  isCover?: boolean
 }
 
 export interface PhotoSourceSet {
