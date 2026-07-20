@@ -28,7 +28,21 @@ const yearGroups = computed(() => {
 })
 
 function coverFor(story: PhotoStory): Photo | null {
-  return story.cover ? photoById.value.get(story.cover) ?? null : null
+  if (story.cover) {
+    const legacyCover = photoById.value.get(story.cover)
+    if (legacyCover) return legacyCover
+  }
+
+  const storyPhotos = photos.value.filter((photo) => photo.storySlug === story.slug)
+  const manifestCover = storyPhotos.find((photo) => photo.isCover)
+  if (manifestCover) return manifestCover
+
+  return storyPhotos.reduce<Photo | null>((lowestOrderPhoto, photo) => {
+    if (!lowestOrderPhoto) return photo
+    return (photo.storyOrder ?? Infinity) < (lowestOrderPhoto.storyOrder ?? Infinity)
+      ? photo
+      : lowestOrderPhoto
+  }, null)
 }
 
 function srcOf(photo: Photo) {

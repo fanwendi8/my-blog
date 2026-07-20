@@ -31,6 +31,14 @@ permalink: /gallery/empty/
 
       expect(await readGalleryStories(root)).toEqual([
         {
+          slug: 'empty',
+          title: 'Empty',
+          date: '2025-01-03',
+          location: null,
+          cover: null,
+          path: '/gallery/empty/',
+        },
+        {
           slug: 'daily',
           title: 'Daily Walk',
           date: '2025-01-02',

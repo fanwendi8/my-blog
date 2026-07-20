@@ -31,10 +31,16 @@ vi.mock('../composables/useGalleryData', () => ({
         h: 400,
         alt: 'B',
       },
+      { id: 'cover-first', src: '/cover-first.webp', w: 600, h: 400, storySlug: 'featured', storyOrder: 1 },
+      { id: 'cover-marked', src: '/cover-marked.webp', w: 600, h: 400, storySlug: 'featured', storyOrder: 2, isCover: true },
+      { id: 'fallback-later', src: '/fallback-later.webp', w: 600, h: 400, storySlug: 'fallback', storyOrder: 2 },
+      { id: 'fallback-first', src: '/fallback-first.webp', w: 600, h: 400, storySlug: 'fallback', storyOrder: 1 },
     ]),
     stories: ref([
       { slug: 'late', title: 'Late', date: '2025-01-01', location: 'Beijing', cover: 'a', count: 1, photos: ['a'], path: '/gallery/late/' },
       { slug: 'early', title: 'Early', date: '2024-01-01', location: 'Tokyo', cover: 'b', count: 1, photos: ['b'], path: '/gallery/early/' },
+      { slug: 'featured', title: 'Featured', date: '2023-01-01', location: null, cover: null, path: '/gallery/featured/' },
+      { slug: 'fallback', title: 'Fallback', date: '2022-01-01', location: null, cover: null, path: '/gallery/fallback/' },
     ]),
     ready: ref(true),
     error: ref(null),
@@ -49,7 +55,7 @@ describe('GalleryHome', () => {
     expect(wrapper.find('.gallery-story-index').exists()).toBe(true)
     expect(wrapper.text()).toContain('2025')
     expect(wrapper.text()).toContain('2024')
-    expect(wrapper.findAll('.gallery-story-card')).toHaveLength(2)
+    expect(wrapper.findAll('.gallery-story-card')).toHaveLength(4)
     expect(wrapper.find('.router-link-stub').attributes('href')).toBe('/gallery/late/')
     expect(wrapper.find('.gallery-story-card time').attributes('datetime')).toBe('2025-01-01')
     expect(wrapper.find('.gallery-story-card time').text()).toBe('2025-01-01')
@@ -61,5 +67,19 @@ describe('GalleryHome', () => {
     const images = wrapper.findAll('.gallery-story-card__cover img')
     expect(images[1].attributes('src')).toBe('/gallery-img/b-thumb.webp')
     expect(images[1].attributes('style')).toBeUndefined()
+  })
+
+  it('uses the manifest cover photo for stories without a legacy cover', () => {
+    const wrapper = mount(GalleryHome)
+    const card = wrapper.findAll('.gallery-story-card').find((item) => item.text().includes('Featured'))
+
+    expect(card?.find('img').attributes('src')).toBe('/cover-marked.webp')
+  })
+
+  it('uses the lowest story order when a story has no manifest cover photo', () => {
+    const wrapper = mount(GalleryHome)
+    const card = wrapper.findAll('.gallery-story-card').find((item) => item.text().includes('Fallback'))
+
+    expect(card?.find('img').attributes('src')).toBe('/fallback-first.webp')
   })
 })

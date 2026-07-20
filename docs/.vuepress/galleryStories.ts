@@ -86,7 +86,6 @@ export async function readGalleryStories(galleryDir: string): Promise<PhotoStory
     const slug = basename(entry.name, '.md')
     const frontmatter = parseFrontmatter(await readFile(join(galleryDir, entry.name), 'utf8'))
     const cover = toStringOrNull(frontmatter.cover)
-    if (!cover) continue
 
     stories.push({
       slug,
