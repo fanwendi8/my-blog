@@ -31,6 +31,7 @@ async function orderImages(storyDir, slug, images) {
   let order
   try {
     const parsed = JSON.parse(await readFile(orderFile, 'utf8'))
+    if (parsed === null || typeof parsed !== 'object') throw storyError(slug, 'order.json must contain an order array')
     order = parsed.order
   } catch (error) {
     if (error.code === 'ENOENT') return [...images].sort((a, b) => a.relativePath.localeCompare(b.relativePath))

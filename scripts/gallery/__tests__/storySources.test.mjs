@@ -21,7 +21,7 @@ async function story(root, slug, files, order) {
     await mkdir(path.dirname(target), { recursive: true })
     await writeFile(target, contents)
   }
-  if (order) await writeFile(path.join(dir, 'order.json'), JSON.stringify({ order }))
+  if (order !== undefined) await writeFile(path.join(dir, 'order.json'), JSON.stringify({ order }))
 }
 
 describe('scanStorySources', () => {
@@ -94,6 +94,24 @@ describe('scanStorySources', () => {
     await withRoot(async root => {
       await story(root, 'covers', { 'cover.jpg': '', 'nested/cover.png': '' })
       await expect(scanStorySources(root)).rejects.toThrow('story "covers" contains multiple explicit cover files')
+    })
+  })
+
+  test('rejects non-object order.json roots with deterministic errors', async () => {
+    for (const [slug, rootValue] of [['null-root', null], ['string-root', 'order'], ['number-root', 42]]) {
+      await withRoot(async root => {
+        await story(root, slug, { 'a.jpg': '' })
+        await writeFile(path.join(root, slug, 'order.json'), JSON.stringify(rootValue))
+        await expect(scanStorySources(root)).rejects.toThrow(`story "${slug}" order.json must contain an order array`)
+      })
+    }
+  })
+
+  test('validates an explicitly empty order array', async () => {
+    await withRoot(async root => {
+      await story(root, 'empty-order', { 'a.jpg': '' }, [])
+
+      await expect(scanStorySources(root)).rejects.toThrow('story "empty-order" order.json omits image path "a.jpg"')
     })
   })
 })
