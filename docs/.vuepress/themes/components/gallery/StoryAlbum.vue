@@ -32,6 +32,36 @@ function accessibleLabel(photo: Photo, index: number) {
   return photo.alt?.trim() || photo.title?.trim() || `查看照片 ${index + 1}`
 }
 
+function gridSpanForRatio(ratio: number, columns: number, targetArea: number) {
+  const safeRatio = Math.min(4, Math.max(.25, ratio))
+  return Math.min(columns, Math.max(1, Math.round(Math.sqrt(safeRatio * targetArea))))
+}
+
+function flexBasisForSpan(span: number, columns: number, gap: number) {
+  if (span >= columns) return '100%'
+
+  const percentage = (span / columns * 100).toFixed(4)
+  const gapOffset = ((1 - span / columns) * gap).toFixed(4)
+  return `calc(${percentage}% - ${gapOffset}px)`
+}
+
+function itemStyle(photo: Photo) {
+  const ratio = photo.h > 0 ? photo.w / photo.h : 1
+  const desktopSpan = gridSpanForRatio(ratio, 12, 20)
+  const tabletSpan = gridSpanForRatio(ratio, 6, 8)
+  const mobileSpan = ratio < .85 ? 1 : 2
+
+  return {
+    '--story-flex-basis': flexBasisForSpan(desktopSpan, 12, 20),
+    '--story-flex-basis-tablet': flexBasisForSpan(tabletSpan, 6, 20),
+    '--story-flex-basis-mobile': flexBasisForSpan(mobileSpan, 2, 12),
+  }
+}
+
+function frameStyle(photo: Photo) {
+  return { '--story-photo-ratio': `${photo.w} / ${photo.h}` }
+}
+
 async function openPhotoSwipe(event: MouseEvent, index: number) {
   if (typeof window === 'undefined') return
   if (event.button !== 0 || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return
@@ -59,11 +89,12 @@ async function openPhotoSwipe(event: MouseEvent, index: number) {
       v-for="(photo, index) in albumPhotos"
       :key="`${photo.id}-${index}`"
       class="story-album__item"
+      :style="itemStyle(photo)"
     >
       <a
         class="story-album__frame"
         :href="largeSrc(photo)"
-        :style="{ '--story-photo-ratio': `${photo.w} / ${photo.h}` }"
+        :style="frameStyle(photo)"
         :aria-label="accessibleLabel(photo, index)"
         :aria-describedby="captionOf(photo) ? captionId(index) : undefined"
         @click="openPhotoSwipe($event, index)"

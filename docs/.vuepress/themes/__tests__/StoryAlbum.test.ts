@@ -130,7 +130,18 @@ describe('StoryAlbum', () => {
       .toEqual(['/gallery-img/b-thumb.webp', '/gallery-img/a-thumb.webp'])
     expect(wrapper.findAll('.story-album__frame')[0].attributes('style'))
       .toContain('--story-photo-ratio: 400 / 600')
-    expect(albumItems.every((item) => item.attributes('style') === undefined)).toBe(true)
+    expect(wrapper.findAll('.story-album__item')[0].attributes('style'))
+      .toContain('--story-flex-basis: calc(33.3333% - 13.3333px)')
+    expect(wrapper.findAll('.story-album__item')[0].attributes('style'))
+      .toContain('--story-flex-basis-tablet: calc(33.3333% - 13.3333px)')
+    expect(wrapper.findAll('.story-album__item')[0].attributes('style'))
+      .toContain('--story-flex-basis-mobile: calc(50.0000% - 6.0000px)')
+    expect(wrapper.findAll('.story-album__item')[1].attributes('style'))
+      .toContain('--story-flex-basis: calc(41.6667% - 11.6667px)')
+    expect(wrapper.findAll('.story-album__item')[1].attributes('style'))
+      .toContain('--story-flex-basis-tablet: calc(50.0000% - 10.0000px)')
+    expect(wrapper.findAll('.story-album__item')[1].attributes('style'))
+      .toContain('--story-flex-basis-mobile: 100%')
     expect(wrapper.find('.story-album__caption').text()).toBe('Stacked sky')
     expect(wrapper.find('.story-album__back').attributes('href')).toBe('/gallery/')
   })
@@ -177,14 +188,16 @@ describe('StoryAlbum', () => {
     const captionLineRule = styles.match(/\.story-album__caption::before\s*\{([^}]*)\}/)?.[1] ?? ''
     const albumRule = styles.match(/\.story-album\s*\{([^}]*)\}/)?.[1] ?? ''
     const backRule = styles.match(/\.story-album__back\s*\{([^}]*)\}/)?.[1] ?? ''
-    const desktopAlbumRule =
-      styles.match(/@media\s*\(min-width:\s*1200px\)[\s\S]*?\.story-album\s*\{([^}]*)\}/)?.[1] ?? ''
     const tabletAlbumRule =
       styles.match(/@media\s*\(min-width:\s*720px\)\s*and\s*\(max-width:\s*1199px\)[\s\S]*?\.story-album\s*\{([^}]*)\}/)?.[1] ?? ''
+    const tabletItemRule =
+      styles.match(/@media\s*\(min-width:\s*720px\)\s*and\s*\(max-width:\s*1199px\)[\s\S]*?\.story-album__item\s*\{([^}]*)\}/)?.[1] ?? ''
     const tabletFrameRule =
       styles.match(/@media\s*\(min-width:\s*720px\)\s*and\s*\(max-width:\s*1199px\)[\s\S]*?\.story-album__frame\s*\{([^}]*)\}/)?.[1] ?? ''
     const mobileFrameRule =
       styles.match(/@media\s*\(max-width:\s*719px\)[\s\S]*?\.story-album__frame\s*\{([^}]*)\}/)?.[1] ?? ''
+    const mobileItemRule =
+      styles.match(/@media\s*\(max-width:\s*719px\)[\s\S]*?\.story-album__item\s*\{([^}]*)\}/)?.[1] ?? ''
 
     expect(frameRule).toMatch(/aspect-ratio:\s*var\(--story-photo-ratio, 4 \/ 3\)/)
     expect(styles).toMatch(/--story-frame-color:\s*#4a4943/)
@@ -192,10 +205,10 @@ describe('StoryAlbum', () => {
     expect(albumRule).toMatch(/flex-wrap:\s*wrap/)
     expect(albumRule).toMatch(/justify-content:\s*center/)
     expect(albumRule).toMatch(/max-width:\s*min\(1760px,\s*calc\(100vw - 96px\)\)/)
-    expect(itemRule).toMatch(/flex:\s*0 0 auto/)
+    expect(itemRule).toMatch(/flex:\s*0 0 var\(--story-flex-basis,\s*33\.3333%\)/)
     expect(itemRule).not.toMatch(/transform:/)
-    expect(frameRule).toMatch(/height:\s*var\(--story-row-height\)/)
-    expect(frameRule).toMatch(/width:\s*auto/)
+    expect(frameRule).toMatch(/height:\s*auto/)
+    expect(frameRule).toMatch(/width:\s*100%/)
     expect(frameRule).toMatch(/border:\s*6px solid var\(--story-frame-color\)/)
     expect(frameRule).toMatch(/--story-mat-inset:\s*clamp\(14px,\s*1\.35vw,\s*18px\)/)
     expect(frameRule).toMatch(/padding:\s*var\(--story-mat-inset\)/)
@@ -217,11 +230,11 @@ describe('StoryAlbum', () => {
     expect(captionLineRule).toMatch(/width:\s*48px/)
     expect(captionLineRule).toMatch(/height:\s*1px/)
     expect(backRule).toMatch(/flex-basis:\s*100%/)
-    expect(desktopAlbumRule).toMatch(/--story-row-height:\s*240px/)
-    expect(tabletAlbumRule).toMatch(/--story-row-height:\s*200px/)
+    expect(tabletAlbumRule).toMatch(/gap:\s*28px 20px/)
+    expect(tabletItemRule).toMatch(/flex-basis:\s*var\(--story-flex-basis-tablet,\s*33\.3333%\)/)
     expect(tabletFrameRule).toMatch(/border:\s*5px solid var\(--story-frame-color\)/)
     expect(tabletFrameRule).toMatch(/--story-mat-inset:\s*clamp\(10px,\s*1\.25vw,\s*14px\)/)
-    expect(mobileFrameRule).toMatch(/--story-row-height:\s*150px/)
+    expect(mobileItemRule).toMatch(/flex-basis:\s*var\(--story-flex-basis-mobile,\s*100%\)/)
     expect(mobileFrameRule).toMatch(/--story-shadow-contact:\s*2px 3px 4px -2px rgba\(38, 36, 31, \.26\)/)
     expect(mobileFrameRule).toMatch(/--story-shadow-main:\s*6px 9px 14px -7px rgba\(38, 36, 31, \.22\)/)
     expect(mobileFrameRule).toMatch(/--story-shadow-ambient:\s*10px 14px 24px -12px rgba\(38, 36, 31, \.14\)/)
