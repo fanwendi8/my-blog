@@ -204,7 +204,7 @@ describe('StoryAlbum', () => {
     expect(back.getComponent(IconStub).props('name')).toBe('material-symbols:arrow-back-rounded')
     expect(backRule).toMatch(/min-width:\s*40px/)
     expect(backRule).toMatch(/min-height:\s*40px/)
-    expect(backRule).toMatch(/margin-top:\s*8px/)
+    expect(backRule).toMatch(/margin-top:\s*24px/)
     expect(backRule).toMatch(/display:\s*inline-flex/)
     expect(backRule).toMatch(/justify-self:\s*center/)
   })
