@@ -5,11 +5,11 @@ import { createPhotoRecord, fileMetaKey } from '../build.mjs'
 describe('fileMetaKey', () => {
   it('normalizes staging paths for portable meta.json lookups', () => {
     const staging = path.resolve('/project/gallery-staging')
-    const absolute = path.join(staging, 'stories', '2.jpg')
+    const absolute = path.join(staging, '2026-05-06', '02.jpg')
 
-    expect(fileMetaKey(absolute, staging)).toBe('stories/2.jpg')
-    expect(fileMetaKey('stories/2.jpg', staging)).toBe('stories/2.jpg')
-    expect(fileMetaKey('stories\\2.jpg', staging)).toBe('stories/2.jpg')
+    expect(fileMetaKey(absolute, staging)).toBe('2026-05-06/02.jpg')
+    expect(fileMetaKey('2026-05-06/02.jpg', staging)).toBe('2026-05-06/02.jpg')
+    expect(fileMetaKey('2026-05-06\\02.jpg', staging)).toBe('2026-05-06/02.jpg')
   })
 })
 
@@ -36,5 +36,18 @@ describe('createPhotoRecord', () => {
       alt: '',
       caption: null,
     })
+  })
+
+  it('adds story metadata to a photo record', () => {
+    expect(createPhotoRecord({
+      id: 'photo-id',
+      src: { thumb: { webp: 'photo-thumb.webp', w: 480 }, large: { avif: 'photo-large.avif', w: 3840 } },
+      size: { w: 1200, h: 900 },
+      fileMeta: {},
+      storySlug: '2026-05-06',
+      storyOrder: 1,
+      isCover: true,
+      previous: null,
+    })).toMatchObject({ storySlug: '2026-05-06', storyOrder: 1, isCover: true })
   })
 })

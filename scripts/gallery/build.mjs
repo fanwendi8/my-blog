@@ -4,14 +4,15 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
-import { PATHS, R2, DERIVATIVES } from './config.mjs'
-import { scanDirectory, contentHash } from './scan.mjs'
+import { PATHS, R2, PHOTO_DERIVATIVES } from './config.mjs'
+import { contentHash } from './scan.mjs'
 import { derivativeManifest, generateDerivatives } from './derivatives.mjs'
 import {
   mergePhotos, writeManifest, readPhotosOrEmpty,
 } from './manifest.mjs'
 import { makeR2Client, uploadDerivatives } from './uploader.mjs'
 import { prefixedObjectKey } from './sync.mjs'
+import { scanStorySources } from './storySources.mjs'
 
 const argv = new Set(process.argv.slice(2))
 const UPLOAD = argv.has('--upload')
@@ -23,7 +24,9 @@ export function fileMetaKey(file, stagingRoot = PATHS.staging) {
   return path.relative(stagingRoot, file).replaceAll('\\', '/')
 }
 
-export function createPhotoRecord({ id, src, size, fileMeta = {}, previous = null }) {
+export function createPhotoRecord({
+  id, src, size, fileMeta = {}, previous = null, storySlug, storyOrder, isCover,
+}) {
   return {
     id,
     src,
@@ -32,6 +35,7 @@ export function createPhotoRecord({ id, src, size, fileMeta = {}, previous = nul
     title: fileMeta.title ?? previous?.title ?? null,
     alt: fileMeta.alt ?? previous?.alt ?? previous?.title ?? '',
     caption: fileMeta.caption ?? previous?.caption ?? null,
+    ...(storySlug === undefined ? {} : { storySlug, storyOrder, isCover }),
   }
 }
 
@@ -53,14 +57,12 @@ async function pruneStalePhotos(outRoot, keepIds) {
 }
 
 async function main() {
-  const coverFiles = await scanDirectory(path.join(PATHS.staging, 'covers'))
-  const storyFiles = await scanDirectory(path.join(PATHS.staging, 'stories'))
-  const allFiles = [
-    ...coverFiles.map(f => ({ file: f, role: 'cover' })),
-    ...storyFiles.map(f => ({ file: f, role: 'story' })),
-  ]
+  const stories = await scanStorySources(PATHS.staging)
+  const allFiles = stories.flatMap(({ slug, photos }) => photos.map(({
+    file, storyOrder, isCover,
+  }) => ({ file, storySlug: slug, storyOrder, isCover })))
 
-  console.log(`[gallery] found ${coverFiles.length} cover files, ${storyFiles.length} story files`)
+  console.log(`[gallery] found ${stories.length} story directories, ${allFiles.length} photos`)
   if (allFiles.length === 0) { console.log('[gallery] nothing to do'); return }
 
   const prev = await readPhotosOrEmpty(PATHS.manifestDir)
@@ -76,23 +78,25 @@ async function main() {
 
   const next = []
 
-  for (const { file, role } of allFiles) {
+  for (const { file, storySlug, storyOrder, isCover } of allFiles) {
     const id = await contentHash(file)
-    const specs = DERIVATIVES[role]
 
     if (prevById.has(id) && !DRY) {
-      await generateDerivatives(file, id, PATHS.publicImages, specs)
+      await generateDerivatives(file, id, PATHS.publicImages, PHOTO_DERIVATIVES)
       const prevPhoto = prevById.get(id)
       next.push(createPhotoRecord({
         id,
-        src: derivativeManifest(id, specs),
+        src: derivativeManifest(id, PHOTO_DERIVATIVES),
         size: prevPhoto,
         previous: prevPhoto,
+        storySlug,
+        storyOrder,
+        isCover,
       }))
       continue
     }
     console.log(`[gallery] ${id}  ${path.relative(PATHS.staging, file)}`)
-    const src = await generateDerivatives(file, id, PATHS.publicImages, specs)
+    const src = await generateDerivatives(file, id, PATHS.publicImages, PHOTO_DERIVATIVES)
     const size = await readImageSize(file)
 
     // 从 meta.json 读取轻量标题和配文
@@ -103,6 +107,9 @@ async function main() {
       src,
       size,
       fileMeta,
+      storySlug,
+      storyOrder,
+      isCover,
     }))
   }
 

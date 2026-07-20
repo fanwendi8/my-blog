@@ -23,16 +23,10 @@ export const R2 = {
   publicBase: process.env.R2_PUBLIC_BASE ?? '',      // 例: https://img.fanwendi.fun
 }
 
-// 衍生图规格 - 按角色分组
-export const DERIVATIVES = {
-  cover: [
-    { name: 'thumb', width: 480, formats: ['webp'] },
-    { name: 'large', width: 3840, formats: ['avif'] },
-  ],
-  story: [
-    { name: 'thumb', width: 480, formats: ['webp'] },
-    { name: 'large', width: 3840, formats: ['avif'] },
-  ],
-}
+// 衍生图规格 - 所有照片共享
+export const PHOTO_DERIVATIVES = [
+  { name: 'thumb', width: 480, formats: ['webp'] },
+  { name: 'large', width: 3840, formats: ['avif'] },
+]
 
 export const HASH_LEN = 12                          // photo id 长度(sha256 前缀)
