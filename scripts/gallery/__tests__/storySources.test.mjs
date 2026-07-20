@@ -42,6 +42,32 @@ describe('scanStorySources', () => {
     })
   })
 
+  test('uses code-point ordering for mixed-case and Unicode image paths without order.json', async () => {
+    await withRoot(async root => {
+      await story(root, 'story', {
+        'é.jpg': '',
+        'a-second.jpg': '',
+        'z.jpg': '',
+        '你.jpg': '',
+        'A-first.jpg': '',
+        'Å.jpg': '',
+        'ä.jpg': '',
+      })
+
+      const [result] = await scanStorySources(root)
+
+      expect(result.photos.map(photo => photo.relativePath)).toEqual([
+        'A-first.jpg',
+        'a-second.jpg',
+        'z.jpg',
+        'Å.jpg',
+        'ä.jpg',
+        'é.jpg',
+        '你.jpg',
+      ])
+    })
+  })
+
   test('uses explicit order for nested image paths and normalized separators', async () => {
     await withRoot(async root => {
       await story(root, 'story', { 'z.png': '', 'album/cover.jpg': '', 'album/01.jpg': '', 'note.txt': '' }, ['album/01.jpg', 'album/cover.jpg', 'z.png'])

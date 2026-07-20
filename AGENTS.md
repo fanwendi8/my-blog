@@ -23,7 +23,7 @@
 - `docs/.vuepress/galleryStories.ts`: 图库相关 Vite 插件。
 - `docs/.vuepress/client.ts`: 客户端组件注册、PhotoSwipe 运行时配置和路由修复入口。
 - `docs/.vuepress/themes/`: 自定义主题扩展，包括布局、组件、composables、图库 helper、样式和 Vitest 测试。
-- `docs/.vuepress/themes/components/gallery/`: 摄影故事 Markdown 可直接使用的组件：`PhotoStoryHeader`、`StoryPhoto`、`StoryPhotos`、`StorySplit`。
+- `docs/.vuepress/themes/components/gallery/`: 摄影故事 Markdown 可直接使用的组件：`PhotoStoryHeader`、`StoryAlbum`、`StoryPhoto`、`StoryPhotos`、`StorySplit`。
 - `docs/.vuepress/themes/layouts/`: 自定义页面布局，例如 `GalleryHome` 和 `NotesHome`。
 - `gallery-staging/`: 图库源图暂存目录。
 - `scripts/gallery/`: 图库扫描、派生图、manifest 和上传脚本。
@@ -89,7 +89,7 @@ npm run docs:build
 
 ## 图库流程
 
-图库源图放在 `gallery-staging/`。运行 `npm run gallery:build` 会根据脚本生成图库 metadata 和图片派生资源，并清理 `docs/.vuepress/public/gallery-img/` 中不再由当前 staging 引用的文件。
+图库源图按故事放在 `gallery-staging/<story-slug>/`。每个故事目录可选 `order.json` 指定图片相对路径顺序，也可选 `cover.jpg` 标记图库卡片封面；没有 `cover.*` 时使用排序后的第一张照片。运行 `npm run gallery:build` 会根据脚本生成图库 metadata 和图片派生资源，并清理 `docs/.vuepress/public/gallery-img/` 中不再由当前 staging 引用的文件。
 
 图库相关代码集中在 `scripts/gallery/`：
 
@@ -101,7 +101,7 @@ npm run docs:build
 - `sync.mjs`: 将本地生成结果同步到 R2，并支持 dry-run/prune。
 - `config.mjs`: 图库构建配置。
 
-图库故事是 markdown-first：`docs/gallery/*.md` 是故事页面，文件名是 story slug。`galleryStoriesPlugin` 从 frontmatter 读取 `title`、`date`、`location`、`cover` 和 `permalink`，没有 `cover` 的 Markdown 不会进入图库首页。
+图库故事是 markdown-first：`docs/gallery/*.md` 是故事页面，文件名是 story slug。`galleryStoriesPlugin` 从 frontmatter 读取 `title`、`date`、`location`、可选的旧版 `cover` 和 `permalink`。`cover` 不是必填项；`GalleryHome` 会从 manifest 中与 story slug 匹配且 `isCover` 为真的照片解析封面。
 
 图库故事常用 frontmatter：
 
@@ -110,7 +110,6 @@ npm run docs:build
 title: Example Story
 date: 2026-05-06
 location: Beijing
-cover: 723dcc13be01
 permalink: /gallery/example-story/
 pageClass: photo-story-page
 ---
@@ -119,9 +118,12 @@ pageClass: photo-story-page
 图库 story Markdown 可直接使用这些全局组件：
 
 - `<PhotoStoryHeader />`: 读取页面 frontmatter 渲染故事标题、日期、地点。
+- `<StoryAlbum story="..." />`: 自动按 manifest 中该 story 的图片顺序渲染相册。
 - `<StoryPhoto id="..." caption="..." />`: 单张照片。
 - `<StoryPhotos :ids="['...', '...']" caption="..." />`: 多张横向排列照片。
 - `<StorySplit :left="['...']" :right="['...', '...']" reverse vertical caption="..." />`: 分栏/上下布局。
+
+`StoryAlbum` 是新故事的默认自动相册；保留 ID 驱动的 `StoryPhoto`、`StoryPhotos` 和 `StorySplit` 用于需要特殊选图或排版的页面。
 
 底层图片组件使用 `large.avif`，并通过显式链接打开 PhotoSwipe。普通左键打开 PhotoSwipe，修饰键点击和非左键点击保留浏览器原生链接行为。图片本身带 `no-view`，避免被全局 PhotoSwipe 选择器重复接管。
 

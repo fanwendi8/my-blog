@@ -11,6 +11,10 @@ function isSupportedImage(file) {
   return file.isFile() && IMAGE_EXTENSIONS.has(path.extname(file.name).toLowerCase())
 }
 
+function compareCodePoints(a, b) {
+  return a < b ? -1 : a > b ? 1 : 0
+}
+
 async function discoverImages(directory, relative = '') {
   const entries = await readdir(directory, { withFileTypes: true })
   const images = []
@@ -34,7 +38,7 @@ async function orderImages(storyDir, slug, images) {
     if (parsed === null || typeof parsed !== 'object') throw storyError(slug, 'order.json must contain an order array')
     order = parsed.order
   } catch (error) {
-    if (error.code === 'ENOENT') return [...images].sort((a, b) => a.relativePath.localeCompare(b.relativePath))
+    if (error.code === 'ENOENT') return [...images].sort((a, b) => compareCodePoints(a.relativePath, b.relativePath))
     if (error instanceof SyntaxError) throw storyError(slug, 'order.json is invalid JSON')
     throw error
   }
