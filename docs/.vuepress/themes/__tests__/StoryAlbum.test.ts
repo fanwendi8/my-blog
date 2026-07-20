@@ -189,24 +189,41 @@ describe('StoryAlbum', () => {
     expect(wrapper.find('.story-album__back').attributes('href')).toBe('/gallery/')
   })
 
-  it('renders an icon-only back link with an accessible name and tooltip', () => {
+  it('renders an icon-only back link inside a full-width centering row', () => {
     const wrapper = mount(StoryAlbum, {
       props: { story: '2026-05-06' },
       global: { components: { Icon: IconStub } },
     })
+    const backRow = wrapper.get('.story-album__back-row')
     const back = wrapper.get('.story-album__back')
     const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
+    const backRowRule = styles.match(/\.story-album__back-row\s*\{[^}]*\}/)?.[0] ?? ''
     const backRule = styles.match(/\.story-album__back\s*\{[^}]*\}/)?.[0] ?? ''
 
+    expect(backRow.element.tagName).toBe('DIV')
     expect(back.attributes('aria-label')).toBe('返回瞳画')
     expect(back.attributes('title')).toBe('返回瞳画')
     expect(back.text()).toBe('')
     expect(back.getComponent(IconStub).props('name')).toBe('material-symbols:arrow-back-rounded')
+    expect(backRowRule).toMatch(/flex:\s*0 0 100%/)
+    expect(backRowRule).toMatch(/display:\s*flex/)
+    expect(backRowRule).toMatch(/justify-content:\s*center/)
     expect(backRule).toMatch(/min-width:\s*40px/)
     expect(backRule).toMatch(/min-height:\s*40px/)
-    expect(backRule).toMatch(/margin-top:\s*24px/)
+    expect(backRule).toMatch(/flex:\s*0 0 auto/)
+    expect(backRule).toMatch(/width:\s*fit-content/)
+    expect(backRule).toMatch(/margin:\s*0/)
+    expect(backRule).not.toMatch(/flex-basis:\s*100%/)
     expect(backRule).toMatch(/display:\s*inline-flex/)
-    expect(backRule).toMatch(/justify-self:\s*center/)
+  })
+
+  it('increases the return gap on ultra-wide screens', () => {
+    const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
+    const ultraWideRule = styles.match(
+      /@media\s*\(min-width:\s*3200px\)\s*\{\s*\.story-album__back-row\s*\{([^}]*)\}/,
+    )?.[1] ?? ''
+
+    expect(ultraWideRule).toMatch(/margin-top:\s*48px/)
   })
 
   it('keeps the StoryAlbum grid rhythm compact on mobile', () => {
@@ -229,6 +246,7 @@ describe('StoryAlbum', () => {
     const captionRule = styles.match(/\.story-album__caption\s*\{([^}]*)\}/)?.[1] ?? ''
     const captionLineRule = styles.match(/\.story-album__caption::before\s*\{([^}]*)\}/)?.[1] ?? ''
     const albumRule = styles.match(/\.story-album\s*\{([^}]*)\}/)?.[1] ?? ''
+    const backRowRule = styles.match(/\.story-album__back-row\s*\{([^}]*)\}/)?.[1] ?? ''
     const backRule = styles.match(/\.story-album__back\s*\{([^}]*)\}/)?.[1] ?? ''
     const tabletAlbumRule =
       styles.match(/@media\s*\(min-width:\s*720px\)\s*and\s*\(max-width:\s*1199px\)[\s\S]*?\.story-album\s*\{([^}]*)\}/)?.[1] ?? ''
@@ -277,7 +295,7 @@ describe('StoryAlbum', () => {
     expect(captionLineRule).toMatch(/width:\s*48px/)
     expect(captionLineRule).toMatch(/height:\s*1px/)
     expect(captionLineRule).toMatch(/margin:\s*0 auto 7px/)
-    expect(backRule).toMatch(/flex-basis:\s*100%/)
+    expect(backRowRule).toMatch(/flex:\s*0 0 100%/)
     expect(tabletAlbumRule).toMatch(/gap:\s*28px 20px/)
     expect(tabletItemRule).toMatch(/flex-basis:\s*var\(--story-flex-basis-tablet,\s*33\.3333%\)/)
     expect(tabletFrameRule).toMatch(/border:\s*6px solid var\(--story-frame-color\)/)

@@ -115,13 +115,15 @@ async function openPhotoSwipe(event: MouseEvent, index: number) {
         {{ captionOf(photo) }}
       </figcaption>
     </figure>
-    <RouterLink
-      class="story-album__back"
-      to="/gallery/"
-      aria-label="返回瞳画"
-      title="返回瞳画"
-    >
-      <Icon name="material-symbols:arrow-back-rounded" aria-hidden="true" />
-    </RouterLink>
+    <div class="story-album__back-row">
+      <RouterLink
+        class="story-album__back"
+        to="/gallery/"
+        aria-label="返回瞳画"
+        title="返回瞳画"
+      >
+        <Icon name="material-symbols:arrow-back-rounded" aria-hidden="true" />
+      </RouterLink>
+    </div>
   </section>
 </template>

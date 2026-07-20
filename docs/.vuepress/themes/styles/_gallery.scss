@@ -368,19 +368,22 @@ html:has(.photo-story-page) .vp-doc-container > .container {
   content: '';
 }
 
-.story-album__back {
+.story-album__back-row {
   flex: 0 0 100%;
-  flex-basis: 100%;
-  justify-self: center;
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.story-album__back {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: fit-content;
   min-width: 40px;
   min-height: 40px;
-  margin-top: 24px;
-  margin-right: auto;
-  margin-left: auto;
+  margin: 0;
   color: var(--story-muted-color);
   text-decoration: none;
 }
@@ -711,6 +714,12 @@ figure.photo-story-gallery__figure > figcaption {
   .photo-story-page .vp-doc > div > p {
     font-size: 15px;
     line-height: 1.6;
+  }
+}
+
+@media (min-width: 3200px) {
+  .story-album__back-row {
+    margin-top: 48px;
   }
 }
 
