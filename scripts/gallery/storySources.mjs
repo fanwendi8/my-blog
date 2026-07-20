@@ -33,12 +33,7 @@ async function orderImages(storyDir, slug, images) {
     const parsed = JSON.parse(await readFile(orderFile, 'utf8'))
     order = parsed.order
   } catch (error) {
-    if (error.code === 'ENOENT') {
-      const ordered = [...images].sort((a, b) => a.relativePath.localeCompare(b.relativePath))
-      const coverIndex = ordered.findIndex(image => path.basename(image.relativePath, path.extname(image.relativePath)).toLowerCase() === 'cover')
-      if (coverIndex > 1) ordered.splice(1, 0, ordered.splice(coverIndex, 1)[0])
-      return ordered
-    }
+    if (error.code === 'ENOENT') return [...images].sort((a, b) => a.relativePath.localeCompare(b.relativePath))
     if (error instanceof SyntaxError) throw storyError(slug, 'order.json is invalid JSON')
     throw error
   }

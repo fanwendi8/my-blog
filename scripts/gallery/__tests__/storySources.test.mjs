@@ -35,8 +35,8 @@ describe('scanStorySources', () => {
         slug: '2026-05-06',
         photos: [
           expect.objectContaining({ relativePath: '01.jpg', storyOrder: 0, isCover: false }),
-          expect.objectContaining({ relativePath: 'cover.jpg', storyOrder: 1, isCover: true }),
-          expect.objectContaining({ relativePath: '02.jpg', storyOrder: 2, isCover: false }),
+          expect.objectContaining({ relativePath: '02.jpg', storyOrder: 1, isCover: false }),
+          expect.objectContaining({ relativePath: 'cover.jpg', storyOrder: 2, isCover: true }),
         ],
       }])
     })
