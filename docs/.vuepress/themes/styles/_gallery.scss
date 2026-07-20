@@ -157,6 +157,10 @@ html:has(.photo-story-page) .photo-story-page {
   background-image: none;
 }
 
+html:has(.photo-story-page) .photo-story-page {
+  min-height: auto;
+}
+
 html:has(.photo-story-page) {
   --vp-layout-top-height: 0px;
   --vp-nav-height: 0px;
@@ -372,9 +376,9 @@ html:has(.photo-story-page) .vp-doc-container > .container {
   align-items: center;
   justify-content: center;
   width: fit-content;
-  min-width: 32px;
-  min-height: 32px;
-  margin-top: 8px;
+  min-width: 40px;
+  min-height: 40px;
+  margin-top: -8px;
   margin-right: auto;
   margin-left: auto;
   color: var(--story-muted-color);
@@ -382,8 +386,8 @@ html:has(.photo-story-page) .vp-doc-container > .container {
 }
 
 .story-album__back svg {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
 }
 
 .story-album__back:focus-visible {

@@ -68,6 +68,7 @@ describe('PhotoStoryHeader', () => {
     expect(styles).not.toMatch(/--story-text-width/)
     expect(styles).toMatch(/--story-media-width:\s*min\(1600px,\s*calc\(100vw - 96px\)\)/)
     expect(styles).toMatch(/@media\s*\(min-width:\s*3200px\)[\s\S]*--story-media-width:\s*min\(2200px,\s*calc\(100vw - 96px\)\)/)
+    expect(styles).toMatch(/html:has\(\.photo-story-page\) \.photo-story-page\s*\{\s*min-height:\s*auto/)
     expect(styles).toMatch(/--story-wall-color:\s*#fff/)
     expect(styles).toMatch(/background-color:\s*var\(--story-wall-color\)/)
     expect(styles).toMatch(/background-image:\s*none/)

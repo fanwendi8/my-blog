@@ -122,7 +122,7 @@ async function openPhotoSwipe(event: MouseEvent, index: number) {
       title="返回瞳画"
     >
       <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
-        <path d="M11.5 4.5 6 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1" />
+        <path d="M9 4.5 3.5 10 9 15.5 M3.5 10h13" fill="none" stroke="currentColor" stroke-width="1.2" />
       </svg>
     </RouterLink>
   </section>
