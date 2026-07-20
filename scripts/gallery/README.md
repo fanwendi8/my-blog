@@ -118,7 +118,7 @@ pageClass: photo-story-page
 ```json
 [
   {
-    "path": "stories/2.jpg",
+    "path": "2026-05-06/01.jpg",
     "title": "昆明湖水面",
     "alt": "傍晚的昆明湖水面与远处云层",
     "caption": "颐和园。2026。"
