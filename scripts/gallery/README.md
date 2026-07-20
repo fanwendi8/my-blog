@@ -1,6 +1,17 @@
 # Gallery 内容工作流
 
-The gallery is markdown-first. Each markdown file in `docs/gallery/*.md` is a story, and the VuePress build reads story metadata directly from frontmatter.
+The gallery is markdown-first. Each markdown file in `docs/gallery/*.md` is a story, and the VuePress build reads story metadata directly from frontmatter. Its source images live in a matching story directory under `gallery-staging/`:
+
+```text
+gallery-staging/
+└── example-story/
+    ├── cover.jpg
+    ├── 01.jpg
+    ├── 02.jpg
+    └── order.json
+```
+
+`cover.*` (supported image formats are `.jpg`, `.jpeg`, and `.png`) marks the gallery-card cover. It is also a normal story photo and may appear anywhere in the album. `order.json` is optional: when present, its `order` array must list every image path relative to the story directory exactly once; otherwise images use deterministic lexical path order. Nested image paths are supported.
 
 Run this only when adding, removing, or replacing source images in `gallery-staging/`:
 
@@ -13,7 +24,7 @@ The image build writes:
 - `docs/.vuepress/public/gallery/data/photos.json`
 - `docs/.vuepress/public/gallery-img/<photo-id>-<size>.<format>`
 
-`gallery:build` writes derivatives directly to `docs/.vuepress/public/gallery-img/` and prunes that directory to the current files in `gallery-staging/`. Both cover and story photos generate `thumb.webp`; `large.avif` is reserved for large-image viewing.
+`gallery:build` writes derivatives directly to `docs/.vuepress/public/gallery-img/` and prunes that directory to the current files in `gallery-staging/`. Every story image, including `cover.*`, uses the same derivative output: `thumb.webp` for gallery grids and album thumbnails, plus `large.avif` for story viewing and Lightbox.
 
 ## R2 同步
 
@@ -93,13 +104,12 @@ npm run gallery:publish
 title: Example Story
 date: 2025-01-01
 location: Beijing
-cover: 723dcc13be01
 permalink: /gallery/example-story/
 pageClass: photo-story-page
 ---
 ```
 
-`cover` 必填,并且需要对应 `photos.json` 中已有的图片 id。没有 `cover` 的 markdown 不会出现在 gallery 首页。
+图库首页封面从同 slug 的 `gallery-staging/example-story/cover.*` 自动解析，不再在 frontmatter 中维护图片 ID。缺少 `cover.*` 时，构建器会使用该故事排序后的第一张照片作为封面。
 
 ## 图片元数据
 
@@ -116,7 +126,7 @@ pageClass: photo-story-page
 ]
 ```
 
-路径统一写成 `covers/1.jpg` 或 `stories/2.jpg`。脚本也会兼容反斜杠路径,但不建议在文档里使用本机绝对路径。
+路径统一写成 `example-story/01.jpg` 或 `example-story/nested/detail.jpg`。脚本也会兼容反斜杠路径,但不建议在文档里使用本机绝对路径。
 
 ## 衍生图
 
@@ -124,5 +134,5 @@ pageClass: photo-story-page
 
 | 文件 | 用途 |
 |---|---|
-| `thumb.webp` | 长边 480, 图库网格和专辑封面 |
+| `thumb.webp` | 长边 480, 图库网格和故事相册缩略图 |
 | `large.avif` | 长边 3840, 故事正文和 Lightbox |

@@ -40,16 +40,16 @@ pageClass: photo-story-page
 
 ### `<StoryAlbum />`
 
-摄影故事的默认相册布局。按 `ids` 顺序展示照片，并在故事末尾提供返回图库首页的链接。需要为个别照片补充说明时，使用 `captions` 对象，以照片 ID 为键。
+摄影故事的默认相册布局。按 `story` 指向的 story directory 顺序展示照片，并在故事末尾提供返回图库首页的链接。需要为个别照片补充说明时，使用 `captions` 对象，以稳定照片 ID 为键。
 
 | Prop        | 类型                                | 必填 | 说明                                      |
 | ----------- | ----------------------------------- | ---- | ----------------------------------------- |
-| `:ids`      | `string[]`                          | 是   | 按展示顺序排列的照片 ID 数组                |
+| `story`     | `string`                            | 是   | story slug，对应 `gallery-staging/<slug>/` |
 | `:captions` | `Record<string, string \| undefined>` | 否   | 照片 ID 到说明文字的映射，覆盖默认 caption |
 
 ```markdown
 <StoryAlbum
-  :ids="['010b54cc976e', '9f59a0e0c481']"
+  story="example-album-story"
   :captions="{
     '9f59a0e0c481': '单张',
   }"
@@ -67,7 +67,6 @@ pageClass: photo-story-page
 title: Example Album Story
 date: 2025-01-02
 location: Beijing
-cover: afb0b234ec65
 permalink: /gallery/example-album-story/
 pageClass: photo-story-page
 ---
@@ -77,7 +76,7 @@ pageClass: photo-story-page
 这是一篇摄影故事的简短引言。照片按拍摄与观看的顺序收束为一个完整相册。
 
 <StoryAlbum
-  :ids="['010b54cc976e', 'b597375e04e3', 'b0735e09eeeb', '9f59a0e0c481', '98a9c0597e73', 'afb0b234ec65', '21a2f94b9ca5']"
+  story="example-album-story"
   :captions="{
     '9f59a0e0c481': '单张',
     '98a9c0597e73': '70 张堆栈',
@@ -220,7 +219,7 @@ pageClass: photo-story-page
 
 ```
 PhotoStoryHeader       ── 读取 frontmatter，渲染头部
-StoryAlbum             ── 默认相册布局，按 ids 顺序渲染照片和可选 captions
+StoryAlbum             ── 默认相册布局，按 story source 顺序渲染照片和可选 captions
 StoryPhoto             ── 包裹 PhotoStoryImage(mode=single)
 StoryPhotos            ── 包裹 PhotoStoryImage(mode=tile) × N
 StorySplit             ── 包裹 PhotoStoryImage(mode=tile) × N
