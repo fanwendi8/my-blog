@@ -121,9 +121,7 @@ async function openPhotoSwipe(event: MouseEvent, index: number) {
       aria-label="返回瞳画"
       title="返回瞳画"
     >
-      <svg aria-hidden="true" viewBox="0 0 20 20" focusable="false">
-        <path d="M9 4.5 3.5 10 9 15.5 M3.5 10h13" fill="none" stroke="currentColor" stroke-width="1.2" />
-      </svg>
+      <Icon name="material-symbols:arrow-back-rounded" aria-hidden="true" />
     </RouterLink>
   </section>
 </template>

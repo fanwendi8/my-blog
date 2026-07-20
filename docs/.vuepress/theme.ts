@@ -6,6 +6,10 @@ export const theme: Theme = plumeTheme({
   readingTime: false,
 
   markdown: {
+    icon: {
+      provider: 'iconify',
+      preload: ['material-symbols:arrow-back-rounded'],
+    },
     image: {
       // 启用 figure
       figure: true,

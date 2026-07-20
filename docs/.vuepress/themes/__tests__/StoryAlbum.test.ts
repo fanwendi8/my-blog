@@ -17,6 +17,16 @@ const storyPhotoSwipe = vi.hoisted(() => ({
   create: vi.fn(),
 }))
 
+const IconStub = defineComponent({
+  name: 'Icon',
+  props: {
+    name: { type: String, required: true },
+  },
+  setup(props) {
+    return () => h('span', { class: 'vp-icon', 'data-icon': props.name })
+  },
+})
+
 vi.mock('photoswipe', () => ({
   default: class PhotoSwipe {
     addFilter = photoSwipe.addFilter
@@ -180,7 +190,10 @@ describe('StoryAlbum', () => {
   })
 
   it('renders an icon-only back link with an accessible name and tooltip', () => {
-    const wrapper = mount(StoryAlbum, { props: { story: '2026-05-06' } })
+    const wrapper = mount(StoryAlbum, {
+      props: { story: '2026-05-06' },
+      global: { components: { Icon: IconStub } },
+    })
     const back = wrapper.get('.story-album__back')
     const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
     const backRule = styles.match(/\.story-album__back\s*\{[^}]*\}/)?.[0] ?? ''
@@ -188,15 +201,10 @@ describe('StoryAlbum', () => {
     expect(back.attributes('aria-label')).toBe('返回瞳画')
     expect(back.attributes('title')).toBe('返回瞳画')
     expect(back.text()).toBe('')
-    expect(back.find('svg').exists()).toBe(true)
-    const path = back.get('path')
-    expect(path.attributes('d')).toBe('M9 4.5 3.5 10 9 15.5 M3.5 10h13')
-    expect(path.attributes('fill')).toBe('none')
-    expect(path.attributes('stroke')).toBe('currentColor')
-    expect(path.attributes('stroke-width')).toBe('1.2')
+    expect(back.getComponent(IconStub).props('name')).toBe('material-symbols:arrow-back-rounded')
     expect(backRule).toMatch(/min-width:\s*40px/)
     expect(backRule).toMatch(/min-height:\s*40px/)
-    expect(backRule).toMatch(/margin-top:\s*-8px/)
+    expect(backRule).toMatch(/margin-top:\s*8px/)
     expect(backRule).toMatch(/display:\s*inline-flex/)
     expect(backRule).toMatch(/justify-self:\s*center/)
   })

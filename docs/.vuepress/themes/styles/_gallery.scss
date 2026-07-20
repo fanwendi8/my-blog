@@ -378,14 +378,14 @@ html:has(.photo-story-page) .vp-doc-container > .container {
   width: fit-content;
   min-width: 40px;
   min-height: 40px;
-  margin-top: -8px;
+  margin-top: 8px;
   margin-right: auto;
   margin-left: auto;
   color: var(--story-muted-color);
   text-decoration: none;
 }
 
-.story-album__back svg {
+.story-album__back .vp-icon {
   width: 24px;
   height: 24px;
 }
