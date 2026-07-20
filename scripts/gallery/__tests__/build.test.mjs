@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import path from 'node:path'
-import { createPhotoRecord, fileMetaKey } from '../build.mjs'
+import { createPhotoRecord, fileMetaKey, validateUniquePhotoIds } from '../build.mjs'
 
 describe('fileMetaKey', () => {
   it('normalizes staging paths for portable meta.json lookups', () => {
@@ -49,5 +49,28 @@ describe('createPhotoRecord', () => {
       isCover: true,
       previous: null,
     })).toMatchObject({ storySlug: '2026-05-06', storyOrder: 1, isCover: true })
+  })
+
+  it('uses current metadata when reusing a photo record', () => {
+    expect(createPhotoRecord({
+      id: 'photo-id',
+      src: { thumb: { webp: 'photo-thumb.webp', w: 480 } },
+      size: { w: 1200, h: 900 },
+      fileMeta: { title: 'Current title', alt: 'Current alt', caption: 'Current caption' },
+      previous: { w: 1200, h: 900, title: 'Old title', alt: 'Old alt', caption: 'Old caption' },
+    })).toMatchObject({
+      title: 'Current title',
+      alt: 'Current alt',
+      caption: 'Current caption',
+    })
+  })
+})
+
+describe('validateUniquePhotoIds', () => {
+  it('rejects duplicate content hashes with deterministic source placements', () => {
+    expect(() => validateUniquePhotoIds([
+      { id: 'duplicate-id', sourcePath: '2026-05-07/02.jpg' },
+      { id: 'duplicate-id', sourcePath: '2026-05-06/01.jpg' },
+    ])).toThrow('[gallery] duplicate photo id "duplicate-id" at "2026-05-06/01.jpg" and "2026-05-07/02.jpg"')
   })
 })

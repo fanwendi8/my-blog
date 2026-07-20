@@ -39,6 +39,21 @@ export function createPhotoRecord({
   }
 }
 
+export function validateUniquePhotoIds(sources) {
+  const seen = new Map()
+  const ordered = [...sources].sort((a, b) => {
+    const byId = a.id.localeCompare(b.id)
+    return byId || a.sourcePath.localeCompare(b.sourcePath)
+  })
+  for (const source of ordered) {
+    const previous = seen.get(source.id)
+    if (previous) {
+      throw new Error(`[gallery] duplicate photo id "${source.id}" at "${previous.sourcePath}" and "${source.sourcePath}"`)
+    }
+    seen.set(source.id, source)
+  }
+}
+
 async function readImageSize(file) {
   const { width, height } = await sharp(file).metadata()
   return { w: width, h: height }
@@ -59,8 +74,14 @@ async function pruneStalePhotos(outRoot, keepIds) {
 async function main() {
   const stories = await scanStorySources(PATHS.staging)
   const allFiles = stories.flatMap(({ slug, photos }) => photos.map(({
-    file, storyOrder, isCover,
-  }) => ({ file, storySlug: slug, storyOrder, isCover })))
+    file, relativePath, storyOrder, isCover,
+  }) => ({
+    file,
+    sourcePath: path.join(slug, relativePath).replaceAll('\\', '/'),
+    storySlug: slug,
+    storyOrder,
+    isCover,
+  })))
 
   console.log(`[gallery] found ${stories.length} story directories, ${allFiles.length} photos`)
   if (allFiles.length === 0) { console.log('[gallery] nothing to do'); return }
@@ -77,9 +98,14 @@ async function main() {
   } catch { /* meta.json 不存在则忽略 */ }
 
   const next = []
+  const sources = []
+  for (const source of allFiles) {
+    sources.push({ ...source, id: await contentHash(source.file) })
+  }
+  validateUniquePhotoIds(sources)
 
-  for (const { file, storySlug, storyOrder, isCover } of allFiles) {
-    const id = await contentHash(file)
+  for (const { file, id, storySlug, storyOrder, isCover } of sources) {
+    const fileMeta = fileMetaMap.get(fileMetaKey(file))
 
     if (prevById.has(id) && !DRY) {
       await generateDerivatives(file, id, PATHS.publicImages, PHOTO_DERIVATIVES)
@@ -88,6 +114,7 @@ async function main() {
         id,
         src: derivativeManifest(id, PHOTO_DERIVATIVES),
         size: prevPhoto,
+        fileMeta,
         previous: prevPhoto,
         storySlug,
         storyOrder,
@@ -98,9 +125,6 @@ async function main() {
     console.log(`[gallery] ${id}  ${path.relative(PATHS.staging, file)}`)
     const src = await generateDerivatives(file, id, PATHS.publicImages, PHOTO_DERIVATIVES)
     const size = await readImageSize(file)
-
-    // 从 meta.json 读取轻量标题和配文
-    const fileMeta = fileMetaMap.get(fileMetaKey(file))
 
     next.push(createPhotoRecord({
       id,
