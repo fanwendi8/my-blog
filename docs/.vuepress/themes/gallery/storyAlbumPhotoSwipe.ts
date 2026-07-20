@@ -26,6 +26,15 @@ export const storyAlbumPhotoSwipeOptions: PhotoSwipeOptions = {
 
 export function configureStoryAlbumPhotoSwipe(photoSwipe: PhotoSwipe): void {
   photoSwipe.addFilter('isContentZoomable', () => false)
+  photoSwipe.on('contentResize', ({ content, width, height }) => {
+    const placeholder = content.placeholder?.element
+    if (placeholder?.tagName !== 'IMG') return
+
+    placeholder.style.width = `${width}px`
+    placeholder.style.height = `${height}px`
+    placeholder.style.transform = 'none'
+    placeholder.style.objectFit = 'cover'
+  })
   photoSwipe.on('uiRegister', () => {
     photoSwipe.ui.registerElement({
       name: 'story-album-caption',
