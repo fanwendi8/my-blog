@@ -157,10 +157,13 @@ describe('StoryAlbum', () => {
       styles.match(/@media\s*\(min-width:\s*1200px\)[\s\S]*?\.story-album\s*\{([^}]*)\}/)?.[1] ?? ''
     const tabletAlbumRule =
       styles.match(/@media\s*\(min-width:\s*720px\)\s*and\s*\(max-width:\s*1199px\)[\s\S]*?\.story-album\s*\{([^}]*)\}/)?.[1] ?? ''
+    const tabletFrameRule =
+      styles.match(/@media\s*\(min-width:\s*720px\)\s*and\s*\(max-width:\s*1199px\)[\s\S]*?\.story-album__frame\s*\{([^}]*)\}/)?.[1] ?? ''
     const mobileFrameRule =
       styles.match(/@media\s*\(max-width:\s*719px\)[\s\S]*?\.story-album__frame\s*\{([^}]*)\}/)?.[1] ?? ''
 
     expect(frameRule).toMatch(/aspect-ratio:\s*var\(--story-photo-ratio, 4 \/ 3\)/)
+    expect(styles).toMatch(/--story-frame-color:\s*#4a4943/)
     expect(albumRule).toMatch(/display:\s*flex/)
     expect(albumRule).toMatch(/flex-wrap:\s*wrap/)
     expect(albumRule).toMatch(/justify-content:\s*center/)
@@ -169,15 +172,20 @@ describe('StoryAlbum', () => {
     expect(itemRule).not.toMatch(/transform:/)
     expect(frameRule).toMatch(/height:\s*var\(--story-row-height\)/)
     expect(frameRule).toMatch(/width:\s*auto/)
-    expect(frameRule).toMatch(/border:\s*3px solid transparent/)
-    expect(frameRule).toMatch(/--story-mat-inset:\s*clamp\(24px,\s*2vw,\s*28px\)/)
+    expect(frameRule).toMatch(/border:\s*6px solid var\(--story-frame-color\)/)
+    expect(frameRule).toMatch(/--story-mat-inset:\s*clamp\(20px,\s*2vw,\s*24px\)/)
     expect(frameRule).toMatch(/padding:\s*var\(--story-mat-inset\)/)
-    expect(frameRule).toMatch(/linear-gradient\(var\(--story-mat-color\),\s*var\(--story-mat-color\)\) padding-box/)
-    expect(frameRule).toMatch(/linear-gradient\(140deg,\s*var\(--story-frame-color\)/)
-    expect(frameRule).toMatch(/0 12px 22px rgba\(38, 36, 31, \.18\)/)
+    expect(frameRule).toMatch(/background:\s*var\(--story-mat-color\)/)
+    expect(frameRule).not.toMatch(/gradient/)
+    expect(frameRule).toMatch(/--story-shadow-contact:\s*3px 4px 6px -3px rgba\(38, 36, 31, \.28\)/)
+    expect(frameRule).toMatch(/--story-shadow-main:\s*10px 14px 24px -10px rgba\(38, 36, 31, \.24\)/)
+    expect(frameRule).toMatch(/--story-shadow-ambient:\s*18px 24px 42px -18px rgba\(38, 36, 31, \.16\)/)
+    expect(frameRule).toMatch(/var\(--story-shadow-contact\)/)
+    expect(frameRule).toMatch(/var\(--story-shadow-main\)/)
+    expect(frameRule).toMatch(/var\(--story-shadow-ambient\)/)
     expect(frameRule).toMatch(/border-radius:\s*0/)
     expect(frameLipRule).toMatch(/inset:\s*var\(--story-mat-inset\)/)
-    expect(frameLipRule).toMatch(/border:\s*1px solid rgba\(51, 50, 46, \.18\)/)
+    expect(frameLipRule).toMatch(/border:\s*1px solid rgba\(51, 50, 46, \.24\)/)
     expect(imageRule).toMatch(/object-fit:\s*cover/)
     expect(imageRule).toMatch(/border:\s*1px solid rgba\(45, 45, 42, \.13\)/)
     expect(hoverRule).toMatch(/^\s*opacity:\s*\.9\s*;?\s*$/)
@@ -185,10 +193,16 @@ describe('StoryAlbum', () => {
     expect(captionLineRule).toMatch(/width:\s*48px/)
     expect(captionLineRule).toMatch(/height:\s*1px/)
     expect(backRule).toMatch(/flex-basis:\s*100%/)
-    expect(desktopAlbumRule).toMatch(/--story-row-height:\s*220px/)
-    expect(tabletAlbumRule).toMatch(/--story-row-height:\s*185px/)
-    expect(mobileFrameRule).toMatch(/--story-row-height:\s*140px/)
-    expect(mobileFrameRule).toMatch(/--story-mat-inset:\s*10px/)
+    expect(desktopAlbumRule).toMatch(/--story-row-height:\s*240px/)
+    expect(tabletAlbumRule).toMatch(/--story-row-height:\s*200px/)
+    expect(tabletFrameRule).toMatch(/border:\s*5px solid var\(--story-frame-color\)/)
+    expect(tabletFrameRule).toMatch(/--story-mat-inset:\s*clamp\(16px,\s*2vw,\s*20px\)/)
+    expect(mobileFrameRule).toMatch(/--story-row-height:\s*150px/)
+    expect(mobileFrameRule).toMatch(/--story-shadow-contact:\s*2px 3px 4px -2px rgba\(38, 36, 31, \.26\)/)
+    expect(mobileFrameRule).toMatch(/--story-shadow-main:\s*6px 9px 14px -7px rgba\(38, 36, 31, \.22\)/)
+    expect(mobileFrameRule).toMatch(/--story-shadow-ambient:\s*10px 14px 24px -12px rgba\(38, 36, 31, \.14\)/)
+    expect(mobileFrameRule).toMatch(/border:\s*5px solid var\(--story-frame-color\)/)
+    expect(mobileFrameRule).toMatch(/--story-mat-inset:\s*8px/)
   })
 
   it('opens an ordered story lightbox at the clicked item', async () => {

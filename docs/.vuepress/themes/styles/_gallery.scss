@@ -135,9 +135,8 @@ html:has(.gallery-page)::-webkit-scrollbar-thumb {
 }
 
 .photo-story-page {
-  --story-wall-color: #f5f2ec;
-  --story-frame-color: #303231;
-  --story-frame-highlight: #74756f;
+  --story-wall-color: #fff;
+  --story-frame-color: #4a4943;
   --story-mat-color: #fffdf8;
   --story-muted-color: #65625b;
   --story-media-width: min(1280px, calc(100vw - 64px));
@@ -148,12 +147,8 @@ html:has(.photo-story-page),
 html:has(.photo-story-page) body,
 html:has(.photo-story-page) .vp-layout,
 html:has(.photo-story-page) .photo-story-page {
-  background-color: #f5f2ec;
-  background-image:
-    radial-gradient(rgba(54, 50, 44, .022) .45px, transparent .45px),
-    radial-gradient(rgba(255, 255, 255, .26) .45px, transparent .45px);
-  background-position: 0 0, 5px 7px;
-  background-size: 8px 8px, 13px 13px;
+  background-color: var(--story-wall-color);
+  background-image: none;
 }
 
 html:has(.photo-story-page) {
@@ -261,7 +256,7 @@ html:has(.photo-story-page) .vp-doc-container > .container {
 }
 
 .story-album {
-  --story-row-height: 220px;
+  --story-row-height: 240px;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -281,7 +276,10 @@ html:has(.photo-story-page) .vp-doc-container > .container {
 }
 
 .story-album__frame {
-  --story-mat-inset: clamp(24px, 2vw, 28px);
+  --story-mat-inset: clamp(20px, 2vw, 24px);
+  --story-shadow-contact: 3px 4px 6px -3px rgba(38, 36, 31, .28);
+  --story-shadow-main: 10px 14px 24px -10px rgba(38, 36, 31, .24);
+  --story-shadow-ambient: 18px 24px 42px -18px rgba(38, 36, 31, .16);
 
   box-sizing: border-box;
   display: grid;
@@ -292,17 +290,16 @@ html:has(.photo-story-page) .vp-doc-container > .container {
   position: relative;
   place-items: center;
   overflow: hidden;
-  border: 3px solid transparent;
+  border: 6px solid var(--story-frame-color);
   border-radius: 0;
   padding: var(--story-mat-inset);
-  background:
-    linear-gradient(var(--story-mat-color), var(--story-mat-color)) padding-box,
-    linear-gradient(140deg, var(--story-frame-color) 0%, var(--story-frame-highlight) 48%, var(--story-frame-color) 100%) border-box;
+  background: var(--story-mat-color);
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, .82),
-    inset 0 -1px 0 rgba(44, 43, 39, .16),
-    0 2px 4px rgba(38, 36, 31, .14),
-    0 12px 22px rgba(38, 36, 31, .18);
+    inset 0 0 0 1px rgba(255, 255, 255, .38),
+    inset 0 -2px 0 rgba(22, 24, 21, .48),
+    var(--story-shadow-contact),
+    var(--story-shadow-main),
+    var(--story-shadow-ambient);
   color: inherit;
   text-decoration: none;
 }
@@ -311,8 +308,9 @@ html:has(.photo-story-page) .vp-doc-container > .container {
   position: absolute;
   z-index: 1;
   inset: var(--story-mat-inset);
-  border: 1px solid rgba(51, 50, 46, .18);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .72);
+  border: 1px solid rgba(51, 50, 46, .24);
+  box-shadow:
+    inset 0 -1px 0 rgba(30, 31, 28, .18);
   content: '';
   pointer-events: none;
 }
@@ -603,7 +601,7 @@ figure.photo-story-gallery__figure > figcaption {
   }
 
   .story-album {
-    --story-row-height: 140px;
+    --story-row-height: 150px;
     max-width: calc(100vw - 32px);
     gap: 22px 12px;
   }
@@ -613,8 +611,12 @@ figure.photo-story-gallery__figure > figcaption {
   }
 
   .story-album__frame {
-    --story-row-height: 140px;
-    --story-mat-inset: 10px;
+    --story-row-height: 150px;
+    --story-mat-inset: 8px;
+    --story-shadow-contact: 2px 3px 4px -2px rgba(38, 36, 31, .26);
+    --story-shadow-main: 6px 9px 14px -7px rgba(38, 36, 31, .22);
+    --story-shadow-ambient: 10px 14px 24px -12px rgba(38, 36, 31, .14);
+    border: 5px solid var(--story-frame-color);
     max-width: 100%;
   }
 }
@@ -665,19 +667,20 @@ figure.photo-story-gallery__figure > figcaption {
 
 @media (min-width: 720px) and (max-width: 1199px) {
   .story-album {
-    --story-row-height: 185px;
+    --story-row-height: 200px;
     max-width: min(1120px, calc(100vw - 48px));
     gap: 28px 20px;
   }
 
   .story-album__frame {
-    --story-mat-inset: clamp(20px, 2vw, 24px);
+    --story-mat-inset: clamp(16px, 2vw, 20px);
+    border: 5px solid var(--story-frame-color);
   }
 }
 
 @media (min-width: 1200px) {
   .story-album {
-    --story-row-height: 220px;
+    --story-row-height: 240px;
   }
 }
 
