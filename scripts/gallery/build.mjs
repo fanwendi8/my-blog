@@ -12,7 +12,7 @@ import {
 } from './manifest.mjs'
 import { makeR2Client, uploadDerivatives } from './uploader.mjs'
 import { prefixedObjectKey } from './sync.mjs'
-import { scanStorySources } from './storySources.mjs'
+import { compareCodePoints, scanStorySources } from './storySources.mjs'
 
 const argv = new Set(process.argv.slice(2))
 const UPLOAD = argv.has('--upload')
@@ -42,8 +42,8 @@ export function createPhotoRecord({
 export function validateUniquePhotoIds(sources) {
   const seen = new Map()
   const ordered = [...sources].sort((a, b) => {
-    const byId = a.id.localeCompare(b.id)
-    return byId || a.sourcePath.localeCompare(b.sourcePath)
+    const byId = compareCodePoints(a.id, b.id)
+    return byId || compareCodePoints(a.sourcePath, b.sourcePath)
   })
   for (const source of ordered) {
     const previous = seen.get(source.id)

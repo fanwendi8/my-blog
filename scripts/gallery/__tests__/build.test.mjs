@@ -73,4 +73,16 @@ describe('validateUniquePhotoIds', () => {
       { id: 'duplicate-id', sourcePath: '2026-05-06/01.jpg' },
     ])).toThrow('[gallery] duplicate photo id "duplicate-id" at "2026-05-06/01.jpg" and "2026-05-07/02.jpg"')
   })
+
+  it('uses code-point source-path ordering in duplicate diagnostics', () => {
+    expect(() => validateUniquePhotoIds([
+      { id: 'duplicate-id', sourcePath: 'é-story/photo.jpg' },
+      { id: 'duplicate-id', sourcePath: 'a-story/photo.jpg' },
+      { id: 'duplicate-id', sourcePath: 'z-story/photo.jpg' },
+      { id: 'duplicate-id', sourcePath: '你-story/photo.jpg' },
+      { id: 'duplicate-id', sourcePath: 'A-story/photo.jpg' },
+      { id: 'duplicate-id', sourcePath: 'Å-story/photo.jpg' },
+      { id: 'duplicate-id', sourcePath: 'ä-story/photo.jpg' },
+    ])).toThrow('[gallery] duplicate photo id "duplicate-id" at "A-story/photo.jpg" and "a-story/photo.jpg"')
+  })
 })

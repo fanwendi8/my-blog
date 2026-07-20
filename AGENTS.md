@@ -93,7 +93,8 @@ npm run docs:build
 
 图库相关代码集中在 `scripts/gallery/`：
 
-- `scan.mjs`: 扫描源图片。
+- `storySources.mjs`: 扫描故事目录及其图片来源。
+- `scan.mjs`: 图片哈希与旧版扫描 helper。
 - `derivatives.mjs`: 生成图片派生资源。
 - `manifest.mjs`: 生成 manifest。
 - `uploader.mjs`: 上传逻辑。

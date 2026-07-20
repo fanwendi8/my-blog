@@ -11,7 +11,7 @@ function isSupportedImage(file) {
   return file.isFile() && IMAGE_EXTENSIONS.has(path.extname(file.name).toLowerCase())
 }
 
-function compareCodePoints(a, b) {
+export function compareCodePoints(a, b) {
   return a < b ? -1 : a > b ? 1 : 0
 }
 
@@ -63,7 +63,7 @@ async function orderImages(storyDir, slug, images) {
 export async function scanStorySources(stagingRoot) {
   const entries = await readdir(stagingRoot, { withFileTypes: true })
   const stories = []
-  for (const entry of entries.filter(entry => entry.isDirectory()).sort((a, b) => a.name.localeCompare(b.name))) {
+  for (const entry of entries.filter(entry => entry.isDirectory()).sort((a, b) => compareCodePoints(a.name, b.name))) {
     const slug = entry.name
     const storyDir = path.join(stagingRoot, slug)
     const discovered = await discoverImages(storyDir)

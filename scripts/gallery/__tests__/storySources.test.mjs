@@ -68,6 +68,26 @@ describe('scanStorySources', () => {
     })
   })
 
+  test('uses code-point ordering for mixed-case and Unicode story directories', async () => {
+    await withRoot(async root => {
+      for (const slug of ['é-story', 'a-second-story', 'z-story', '你-story', 'A-first-story', 'Å-story', 'ä-story']) {
+        await story(root, slug, { 'photo.jpg': '' })
+      }
+
+      const stories = await scanStorySources(root)
+
+      expect(stories.map(story => story.slug)).toEqual([
+        'A-first-story',
+        'a-second-story',
+        'z-story',
+        'Å-story',
+        'ä-story',
+        'é-story',
+        '你-story',
+      ])
+    })
+  })
+
   test('uses explicit order for nested image paths and normalized separators', async () => {
     await withRoot(async root => {
       await story(root, 'story', { 'z.png': '', 'album/cover.jpg': '', 'album/01.jpg': '', 'note.txt': '' }, ['album/01.jpg', 'album/cover.jpg', 'z.png'])
