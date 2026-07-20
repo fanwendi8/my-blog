@@ -82,6 +82,18 @@ vi.mock('../composables/useGalleryData', () => ({
         storyOrder: 1,
       },
       {
+        id: 'wide',
+        src: {
+          thumb: { webp: 'wide-thumb.webp' },
+          large: { avif: 'wide-large.avif' },
+        },
+        w: 2000,
+        h: 800,
+        alt: 'Wide',
+        storySlug: '2026-05-06',
+        storyOrder: 3,
+      },
+      {
         id: 'c',
         src: {
           thumb: { webp: 'c-thumb.webp' },
@@ -124,10 +136,10 @@ describe('StoryAlbum', () => {
     })
     const albumItems = wrapper.findAll('.story-album__item')
 
-    expect(albumItems).toHaveLength(2)
-    expect(wrapper.findAll('.story-album__frame')).toHaveLength(2)
+    expect(albumItems).toHaveLength(3)
+    expect(wrapper.findAll('.story-album__frame')).toHaveLength(3)
     expect(wrapper.findAll('.story-album__image').map((image) => image.attributes('src')))
-      .toEqual(['/gallery-img/b-thumb.webp', '/gallery-img/a-thumb.webp'])
+      .toEqual(['/gallery-img/b-thumb.webp', '/gallery-img/a-thumb.webp', '/gallery-img/wide-thumb.webp'])
     expect(wrapper.findAll('.story-album__frame')[0].attributes('style'))
       .toContain('--story-photo-ratio: 400 / 600')
     expect(wrapper.findAll('.story-album__item')[0].attributes('style'))
@@ -142,6 +154,8 @@ describe('StoryAlbum', () => {
       .toContain('--story-flex-basis-tablet: calc(50.0000% - 10.0000px)')
     expect(wrapper.findAll('.story-album__item')[1].attributes('style'))
       .toContain('--story-flex-basis-mobile: 100%')
+    expect(wrapper.findAll('.story-album__item')[2].attributes('style'))
+      .toContain('--story-flex-basis: calc(33.3333% - 13.3333px)')
     expect(wrapper.find('.story-album__caption').text()).toBe('Stacked sky')
     expect(wrapper.find('.story-album__back').attributes('href')).toBe('/gallery/')
   })
@@ -228,11 +242,13 @@ describe('StoryAlbum', () => {
     expect(imageRule).toMatch(/border:\s*1px solid rgba\(45, 45, 42, \.13\)/)
     expect(hoverRule).toMatch(/^\s*opacity:\s*\.9\s*;?\s*$/)
     expect(captionRule).toMatch(/font-size:\s*12px/)
+    expect(captionRule).toMatch(/text-align:\s*center/)
     expect(itemRule).toMatch(/position:\s*relative/)
     expect(captionRule).toMatch(/position:\s*absolute/)
     expect(captionRule).toMatch(/top:\s*calc\(100% \+ 10px\)/)
     expect(captionLineRule).toMatch(/width:\s*48px/)
     expect(captionLineRule).toMatch(/height:\s*1px/)
+    expect(captionLineRule).toMatch(/margin:\s*0 auto 7px/)
     expect(backRule).toMatch(/flex-basis:\s*100%/)
     expect(tabletAlbumRule).toMatch(/gap:\s*28px 20px/)
     expect(tabletItemRule).toMatch(/flex-basis:\s*var\(--story-flex-basis-tablet,\s*33\.3333%\)/)
@@ -256,7 +272,7 @@ describe('StoryAlbum', () => {
 
     expect(storyPhotoSwipe.create).toHaveBeenCalledWith(
       expect.any(Array),
-      ['b', 'a'],
+      ['b', 'a', 'wide'],
       { b: 'Stacked sky' },
     )
 
@@ -270,6 +286,10 @@ describe('StoryAlbum', () => {
         expect.objectContaining({
           src: '/gallery-img/a-large.avif',
           msrc: '/gallery-img/a-thumb.webp',
+        }),
+        expect.objectContaining({
+          src: '/gallery-img/wide-large.avif',
+          msrc: '/gallery-img/wide-thumb.webp',
         }),
       ],
       index: 0,

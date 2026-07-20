@@ -47,7 +47,8 @@ function flexBasisForSpan(span: number, columns: number, gap: number) {
 
 function itemStyle(photo: Photo) {
   const ratio = photo.h > 0 ? photo.w / photo.h : 1
-  const desktopSpan = gridSpanForRatio(ratio, 12, 8, 3)
+  const desktopMaxSpan = ratio >= 2 ? 4 : 3
+  const desktopSpan = gridSpanForRatio(ratio, 12, 8, desktopMaxSpan)
   const tabletSpan = gridSpanForRatio(ratio, 6, 8)
   const mobileSpan = ratio < .85 ? 1 : 2
 

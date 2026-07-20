@@ -352,13 +352,14 @@ html:has(.photo-story-page) .vp-doc-container > .container {
   font-size: 12px;
   letter-spacing: .015em;
   line-height: 1.45;
+  text-align: center;
 }
 
 .story-album__caption::before {
   display: block;
   width: 48px;
   height: 1px;
-  margin-bottom: 7px;
+  margin: 0 auto 7px;
   background: color-mix(in srgb, var(--story-muted-color) 52%, transparent);
   content: '';
 }
