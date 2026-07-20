@@ -31,7 +31,7 @@ describe('PhotoStoryHeader', () => {
     expect(wrapper.get('.photo-story-header__meta').text()).toContain('北京')
   })
 
-  it('gives story text, headers, and text containers a narrow reading column', () => {
+  it('aligns story text with the full media column', () => {
     const styles = readFileSync(resolve(process.cwd(), 'docs/.vuepress/themes/styles/_gallery.scss'), 'utf8')
     const headerRule = styles.match(/\.photo-story-header\s*\{([^}]*)\}/)?.[1] ?? ''
     const metadataRule = styles.match(/\.photo-story-header__meta\s*\{([^}]*)\}/)?.[1] ?? ''
@@ -51,18 +51,20 @@ describe('PhotoStoryHeader', () => {
       /@media\s*\(min-width:\s*1280px\)[\s\S]*?\.photo-story-page \.vp-doc > p,\s*\.photo-story-page \.vp-doc > div > p\s*\{([^}]*)\}/,
     )?.[1] ?? ''
 
-    expect(headerRule).toMatch(/max-width:\s*min\(620px,\s*100%\)/)
+    expect(headerRule).toMatch(/max-width:\s*var\(--story-media-width\)/)
     expect(headerRule).toMatch(/margin:\s*12px 0 28px/)
     expect(headerRule).toMatch(/text-align:\s*left/)
     expect(metadataRule).toMatch(/justify-content:\s*flex-start/)
     expect(textRule).toMatch(/max-width:\s*var\(--story-media-width\)/)
     expect(textContainerRule).toMatch(/max-width:\s*var\(--story-media-width\)/)
-    expect(paragraphRule).toMatch(/max-width:\s*min\(620px,\s*100%\)/)
+    expect(paragraphRule).toMatch(/max-width:\s*var\(--story-media-width\)/)
     expect(paragraphRule).toMatch(/margin:\s*0 0 28px/)
     expect(paragraphRule).toMatch(/line-height:\s*1\.75/)
     expect(mobileIntroRule).toMatch(/margin-bottom:\s*28px/)
     expect(desktopWideIntroRule).toMatch(/line-height:\s*1\.75/)
     expect(styles).not.toMatch(/--story-text-width/)
+    expect(styles).toMatch(/--story-media-width:\s*min\(1600px,\s*calc\(100vw - 96px\)\)/)
+    expect(styles).toMatch(/@media\s*\(min-width:\s*3200px\)[\s\S]*--story-media-width:\s*min\(2200px,\s*calc\(100vw - 96px\)\)/)
     expect(styles).toMatch(/--story-wall-color:\s*#fff/)
     expect(styles).toMatch(/background-color:\s*var\(--story-wall-color\)/)
     expect(styles).toMatch(/background-image:\s*none/)

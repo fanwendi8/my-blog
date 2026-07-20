@@ -32,9 +32,9 @@ function accessibleLabel(photo: Photo, index: number) {
   return photo.alt?.trim() || photo.title?.trim() || `查看照片 ${index + 1}`
 }
 
-function gridSpanForRatio(ratio: number, columns: number, targetArea: number) {
+function gridSpanForRatio(ratio: number, columns: number, targetArea: number, maxSpan = columns) {
   const safeRatio = Math.min(4, Math.max(.25, ratio))
-  return Math.min(columns, Math.max(1, Math.round(Math.sqrt(safeRatio * targetArea))))
+  return Math.min(columns, maxSpan, Math.max(1, Math.round(Math.sqrt(safeRatio * targetArea))))
 }
 
 function flexBasisForSpan(span: number, columns: number, gap: number) {
@@ -47,7 +47,7 @@ function flexBasisForSpan(span: number, columns: number, gap: number) {
 
 function itemStyle(photo: Photo) {
   const ratio = photo.h > 0 ? photo.w / photo.h : 1
-  const desktopSpan = gridSpanForRatio(ratio, 12, 20)
+  const desktopSpan = gridSpanForRatio(ratio, 12, 8, 3)
   const tabletSpan = gridSpanForRatio(ratio, 6, 8)
   const mobileSpan = ratio < .85 ? 1 : 2
 
